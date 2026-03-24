@@ -1,0 +1,28 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: 'c9b2a16d-3e8a-4d2b-91c5-7a8f4b6d9e12'
+  firstName:
+    type: string
+    example: 'John'
+  lastName:
+    type: string
+    example: 'Doe'
+  email:
+    type: string
+    format: email
+    example: 'john.doe@example.com'
+  role:
+    type: string
+    example: 'Senior Developer'
+  timezone:
+    $ref: '../../../../shared/schemas/IanaTimezone.yaml'
+required:
+  - id
+  - firstName
+  - lastName
+  - email
+  - role
+  - timezone

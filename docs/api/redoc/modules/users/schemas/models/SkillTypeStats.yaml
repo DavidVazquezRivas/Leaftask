@@ -1,0 +1,17 @@
+type: object
+properties:
+  skillTypeId:
+    type: string
+    format: uuid
+    example: 'e8b2a16d-3e8a-4d2b-91c5-7a8f4b6d9e88'
+  skillTypeName:
+    type: string
+    example: 'Languages'
+  skills:
+    type: array
+    items:
+      $ref: './UserSkill.yaml'
+required:
+  - skillTypeId
+  - skillTypeName
+  - skills

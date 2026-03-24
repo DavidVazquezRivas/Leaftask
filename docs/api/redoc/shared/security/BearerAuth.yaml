@@ -1,0 +1,4 @@
+type: http
+scheme: bearer
+bearerFormat: JWT
+description: Provide the Access Token in the Authorization header (e.g., "Bearer eyJhbG...").

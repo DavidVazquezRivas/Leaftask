@@ -1,0 +1,15 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: 'b3f4a16d-3e8a-4d2b-91c5-7a8f4b6d9e11'
+  name:
+    type: string
+    example: 'Java'
+  metrics:
+    $ref: './SkillMetrics.yaml'
+required:
+  - id
+  - name
+  - metrics

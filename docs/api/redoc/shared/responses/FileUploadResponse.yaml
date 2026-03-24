@@ -1,0 +1,9 @@
+type: object
+properties:
+  data:
+    $ref: '../schemas/UploadedFile.yaml'
+  meta:
+    $ref: '../schemas/Meta.yaml'
+required:
+  - data
+  - meta

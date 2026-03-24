@@ -1,0 +1,11 @@
+type: object
+properties:
+  code:
+    type: integer
+    example: 1000
+  message:
+    type: string
+    example: 'An unexpected error occurred. Please try again later.'
+required:
+  - code
+  - message

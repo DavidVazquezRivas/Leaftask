@@ -1,0 +1,101 @@
+paths:
+  /oauth/google:
+    post:
+      summary: Authenticate with Google
+      description: Validates a Google ID token and returns an access token. Sets an HttpOnly cookie with the refresh token.
+      tags:
+        - Session
+      security: [] # Disables the global BearerAuth requirement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/GoogleLoginRequest.yaml'
+      responses:
+        '200':
+          description: Successful authentication.
+          headers:
+            Set-Cookie:
+              description: HttpOnly cookie containing the refresh token.
+              schema:
+                type: string
+                example: 'refreshToken=abc123xyz...; HttpOnly; Secure; Path=/; SameSite=Strict'
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/AuthSuccessResponse.yaml'
+        '400':
+          description: Bad Request. Missing or invalid parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized. Invalid Google ID token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+  /refresh:
+    post:
+      summary: Refresh Access Token
+      description: Issues a new access token using the refresh token provided in the HttpOnly cookie.
+      tags:
+        - Session
+      security: [] # Disables the global BearerAuth requirement
+      parameters:
+        - name: refreshToken
+          in: cookie
+          description: The refresh token stored in the HttpOnly cookie.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully generated a new access token.
+          headers:
+            Set-Cookie:
+              description: A new HttpOnly cookie containing the rotated refresh token.
+              schema:
+                type: string
+                example: 'refreshToken=new789xyz...; HttpOnly; Secure; Path=/; SameSite=Strict'
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/AuthSuccessResponse.yaml'
+        '401':
+          description: Unauthorized. Refresh token is missing, invalid, or expired.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+  /logout:
+    post:
+      summary: Terminate Session
+      description: Invalidates the current session and clears the refresh token cookie.
+      tags:
+        - Session
+      responses:
+        '204':
+          description: Successfully logged out.
+          headers:
+            Set-Cookie:
+              description: Clears the refresh token cookie by setting its expiration date to the past.
+              schema:
+                type: string
+                example: 'refreshToken=; Max-Age=0; HttpOnly; Secure; Path=/; SameSite=Strict'
+        '401':
+          description: Unauthorized. User is not authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'

@@ -1,0 +1,54 @@
+openapi: 3.0.3
+info:
+  title: Leaftask API
+  version: 1.0.0
+  description: |
+    Leaftask API documentation for managing tasks and projects.
+  contact:
+    name: David Vázquez Rivas
+    email: vazquezrivasdavid@gmail.com
+
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Local Development Environment
+
+security:
+  - BearerAuth: []
+
+x-tagGroups:
+  - name: Auth & Session
+    tags:
+      - Session
+  - name: Users
+    tags:
+      - Users Profile
+      - Users Stats
+
+tags:
+  - name: Session
+    description: Endpoints related to user authentication and session management.
+  - name: Users Profile
+    description: Endpoints for managing user profiles, including profile updates and image uploads.
+  - name: Users Stats
+    description: Endpoints for retrieving user performance metrics and skill statistics.
+
+paths:
+  # -- Session Module ---
+  /session/oauth/google:
+    $ref: './modules/session/paths/session.yaml#/paths/~1oauth~1google'
+  /session/refresh:
+    $ref: './modules/session/paths/session.yaml#/paths/~1refresh'
+  /session/logout:
+    $ref: './modules/session/paths/session.yaml#/paths/~1logout'
+  # --- Users Module ---
+  /users/me/profile:
+    $ref: './modules/users/paths/profile.yaml#/paths/~1me~1profile'
+  /users/me/profile/image:
+    $ref: './modules/users/paths/profile.yaml#/paths/~1me~1profile~1image'
+  /users/me/stats:
+    $ref: './modules/users/paths/stats.yaml#/paths/~1me~1stats'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      $ref: './shared/security/BearerAuth.yaml'

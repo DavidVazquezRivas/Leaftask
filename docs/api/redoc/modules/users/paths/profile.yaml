@@ -1,0 +1,85 @@
+paths:
+  /me/profile:
+    get:
+      summary: Get Current User Profile
+      description: Retrieves the profile information of the currently authenticated user.
+      tags:
+        - Users Profile
+      responses:
+        '200':
+          description: Successfully retrieved the user profile.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/ProfileResponse.yaml'
+        '401':
+          description: Unauthorized. Invalid or missing Access Token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+    patch:
+      summary: Update Current User Profile
+      description: Updates the profile information of the currently authenticated user. Allows partial updates.
+      tags:
+        - Users Profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/requests/UpdateProfileRequest.yaml'
+      responses:
+        '200':
+          description: Successfully updated the user profile. Returns the updated profile.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/ProfileResponse.yaml'
+        '400':
+          description: Bad Request. Validation error in the payload.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+  /me/profile/image:
+    post:
+      summary: Upload Profile Image
+      description: Uploads a new profile image. Returns the UUID and URL of the uploaded image to be used in the profile update request.
+      tags:
+        - Users Profile
+      requestBody:
+        $ref: '../../../shared/requests/ImageUploadRequest.yaml'
+      responses:
+        '200':
+          description: Image successfully uploaded.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/responses/FileUploadResponse.yaml'
+        '400':
+          description: Bad Request. File is too large or invalid format.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'

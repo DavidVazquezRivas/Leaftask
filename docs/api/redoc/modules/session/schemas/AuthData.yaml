@@ -1,0 +1,32 @@
+type: object
+properties:
+  accessToken:
+    type: string
+    description: Short-lived JWT used for subsequent API requests.
+    example: 'eyJhbGciOiJIUzI1NiIsInR5c...'
+  user:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: '123e4567-e89b-12d3-a456-426614174000'
+      email:
+        type: string
+        format: email
+        example: 'user@example.com'
+      fullName:
+        type: string
+        example: 'John Doe'
+      profileCompleted:
+        type: boolean
+        description: Flag indicating if the user has finished the onboarding process. Frontend should redirect to onboarding if false.
+        example: false
+    required:
+      - id
+      - email
+      - fullName
+      - profileCompleted
+required:
+  - accessToken
+  - user

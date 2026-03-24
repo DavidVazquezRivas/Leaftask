@@ -1,0 +1,25 @@
+type: object
+properties:
+  experience:
+    type: integer
+    description: Score representing the user's experience level (e.g., 0 to 100).
+    example: 70
+  quality:
+    type: integer
+    description: Score representing the quality of work for this skill. (e.g., 0 to 100).
+    example: 80
+  speed_factor:
+    type: number
+    format: float
+    description: Multiplier indicating the user's speed compared to the baseline (e.g., 1.2 is 20% faster).
+    example: 1.2
+  prediction_bias:
+    type: number
+    format: float
+    description: Tendency to under/overestimate time (e.g., -0.2 means they finish 20% faster than estimated).
+    example: -0.2
+required:
+  - experience
+  - quality
+  - speed_factor
+  - prediction_bias

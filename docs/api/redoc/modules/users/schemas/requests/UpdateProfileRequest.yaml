@@ -1,0 +1,22 @@
+type: object
+properties:
+  image:
+    type: string
+    format: uuid
+    description: The UUID of the previously uploaded profile image.
+    example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479'
+  firstName:
+    type: string
+    example: 'John'
+  lastName:
+    type: string
+    example: 'Doe'
+  email:
+    type: string
+    format: email
+    example: 'john.doe@example.com'
+  role:
+    type: string
+    example: 'Senior Developer'
+  timezone:
+    $ref: '../../../../shared/schemas/IanaTimezone.yaml'

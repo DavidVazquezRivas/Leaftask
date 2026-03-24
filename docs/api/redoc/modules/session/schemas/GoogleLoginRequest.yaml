@@ -1,0 +1,8 @@
+type: object
+properties:
+  idToken:
+    type: string
+    description: The JWT provided by the Google Frontend SDK.
+    example: 'eyJhbGciOiJSUzI1NiIsImtpZ...'
+required:
+  - idToken

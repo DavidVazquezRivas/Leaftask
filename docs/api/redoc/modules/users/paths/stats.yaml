@@ -1,0 +1,22 @@
+paths:
+  /me/stats:
+    get:
+      summary: Get Current User Stats
+      description: Retrieves the skills and performance metrics of the authenticated user, grouped by skill type.
+      tags:
+        - Users Stats
+      responses:
+        '200':
+          description: Successfully retrieved user statistics.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/UserStatsResponse.yaml'
+        '401':
+          description: Unauthorized. Invalid or missing Access Token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'

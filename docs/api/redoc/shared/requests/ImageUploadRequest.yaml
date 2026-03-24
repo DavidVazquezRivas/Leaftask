@@ -1,0 +1,12 @@
+required: true
+content:
+  multipart/form-data:
+    schema:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+          description: The file to upload. Must be a valid image format (JPEG, PNG, WebP).
+      required:
+        - file
