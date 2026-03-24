@@ -1,0 +1,16 @@
+name: sort
+in: query
+description: >
+  Multi-column sorting criteria. Format: `field:direction` (e.g., `firstName:asc`).
+  You can pass multiple sort parameters to sort by multiple columns sequentially.
+
+  Example: `?sort=firstName:asc&sort=email:desc`
+required: false
+style: form
+explode: true
+schema:
+  type: array
+  items:
+    type: string
+    pattern: '^[a-zA-Z0-9_]+:(asc|desc)$'
+    example: 'firstName:asc'

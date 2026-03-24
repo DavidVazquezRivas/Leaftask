@@ -23,6 +23,7 @@ x-tagGroups:
     tags:
       - Users Profile
       - Users Stats
+      - Users Management
 
 tags:
   - name: Session
@@ -31,6 +32,8 @@ tags:
     description: Endpoints for managing user profiles, including profile updates and image uploads.
   - name: Users Stats
     description: Endpoints for retrieving user performance metrics and skill statistics.
+  - name: Users Management
+    description: Endpoints for managing users in the system, including listing and searching users
 
 paths:
   # -- Session Module ---
@@ -47,6 +50,8 @@ paths:
     $ref: './modules/users/paths/profile.yaml#/paths/~1me~1profile~1image'
   /users/me/stats:
     $ref: './modules/users/paths/stats.yaml#/paths/~1me~1stats'
+  /users:
+    $ref: './modules/users/paths/collection.yaml#/paths/~1'
 
 components:
   securitySchemes:

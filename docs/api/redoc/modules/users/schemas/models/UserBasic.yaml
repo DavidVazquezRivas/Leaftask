@@ -1,0 +1,17 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: 'c9b2a16d-3e8a-4d2b-91c5-7a8f4b6d9e12'
+  fullName:
+    type: string
+    example: 'John Doe'
+  email:
+    type: string
+    format: email
+    example: 'john.doe@example.com'
+required:
+  - id
+  - fullName
+  - email

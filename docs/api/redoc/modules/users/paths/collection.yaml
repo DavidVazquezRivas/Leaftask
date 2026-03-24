@@ -1,0 +1,51 @@
+paths:
+  /:
+    get:
+      summary: List All Users
+      description: |
+        Retrieves a paginated list of basic user profiles.
+
+        **Allowed sort fields:** `firstName`, `fullName`, `email`.
+      tags:
+        - Users Management
+      parameters:
+        # -- Shared Parameters --
+        - $ref: '../../../shared/parameters/LimitParam.yaml'
+        - $ref: '../../../shared/parameters/CursorParam.yaml'
+        - $ref: '../../../shared/parameters/SortParam.yaml'
+
+        # -- Specific Filters --
+        - name: search
+          in: query
+          description: Partial search term to filter by fullName or email (e.g., "Joh" or "@example").
+          required: false
+          schema:
+            type: string
+        - name: email
+          in: query
+          description: Exact match filter for the user's email.
+          required: false
+          schema:
+            type: string
+            format: email
+      responses:
+        '200':
+          description: Successfully retrieved the list of users.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/UserListResponse.yaml'
+        '400':
+          description: Bad Request. Invalid pagination cursor or parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'

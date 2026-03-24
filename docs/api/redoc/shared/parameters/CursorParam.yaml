@@ -1,0 +1,6 @@
+name: cursor
+in: query
+description: The cursor token to fetch the next page of results. Leave empty to fetch the first page.
+required: false
+schema:
+  type: string
