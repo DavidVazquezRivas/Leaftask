@@ -1,0 +1,117 @@
+paths:
+  /{orgId}/roles:
+    parameters:
+      - name: orgId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: List Organization Roles
+      description: Retrieves all custom and default roles within the organization.
+      tags:
+        - Organization Roles
+      responses:
+        '200':
+          description: Successfully retrieved roles.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/RoleListResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+    post:
+      summary: Create Role
+      description: Creates a new custom role with specific permissions for the organization.
+      tags:
+        - Organization Roles
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/requests/CreateRoleRequest.yaml'
+      responses:
+        '201':
+          description: Role created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/RoleResponse.yaml'
+        '400':
+          description: Bad Request.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+
+  /{orgId}/roles/{roleId}:
+    parameters:
+      - name: orgId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: roleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    patch:
+      summary: Update Role
+      description: Updates the name or permissions of an existing role.
+      tags:
+        - Organization Roles
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/requests/UpdateRoleRequest.yaml'
+      responses:
+        '200':
+          description: Role updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/RoleResponse.yaml'
+        '400':
+          description: Bad Request.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Not Found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+
+    delete:
+      summary: Delete Role
+      description: Deletes a custom role. Fails if the role currently has members assigned.
+      tags:
+        - Organization Roles
+      responses:
+        '204':
+          description: Role successfully deleted.
+        '400':
+          description: Bad Request. Cannot delete a role that is assigned to active members.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'

@@ -1,0 +1,12 @@
+type: object
+properties:
+  name:
+    type: string
+    example: 'Leaftask Admin'
+  permissions:
+    type: array
+    items:
+      $ref: '../models/RolePermission.yaml'
+required:
+  - name
+  - permissions

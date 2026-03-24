@@ -1,0 +1,14 @@
+type: object
+properties:
+  name:
+    type: string
+    example: 'Leaftask'
+  description:
+    type: string
+    example: 'Organization for managing tasks and projects'
+  website:
+    type: string
+    format: uri
+    example: 'https://leaftask.com'
+required:
+  - name

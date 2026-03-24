@@ -1,0 +1,22 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479'
+  name:
+    type: string
+    example: 'Leaftask Admin'
+  totalMembers:
+    type: integer
+    description: Count of organization members currently assigned to this role.
+    example: 5
+  permissions:
+    type: array
+    items:
+      $ref: './RolePermission.yaml'
+required:
+  - id
+  - name
+  - totalMembers
+  - permissions

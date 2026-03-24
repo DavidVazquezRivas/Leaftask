@@ -1,0 +1,36 @@
+paths:
+  /{orgId}/permissions:
+    parameters:
+      - name: orgId
+        in: path
+        required: true
+        description: The UUID of the organization.
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: List Available Permissions
+      description: Retrieves the static list of all system permissions available to be assigned to roles within the organization.
+      tags:
+        - Organization Roles
+      responses:
+        '200':
+          description: Successfully retrieved the permissions list.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/PermissionListResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'

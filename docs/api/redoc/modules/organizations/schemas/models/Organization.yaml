@@ -1,0 +1,41 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+  name:
+    type: string
+    example: 'Leaftask'
+  description:
+    type: string
+    nullable: true
+    example: 'Organization for managing tasks and projects'
+  website:
+    type: string
+    format: uri
+    nullable: true
+    example: 'https://leaftask.com'
+  totalMembers:
+    type: integer
+    description: Automatically calculated count of active members.
+    example: 10
+  activeProjects:
+    type: integer
+    description: Count of ongoing projects within the organization.
+    example: 5
+  customRoles:
+    type: integer
+    description: Number of custom roles created by the organization.
+    example: 3
+  createdAt:
+    type: string
+    format: date-time
+    example: '2024-01-01T00:00:00Z'
+required:
+  - id
+  - name
+  - totalMembers
+  - activeProjects
+  - customRoles
+  - createdAt

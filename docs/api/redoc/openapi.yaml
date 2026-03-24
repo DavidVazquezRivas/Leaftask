@@ -24,6 +24,10 @@ x-tagGroups:
       - Users Profile
       - Users Stats
       - Users Management
+  - name: Organizations
+    tags:
+      - Organizations Management
+      - Organization Roles
 
 tags:
   - name: Session
@@ -34,6 +38,10 @@ tags:
     description: Endpoints for retrieving user performance metrics and skill statistics.
   - name: Users Management
     description: Endpoints for managing users in the system, including listing and searching users
+  - name: Organizations Management
+    description: Endpoints for managing organizations, including creation, updates and deletes
+  - name: Organization Roles
+    description: Management of RBAC (Role-Based Access Control) permissions and custom roles.
 
 paths:
   # -- Session Module ---
@@ -52,6 +60,17 @@ paths:
     $ref: './modules/users/paths/stats.yaml#/paths/~1me~1stats'
   /users:
     $ref: './modules/users/paths/collection.yaml#/paths/~1'
+  # --- Organizations Module ---
+  /organizations:
+    $ref: './modules/organizations/paths/general.yaml#/paths/~1'
+  /organizations/{id}:
+    $ref: './modules/organizations/paths/general.yaml#/paths/~1{id}'
+  /organizations/{orgId}/permissions:
+    $ref: './modules/organizations/paths/permissions.yaml#/paths/~1{orgId}~1permissions'
+  /organizations/{orgId}/roles:
+    $ref: './modules/organizations/paths/roles.yaml#/paths/~1{orgId}~1roles'
+  /organizations/{orgId}/roles/{roleId}:
+    $ref: './modules/organizations/paths/roles.yaml#/paths/~1{orgId}~1roles~1{roleId}'
 
 components:
   securitySchemes:

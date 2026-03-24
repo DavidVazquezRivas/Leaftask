@@ -1,0 +1,14 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    description: The UUID of the specific permission.
+    example: 'a1b2c3d4-e5f6-4a5b-8c7d-9e0f1a2b3c4d'
+  level:
+    type: string
+    enum: [full, supervised, none]
+    example: 'full'
+required:
+  - id
+  - level

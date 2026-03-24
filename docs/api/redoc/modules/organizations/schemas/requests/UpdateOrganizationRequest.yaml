@@ -1,0 +1,12 @@
+type: object
+properties:
+  name:
+    type: string
+    example: 'Leaftask Updated'
+  description:
+    type: string
+    example: 'Updated description for Leaftask organization'
+  website:
+    type: string
+    format: uri
+    example: 'https://leaftask.com/updated'

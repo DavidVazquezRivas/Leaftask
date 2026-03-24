@@ -1,0 +1,9 @@
+type: object
+properties:
+  data:
+    $ref: '../models/Organization.yaml'
+  meta:
+    $ref: '../../../../shared/schemas/Meta.yaml'
+required:
+  - data
+  - meta
