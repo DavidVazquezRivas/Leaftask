@@ -1,0 +1,9 @@
+type: object
+properties:
+  action:
+    type: string
+    enum: [accept, reject]
+    description: The action to take on the invitation.
+    example: 'accept'
+required:
+  - action

@@ -1,0 +1,14 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    description: The UUID of the Role.
+    example: '123e4567-e89b-12d3-a456-426614174000'
+  memberCount:
+    type: integer
+    description: Number of members holding this role.
+    example: 5
+required:
+  - id
+  - memberCount

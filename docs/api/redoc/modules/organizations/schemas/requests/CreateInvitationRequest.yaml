@@ -1,0 +1,15 @@
+type: object
+properties:
+  userId:
+    type: string
+    format: uuid
+    description: The UUID of the user being invited.
+    example: '123e4567-e89b-12d3-a456-426614174002'
+  roleId:
+    type: string
+    format: uuid
+    description: The UUID of the role to be assigned upon acceptance.
+    example: '123e4567-e89b-12d3-a456-426614174000'
+required:
+  - userId
+  - roleId

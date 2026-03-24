@@ -28,6 +28,8 @@ x-tagGroups:
     tags:
       - Organizations Management
       - Organization Roles
+      - Organization Members
+      - Organization Invitations
 
 tags:
   - name: Session
@@ -42,6 +44,10 @@ tags:
     description: Endpoints for managing organizations, including creation, updates and deletes
   - name: Organization Roles
     description: Management of RBAC (Role-Based Access Control) permissions and custom roles.
+  - name: Organization Members
+    description: Management of active organization members and role distribution.
+  - name: Organization Invitations
+    description: Handling of user invitations to join the organization.
 
 paths:
   # -- Session Module ---
@@ -71,6 +77,16 @@ paths:
     $ref: './modules/organizations/paths/roles.yaml#/paths/~1{orgId}~1roles'
   /organizations/{orgId}/roles/{roleId}:
     $ref: './modules/organizations/paths/roles.yaml#/paths/~1{orgId}~1roles~1{roleId}'
+  /organizations/{orgId}/members/distribution:
+    $ref: './modules/organizations/paths/members.yaml#/paths/~1{orgId}~1members~1distribution'
+  /organizations/{orgId}/members:
+    $ref: './modules/organizations/paths/members.yaml#/paths/~1{orgId}~1members'
+  /organizations/{orgId}/members/{memberId}:
+    $ref: './modules/organizations/paths/members.yaml#/paths/~1{orgId}~1members~1{memberId}'
+  /organizations/{orgId}/invitations:
+    $ref: './modules/organizations/paths/invitations.yaml#/paths/~1{orgId}~1invitations'
+  /organizations/{orgId}/invitations/{invitationId}:
+    $ref: './modules/organizations/paths/invitations.yaml#/paths/~1{orgId}~1invitations~1{invitationId}'
 
 components:
   securitySchemes:

@@ -1,0 +1,9 @@
+type: object
+properties:
+  roleId:
+    type: string
+    format: uuid
+    description: The UUID of the new role to assign to the member.
+    example: '123e4567-e89b-12d3-a456-426614174001'
+required:
+  - roleId
