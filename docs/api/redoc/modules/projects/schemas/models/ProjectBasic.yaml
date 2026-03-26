@@ -1,0 +1,16 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: '1111-1111-1111-1111-111111111111'
+  name:
+    type: string
+    example: 'Project Name'
+  abbreviation:
+    type: string
+    example: 'PRJ'
+required:
+  - id
+  - name
+  - abbreviation

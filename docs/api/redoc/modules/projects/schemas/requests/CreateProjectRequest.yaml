@@ -1,0 +1,21 @@
+type: object
+properties:
+  name:
+    type: string
+    example: 'Project Name'
+  abbreviation:
+    type: string
+    example: 'PRJ'
+  privacyLevelId:
+    type: string
+    format: uuid
+    example: '1111-1111-1111-1111-111111111111'
+  organizationId:
+    type: string
+    format: uuid
+    description: Optional. If provided, the project will be created under this organization. If omitted, it will be a personal project.
+    example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+required:
+  - name
+  - abbreviation
+  - privacyLevelId

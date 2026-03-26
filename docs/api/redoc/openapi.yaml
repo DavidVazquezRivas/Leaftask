@@ -30,6 +30,11 @@ x-tagGroups:
       - Organization Roles
       - Organization Members
       - Organization Invitations
+  - name: Projects
+    tags:
+      - Project Management
+      - Project Configuration
+      - Project Roles
 
 tags:
   - name: Session
@@ -48,6 +53,12 @@ tags:
     description: Management of active organization members and role distribution.
   - name: Organization Invitations
     description: Handling of user invitations to join the organization.
+  - name: Project Management
+    description: Endpoints for managing projects, including creation, updates and deletes.
+  - name: Project Configuration
+    description: Endpoints for managing project configuration settings.
+  - name: Project Roles
+    description: Management of RBAC (Role-Based Access Control) permissions and custom roles within projects.
 
 paths:
   # -- Session Module ---
@@ -67,6 +78,8 @@ paths:
   /users:
     $ref: './modules/users/paths/collection.yaml#/paths/~1'
   # --- Organizations Module ---
+  /organizations/me:
+    $ref: './modules/organizations/paths/me.yaml#/paths/~1me'
   /organizations:
     $ref: './modules/organizations/paths/general.yaml#/paths/~1'
   /organizations/{id}:
@@ -87,6 +100,23 @@ paths:
     $ref: './modules/organizations/paths/invitations.yaml#/paths/~1{orgId}~1invitations'
   /organizations/{orgId}/invitations/{invitationId}:
     $ref: './modules/organizations/paths/invitations.yaml#/paths/~1{orgId}~1invitations~1{invitationId}'
+  # --- Projects Module ---
+  /projects/privacy-levels:
+    $ref: './modules/projects/paths/configuration.yaml#/paths/~1privacy-levels'
+  /projects/me:
+    $ref: './modules/projects/paths/collections.yaml#/paths/~1me'
+  /projects/organization/{orgId}:
+    $ref: './modules/projects/paths/collections.yaml#/paths/~1organization~1{orgId}'
+  /projects:
+    $ref: './modules/projects/paths/projects.yaml#/paths/~1'
+  /projects/{projectId}:
+    $ref: './modules/projects/paths/projects.yaml#/paths/~1{projectId}'
+  /projects/{projectId}/permissions:
+    $ref: './modules/projects/paths/permissions.yaml#/paths/~1{projectId}~1permissions'
+  /projects/{projectId}/roles:
+    $ref: './modules/projects/paths/roles.yaml#/paths/~1{projectId}~1roles'
+  /projects/{projectId}/roles/{roleId}:
+    $ref: './modules/projects/paths/roles.yaml#/paths/~1{projectId}~1roles~1{roleId}'
 
 components:
   securitySchemes:

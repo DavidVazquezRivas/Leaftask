@@ -1,0 +1,26 @@
+paths:
+  /me:
+    get:
+      summary: List My Organizations
+      description: Retrieves a lightweight list of organizations the authenticated user belongs to. Used for UI navigation.
+      tags:
+        - Organizations Management
+      parameters:
+        - $ref: '../../../shared/parameters/LimitParam.yaml'
+        - $ref: '../../../shared/parameters/CursorParam.yaml'
+        - $ref: '../../../shared/parameters/SortParam.yaml'
+      responses:
+        '200':
+          description: Successfully retrieved organizations.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/OrganizationBasicListResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'

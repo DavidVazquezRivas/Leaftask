@@ -25,6 +25,12 @@ paths:
             application/json:
               schema:
                 $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. User does not have access to this organization.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
         '500':
           description: Internal Server Error.
           content:
@@ -51,6 +57,18 @@ paths:
                 $ref: '../schemas/responses/RoleResponse.yaml'
         '400':
           description: Bad Request.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. The user does not have permission to create roles.
           content:
             application/json:
               schema:
@@ -94,6 +112,18 @@ paths:
             application/json:
               schema:
                 $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. You don't have permission to update this role.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
         '404':
           description: Not Found.
           content:
@@ -109,8 +139,32 @@ paths:
       responses:
         '204':
           description: Role successfully deleted.
+          headers:
+            X-Resource-ID:
+              description: The UUID of the deleted resource.
+              schema:
+                type: string
+                format: uuid
         '400':
           description: Bad Request. Cannot delete a role that is assigned to active members.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. Only organization admins can delete roles.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Not Found. Role does not exist.
           content:
             application/json:
               schema:

@@ -1,0 +1,11 @@
+type: object
+properties:
+  data:
+    type: array
+    items:
+      $ref: '../models/ProjectPermission.yaml'
+  meta:
+    $ref: '../../../../shared/schemas/Meta.yaml'
+required:
+  - data
+  - meta

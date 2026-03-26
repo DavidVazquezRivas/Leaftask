@@ -1,23 +1,62 @@
 paths:
-  /:
-    post:
-      summary: Create Organization
-      description: Creates a new organization and assigns the current user as the Owner.
+  /{projectId}/roles:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: List Project Roles
+      description: Retrieves all custom and default roles within the project.
       tags:
-        - Organizations Management
+        - Project Roles
+      responses:
+        '200':
+          description: Successfully retrieved project roles.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/ProjectRoleListResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Project not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+    post:
+      summary: Create Project Role
+      description: Creates a new custom role with specific permissions for the project.
+      tags:
+        - Project Roles
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '../schemas/requests/CreateOrganizationRequest.yaml'
+              $ref: '../schemas/requests/CreateProjectRoleRequest.yaml'
       responses:
         '201':
-          description: Organization created successfully.
+          description: Role created successfully.
           content:
             application/json:
               schema:
-                $ref: '../schemas/responses/OrganizationResponse.yaml'
+                $ref: '../schemas/responses/ProjectRoleResponse.yaml'
         '400':
           description: Bad Request. Validation failed.
           content:
@@ -30,77 +69,55 @@ paths:
             application/json:
               schema:
                 $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. Insufficient permissions.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
         '500':
           $ref: '../../../shared/responses/InternalServerError.yaml'
 
-  /{id}:
+  /{projectId}/roles/{roleId}:
     parameters:
-      - name: id
+      - name: projectId
         in: path
         required: true
-        description: The UUID of the organization.
         schema:
           type: string
           format: uuid
-    get:
-      summary: Get Organization Details
-      description: Retrieves the general settings and statistics of a specific organization.
-      tags:
-        - Organizations Management
-      responses:
-        '200':
-          description: Organization details retrieved successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '../schemas/responses/OrganizationResponse.yaml'
-        '401':
-          description: Unauthorized. The user is not authenticated.
-          content:
-            application/json:
-              schema:
-                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
-        '403':
-          description: Forbidden. User does not have access to this organization.
-          content:
-            application/json:
-              schema:
-                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
-        '404':
-          description: Organization not found.
-          content:
-            application/json:
-              schema:
-                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
-        '500':
-          $ref: '../../../shared/responses/InternalServerError.yaml'
-
+      - name: roleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
     patch:
-      summary: Update Organization
-      description: Updates general information of the organization. Requires admin privileges.
+      summary: Update Project Role
+      description: Updates the name or permissions of an existing project role.
       tags:
-        - Organizations Management
+        - Project Roles
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '../schemas/requests/UpdateOrganizationRequest.yaml'
+              $ref: '../schemas/requests/UpdateProjectRoleRequest.yaml'
       responses:
         '200':
-          description: Organization updated successfully.
+          description: Role updated successfully.
           content:
             application/json:
               schema:
-                $ref: '../schemas/responses/OrganizationResponse.yaml'
+                $ref: '../schemas/responses/ProjectRoleResponse.yaml'
         '400':
-          description: Bad Request.
+          description: Bad Request. Validation failed.
           content:
             application/json:
               schema:
                 $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
         '401':
-          description: Unauthorized. The user is not authenticated.
+          description: Unauthorized.
           content:
             application/json:
               schema:
@@ -112,42 +129,47 @@ paths:
               schema:
                 $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
         '404':
-          description: Organization not found.
+          description: Role not found.
           content:
             application/json:
               schema:
                 $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
         '500':
           $ref: '../../../shared/responses/InternalServerError.yaml'
-
     delete:
-      summary: Delete Organization
-      description: Permanently deletes the organization and all associated data. Requires Owner privileges.
+      summary: Delete Project Role
+      description: Deletes a project role. Fails if the role currently has members assigned.
       tags:
-        - Organizations Management
+        - Project Roles
       responses:
         '204':
-          description: Organization successfully deleted. No content returned.
+          description: Role successfully deleted.
           headers:
             X-Resource-ID:
-              description: The UUID of the deleted resource.
+              description: The UUID of the deleted role.
               schema:
                 type: string
                 format: uuid
+        '400':
+          description: Bad Request. Cannot delete a role that is assigned to active members.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
         '401':
-          description: Unauthorized. The user is not authenticated.
+          description: Unauthorized.
           content:
             application/json:
               schema:
                 $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
         '403':
-          description: Forbidden. Only the owner can delete the organization.
+          description: Forbidden. Insufficient permissions.
           content:
             application/json:
               schema:
                 $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
         '404':
-          description: Organization not found.
+          description: Role not found.
           content:
             application/json:
               schema:

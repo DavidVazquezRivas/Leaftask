@@ -1,0 +1,22 @@
+paths:
+  /privacy-levels:
+    get:
+      summary: List Privacy Levels
+      description: Retrieves the static list of available privacy levels for projects.
+      tags:
+        - Project Configuration
+      responses:
+        '200':
+          description: Successfully retrieved privacy levels.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/PrivacyLevelListResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'

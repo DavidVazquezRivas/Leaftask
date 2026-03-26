@@ -19,8 +19,12 @@ paths:
             schema:
               $ref: '../schemas/requests/CreateInvitationRequest.yaml'
       responses:
-        '204':
+        '201':
           description: Invitation sent successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/InvitationResponse.yaml'
         '400':
           description: Bad Request. User is already a member or already has a pending invite.
           content:
@@ -70,6 +74,10 @@ paths:
       responses:
         '200':
           description: Invitation successfully processed.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/InvitationResponse.yaml'
         '400':
           description: Bad Request. Invalid action or invitation already processed.
           content:
@@ -84,6 +92,12 @@ paths:
                 $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
         '404':
           description: Invitation not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '409':
+          description: Conflict. Invitation already accepted or rejected.
           content:
             application/json:
               schema:

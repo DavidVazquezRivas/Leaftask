@@ -1,9 +1,9 @@
 type: object
 properties:
-  action:
+  status:
     type: string
     enum: [accept, reject]
-    description: The action to take on the invitation.
+    description: The status to set for the invitation. Use 'accept' to accept the invitation or 'reject' to decline it.
     example: 'accept'
 required:
-  - action
+  - status

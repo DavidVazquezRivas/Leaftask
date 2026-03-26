@@ -1,0 +1,12 @@
+type: object
+properties:
+  name:
+    type: string
+    example: 'Project Admin'
+  permissions:
+    type: array
+    items:
+      $ref: '../models/ProjectRolePermission.yaml'
+required:
+  - name
+  - permissions

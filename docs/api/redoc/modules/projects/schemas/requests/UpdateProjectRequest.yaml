@@ -1,0 +1,12 @@
+type: object
+properties:
+  name:
+    type: string
+    example: 'Updated Project Name'
+  abbreviation:
+    type: string
+    example: 'UPRJ'
+  privacyLevelId:
+    type: string
+    format: uuid
+    example: '2222-2222-2222-2222-222222222222'

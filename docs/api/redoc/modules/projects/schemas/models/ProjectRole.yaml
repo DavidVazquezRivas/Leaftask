@@ -1,0 +1,22 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: '123e4567-e89b-12d3-a456-426614174000'
+  name:
+    type: string
+    example: 'Project Admin'
+  totalMembers:
+    type: integer
+    description: Count of project members currently assigned to this role.
+    example: 5
+  permissions:
+    type: array
+    items:
+      $ref: './ProjectRolePermission.yaml'
+required:
+  - id
+  - name
+  - totalMembers
+  - permissions

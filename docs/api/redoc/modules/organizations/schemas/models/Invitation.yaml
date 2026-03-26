@@ -1,0 +1,23 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+  status:
+    type: string
+    enum: [pending, accepted, rejected, abandoned]
+    example: 'pending'
+  invitedAt:
+    type: string
+    format: date-time
+    example: '2024-01-01T00:00:00Z'
+  respondedAt:
+    type: string
+    format: date-time
+    nullable: true
+    example: '2024-01-02T00:00:00Z'
+required:
+  - id
+  - status
+  - invitedAt

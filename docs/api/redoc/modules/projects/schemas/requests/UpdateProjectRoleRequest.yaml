@@ -1,0 +1,10 @@
+type: object
+properties:
+  name:
+    type: string
+    example: 'Project Admin Updated'
+  permissions:
+    type: array
+    description: If provided, completely overwrites the existing permissions array for this role.
+    items:
+      $ref: '../models/ProjectRolePermission.yaml'

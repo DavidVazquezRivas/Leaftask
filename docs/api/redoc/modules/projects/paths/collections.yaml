@@ -1,0 +1,72 @@
+paths:
+  /me:
+    get:
+      summary: List My Personal Projects
+      description: Retrieves a lightweight list of the user's personal projects (projects not attached to any organization). Used for UI navigation.
+      tags:
+        - Project Management
+      parameters:
+        - $ref: '../../../shared/parameters/LimitParam.yaml'
+        - $ref: '../../../shared/parameters/CursorParam.yaml'
+        - $ref: '../../../shared/parameters/SortParam.yaml'
+      responses:
+        '200':
+          description: Successfully retrieved personal projects.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/ProjectBasicListResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+  /organization/{orgId}:
+    parameters:
+      - name: orgId
+        in: path
+        required: true
+        description: The UUID of the organization.
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: List Organization Projects
+      description: Retrieves a lightweight list of projects belonging to this organization. Used for UI navigation.
+      tags:
+        - Project Management
+      parameters:
+        - $ref: '../../../shared/parameters/LimitParam.yaml'
+        - $ref: '../../../shared/parameters/CursorParam.yaml'
+        - $ref: '../../../shared/parameters/SortParam.yaml'
+      responses:
+        '200':
+          description: Successfully retrieved organization projects.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/ProjectBasicListResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. User lacks access to this organization.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Organization not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'

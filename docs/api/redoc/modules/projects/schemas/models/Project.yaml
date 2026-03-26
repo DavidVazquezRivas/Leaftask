@@ -1,0 +1,31 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: '1111-1111-1111-1111-111111111111'
+  name:
+    type: string
+    example: 'Project Name'
+  abbreviation:
+    type: string
+    description: Short code or prefix used for tasks within this project.
+    example: 'PRJ'
+  privacyLevel:
+    $ref: './PrivacyLevel.yaml'
+  organizationId:
+    type: string
+    format: uuid
+    nullable: true
+    description: The UUID of the organization this project belongs to. Null if it's a personal project.
+    example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+  createdAt:
+    type: string
+    format: date-time
+    example: '2024-01-01T00:00:00Z'
+required:
+  - id
+  - name
+  - abbreviation
+  - privacyLevel
+  - createdAt

@@ -1,0 +1,41 @@
+paths:
+  /{projectId}/permissions:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: List Project Permissions
+      description: Retrieves the static list of all system permissions available to be assigned to roles within the project.
+      tags:
+        - Project Roles
+      responses:
+        '200':
+          description: Successfully retrieved the permissions list.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/ProjectPermissionListResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Project not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
