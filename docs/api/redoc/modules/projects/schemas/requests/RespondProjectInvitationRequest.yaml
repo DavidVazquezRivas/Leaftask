@@ -1,0 +1,9 @@
+type: object
+properties:
+  status:
+    type: string
+    enum: [accepted, rejected, cancelled]
+    description: The action to perform on the invitation. 'cancelled' can only be executed by project admins.
+    example: 'accepted'
+required:
+  - status

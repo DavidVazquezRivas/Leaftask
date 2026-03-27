@@ -1,0 +1,142 @@
+paths:
+  /{projectId}/invitations:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: List Pending Invitations
+      description: Retrieves a list of active invitations to join this project.
+      tags:
+        - Project Invitations
+      responses:
+        '200':
+          description: Successfully retrieved invitations.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/ProjectInvitationListResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+    post:
+      summary: Create Invitation
+      description: Invites a human user to join the project. (AI Agents are added via a different module).
+      tags:
+        - Project Invitations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/requests/CreateProjectInvitationRequest.yaml'
+      responses:
+        '204':
+          description: Invitation created successfully.
+          headers:
+            X-Resource-ID:
+              description: The UUID of the newly created invitation.
+              schema:
+                type: string
+                format: uuid
+        '400':
+          description: Bad Request. User is already a member or has a pending invite.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. Insufficient permissions.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+  /{projectId}/invitations/{invitationId}:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: invitationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    patch:
+      summary: Update Invitation Status
+      description: Accepts, rejects, or cancels an invitation. Canceling requires admin privileges.
+      tags:
+        - Project Invitations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/requests/RespondProjectInvitationRequest.yaml'
+      responses:
+        '204':
+          description: Invitation status updated successfully.
+          headers:
+            X-Resource-ID:
+              description: The UUID of the processed invitation.
+              schema:
+                type: string
+                format: uuid
+        '400':
+          description: Bad Request. Invalid status transition.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. Cannot act on someone else's invitation.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Invitation not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '409':
+          description: Conflict. The invitation has already been processed (accepted, rejected, or cancelled).
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'

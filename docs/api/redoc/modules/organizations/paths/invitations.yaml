@@ -90,6 +90,12 @@ paths:
             application/json:
               schema:
                 $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. Insufficient permissions to respond to the invitation.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
         '404':
           description: Invitation not found.
           content:

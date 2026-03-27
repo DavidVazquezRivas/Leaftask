@@ -1,0 +1,13 @@
+type: object
+properties:
+  userId:
+    type: string
+    format: uuid
+    example: '123e4567-e89b-12d3-a456-426614174000'
+  roleId:
+    type: string
+    format: uuid
+    example: '11111111-2222-3333-4444-555555555555'
+required:
+  - userId
+  - roleId

@@ -1,0 +1,37 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: '123e4567-e89b-12d3-a456-426614174000'
+  user:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: '123e4567-e89b-12d3-a456-426614174000'
+      name:
+        type: string
+        example: 'John Doe'
+      email:
+        type: string
+        format: email
+        example: 'john.doe@example.com'
+    required:
+      - id
+      - name
+      - email
+  role:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: '11111111-2222-3333-4444-555555555555'
+    required:
+      - id
+required:
+  - id
+  - user
+  - role

@@ -2,8 +2,8 @@ type: object
 properties:
   status:
     type: string
-    enum: [accept, reject]
-    description: The status to set for the invitation. Use 'accept' to accept the invitation or 'reject' to decline it.
-    example: 'accept'
+    enum: [accepted, rejected, cancelled]
+    description: The status to set for the invitation. Use 'accepted' to accept the invitation or 'rejected' to decline it and 'cancelled' to cancel the invitation.
+    example: 'accepted'
 required:
   - status

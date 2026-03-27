@@ -1,0 +1,170 @@
+paths:
+  /{projectId}/members/count:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Get Member Summary
+      description: Returns a breakdown of total members, separated by human users and AI agents.
+      tags:
+        - Project Members
+      responses:
+        '200':
+          description: Successfully retrieved member count.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/ProjectMemberCountResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. User lacks access to this project.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+  /{projectId}/members:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: List Project Members
+      description: Retrieves a paginated and sorted list of all active members in the project.
+      tags:
+        - Project Members
+      parameters:
+        - $ref: '../../../shared/parameters/LimitParam.yaml'
+        - $ref: '../../../shared/parameters/CursorParam.yaml'
+        - $ref: '../../../shared/parameters/SortParam.yaml'
+      responses:
+        '200':
+          description: Successfully retrieved members list.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/ProjectMemberListResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+  /{projectId}/members/{memberId}:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: memberId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    patch:
+      summary: Update Member Role
+      description: Changes the role assigned to a specific project member.
+      tags:
+        - Project Members
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/requests/UpdateProjectMemberRoleRequest.yaml'
+      responses:
+        '204':
+          description: Role successfully updated.
+          headers:
+            X-Resource-ID:
+              description: The UUID of the updated member.
+              schema:
+                type: string
+                format: uuid
+        '400':
+          description: Bad Request.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. Insufficient permissions.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Member not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+    delete:
+      summary: Remove Member
+      description: Removes a member from the project.
+      tags:
+        - Project Members
+      responses:
+        '204':
+          description: Member successfully removed.
+          headers:
+            X-Resource-ID:
+              description: The UUID of the removed member.
+              schema:
+                type: string
+                format: uuid
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. Insufficient permissions.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Member not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'

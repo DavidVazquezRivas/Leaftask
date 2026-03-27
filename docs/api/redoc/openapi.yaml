@@ -16,11 +16,9 @@ security:
   - BearerAuth: []
 
 x-tagGroups:
-  - name: Auth & Session
-    tags:
-      - Session
   - name: Users
     tags:
+      - Session
       - Users Profile
       - Users Stats
       - Users Management
@@ -35,6 +33,8 @@ x-tagGroups:
       - Project Management
       - Project Configuration
       - Project Roles
+      - Project Members
+      - Project Invitations
 
 tags:
   - name: Session
@@ -59,64 +59,106 @@ tags:
     description: Endpoints for managing project configuration settings.
   - name: Project Roles
     description: Management of RBAC (Role-Based Access Control) permissions and custom roles within projects.
+  - name: Project Members
+    description: Management of active human users and AI agents within a project.
+  - name: Project Invitations
+    description: Handling of invitations for human users to join a project.
 
 paths:
-  # -- Session Module ---
+  # ==========================================
+  # USERS MODULE
+  # ==========================================
+  # --- Session & Authentication ---
   /session/oauth/google:
     $ref: './modules/session/paths/session.yaml#/paths/~1oauth~1google'
   /session/refresh:
     $ref: './modules/session/paths/session.yaml#/paths/~1refresh'
   /session/logout:
     $ref: './modules/session/paths/session.yaml#/paths/~1logout'
-  # --- Users Module ---
+
+  # --- User Profile & Stats ---
   /users/me/profile:
     $ref: './modules/users/paths/profile.yaml#/paths/~1me~1profile'
   /users/me/profile/image:
     $ref: './modules/users/paths/profile.yaml#/paths/~1me~1profile~1image'
   /users/me/stats:
     $ref: './modules/users/paths/stats.yaml#/paths/~1me~1stats'
+
+  # --- Users Management ---
   /users:
     $ref: './modules/users/paths/collection.yaml#/paths/~1'
-  # --- Organizations Module ---
+
+  # ==========================================
+  # ORGANIZATIONS MODULE
+  # ==========================================
+  # --- Organization Management ---
   /organizations/me:
     $ref: './modules/organizations/paths/me.yaml#/paths/~1me'
   /organizations:
     $ref: './modules/organizations/paths/general.yaml#/paths/~1'
   /organizations/{id}:
     $ref: './modules/organizations/paths/general.yaml#/paths/~1{id}'
+
+  # --- Organization Roles & Permissions ---
   /organizations/{orgId}/permissions:
     $ref: './modules/organizations/paths/permissions.yaml#/paths/~1{orgId}~1permissions'
   /organizations/{orgId}/roles:
     $ref: './modules/organizations/paths/roles.yaml#/paths/~1{orgId}~1roles'
   /organizations/{orgId}/roles/{roleId}:
     $ref: './modules/organizations/paths/roles.yaml#/paths/~1{orgId}~1roles~1{roleId}'
+
+  # --- Organization Members ---
   /organizations/{orgId}/members/distribution:
     $ref: './modules/organizations/paths/members.yaml#/paths/~1{orgId}~1members~1distribution'
   /organizations/{orgId}/members:
     $ref: './modules/organizations/paths/members.yaml#/paths/~1{orgId}~1members'
   /organizations/{orgId}/members/{memberId}:
     $ref: './modules/organizations/paths/members.yaml#/paths/~1{orgId}~1members~1{memberId}'
+
+  # --- Organization Invitations ---
   /organizations/{orgId}/invitations:
     $ref: './modules/organizations/paths/invitations.yaml#/paths/~1{orgId}~1invitations'
   /organizations/{orgId}/invitations/{invitationId}:
     $ref: './modules/organizations/paths/invitations.yaml#/paths/~1{orgId}~1invitations~1{invitationId}'
-  # --- Projects Module ---
+
+  # ==========================================
+  # PROJECTS MODULE
+  # ==========================================
+  # --- Project Configurations & Collections ---
   /projects/privacy-levels:
     $ref: './modules/projects/paths/configuration.yaml#/paths/~1privacy-levels'
   /projects/me:
     $ref: './modules/projects/paths/collections.yaml#/paths/~1me'
   /projects/organization/{orgId}:
     $ref: './modules/projects/paths/collections.yaml#/paths/~1organization~1{orgId}'
+
+  # --- Project Management  ---
   /projects:
     $ref: './modules/projects/paths/projects.yaml#/paths/~1'
   /projects/{projectId}:
     $ref: './modules/projects/paths/projects.yaml#/paths/~1{projectId}'
+
+  # --- Project Roles & Permissions ---
   /projects/{projectId}/permissions:
     $ref: './modules/projects/paths/permissions.yaml#/paths/~1{projectId}~1permissions'
   /projects/{projectId}/roles:
     $ref: './modules/projects/paths/roles.yaml#/paths/~1{projectId}~1roles'
   /projects/{projectId}/roles/{roleId}:
     $ref: './modules/projects/paths/roles.yaml#/paths/~1{projectId}~1roles~1{roleId}'
+
+  # --- Project Members ---
+  /projects/{projectId}/members/count:
+    $ref: './modules/projects/paths/members.yaml#/paths/~1{projectId}~1members~1count'
+  /projects/{projectId}/members:
+    $ref: './modules/projects/paths/members.yaml#/paths/~1{projectId}~1members'
+  /projects/{projectId}/members/{memberId}:
+    $ref: './modules/projects/paths/members.yaml#/paths/~1{projectId}~1members~1{memberId}'
+
+  # --- Project Invitations ---
+  /projects/{projectId}/invitations:
+    $ref: './modules/projects/paths/invitations.yaml#/paths/~1{projectId}~1invitations'
+  /projects/{projectId}/invitations/{invitationId}:
+    $ref: './modules/projects/paths/invitations.yaml#/paths/~1{projectId}~1invitations~1{invitationId}'
 
 components:
   securitySchemes:

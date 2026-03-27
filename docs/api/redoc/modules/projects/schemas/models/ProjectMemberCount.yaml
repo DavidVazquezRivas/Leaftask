@@ -1,0 +1,18 @@
+type: object
+properties:
+  totalMembers:
+    type: integer
+    description: Total sum of human users and AI agents in the project.
+    example: 5
+  people:
+    type: integer
+    description: Count of human users.
+    example: 3
+  agents:
+    type: integer
+    description: Count of automated AI agents.
+    example: 2
+required:
+  - totalMembers
+  - people
+  - agents

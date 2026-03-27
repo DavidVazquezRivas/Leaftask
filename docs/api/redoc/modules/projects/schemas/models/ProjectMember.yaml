@@ -1,0 +1,25 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    description: The UUID of the member (User or Agent).
+    example: '123e4567-e89b-12d3-a456-426614174000'
+  name:
+    type: string
+    example: 'John Doe'
+  email:
+    type: string
+    format: email
+    nullable: true
+    description: The email of the member. Nullable for Agents.
+    example: 'john.doe@example.com'
+  role:
+    type: string
+    format: uuid
+    description: The UUID of the assigned project role.
+    example: '11111111-2222-3333-4444-555555555555'
+required:
+  - id
+  - name
+  - role
