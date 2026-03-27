@@ -31,12 +31,6 @@ paths:
             application/json:
               schema:
                 $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
-        '404':
-          description: Project not found.
-          content:
-            application/json:
-              schema:
-                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
         '500':
           $ref: '../../../shared/responses/InternalServerError.yaml'
     post:
