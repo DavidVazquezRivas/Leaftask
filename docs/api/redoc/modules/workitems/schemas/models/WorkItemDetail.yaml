@@ -1,0 +1,63 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: '123e4567-e89b-12d3-a456-426614174000'
+  code:
+    type: string
+    example: 'AUR-104'
+  title:
+    type: string
+    example: 'Implement user authentication'
+  description:
+    type: string
+    example: 'Develop and integrate user authentication using OAuth 2.0.'
+  limitDate:
+    type: string
+    format: date-time
+    nullable: true
+    example: '2024-07-15T17:00:00Z'
+  assignee:
+    $ref: './WorkItemAssignee.yaml'
+  estimation:
+    type: number
+    example: 5
+  dedication:
+    $ref: './WorkItemDedication.yaml'
+  progress:
+    type: number
+    description: Progress percentage (e.g., 70 for 70%).
+    example: 70
+  typeId:
+    type: string
+    format: uuid
+    example: '1234e456-5678-90ab-cdef-1234567890ab'
+  statusId:
+    type: string
+    format: uuid
+    example: '123e4567-e89b-12d3-a456-426614174001'
+  parentId:
+    type: string
+    format: uuid
+    nullable: true
+    example: 'abcd1234-5678-90ab-cdef-1234567890ab'
+  attachments:
+    type: array
+    items:
+      $ref: './WorkItemAttachment.yaml'
+  comments:
+    type: array
+    items:
+      $ref: './WorkItemComment.yaml'
+  log:
+    type: array
+    items:
+      $ref: './WorkItemLogEntry.yaml'
+required:
+  - id
+  - code
+  - title
+  - progress
+  - typeId
+  - statusId

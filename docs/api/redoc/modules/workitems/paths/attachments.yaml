@@ -1,0 +1,114 @@
+paths:
+  /{projectId}/work-items/{itemId}/attachments:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: itemId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      summary: Upload Attachment
+      description: Uploads a physical file to a specific work item. Returns the generated attachment ID and URL. Use `multipart/form-data`.
+      tags:
+        - Work Item Attachments
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '../schemas/requests/UploadAttachmentRequest.yaml'
+      responses:
+        '201':
+          description: File uploaded successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/AttachmentResponse.yaml'
+        '400':
+          description: Bad Request. File too large or invalid format.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized. Missing or invalid access token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. User lacks permission to upload files to this work item.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Work item or project not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+  /{projectId}/work-items/{itemId}/attachments/{attachmentId}:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: itemId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: attachmentId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    delete:
+      summary: Delete Attachment
+      description: Permanently removes an attachment from the work item and deletes the underlying file.
+      tags:
+        - Work Item Attachments
+      responses:
+        '204':
+          description: Attachment deleted successfully. No content returned.
+          headers:
+            X-Resource-ID:
+              description: The UUID of the deleted attachment.
+              schema:
+                type: string
+                format: uuid
+        '401':
+          description: Unauthorized. Missing or invalid access token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. User lacks permission to delete this attachment.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Attachment, work item, or project not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'

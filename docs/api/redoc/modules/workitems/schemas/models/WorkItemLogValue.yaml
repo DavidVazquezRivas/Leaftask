@@ -1,0 +1,13 @@
+type: object
+description: Represents the state of a field before or after a change.
+properties:
+  id:
+    type: string
+    format: uuid
+    example: '1234e456-5678-90ab-cdef-1234567890ab'
+  name:
+    type: string
+    example: 'High'
+required:
+  - id
+  - name

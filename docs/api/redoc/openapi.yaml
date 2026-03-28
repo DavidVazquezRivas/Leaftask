@@ -36,6 +36,13 @@ x-tagGroups:
       - Project Members
       - Project Invitations
       - Project Custom Fields
+  - name: Work Items
+    tags:
+      - Work Item Configuration
+      - Work Item Management
+      - Work Item Time Tracking
+      - Work Item Attachments
+      - Work Item Comments
 
 tags:
   - name: Session
@@ -66,6 +73,16 @@ tags:
     description: Handling of invitations for human users to join a project.
   - name: Project Custom Fields
     description: Engine for creating dynamic, data-driven custom properties for work items.
+  - name: Work Item Configuration
+    description: Static configurations and dictionaries for work items.
+  - name: Work Item Management
+    description: Core CRUD operations for managing tasks, bugs, and other work items.
+  - name: Work Item Time Tracking
+    description: Endpoints for logging and managing time entries against work items.
+  - name: Work Item Attachments
+    description: Upload and management of physical files via multipart/form-data.
+  - name: Work Item Comments
+    description: Discussion threads with support for mentions and attachment linking.
 
 paths:
   # ==========================================
@@ -130,8 +147,6 @@ paths:
   # --- Project Configurations & Collections ---
   /projects/privacy-levels:
     $ref: './modules/projects/paths/configuration.yaml#/paths/~1privacy-levels'
-  /projects/work-item-types:
-    $ref: './modules/projects/paths/configuration.yaml#/paths/~1work-item-types'
   /projects/field-types:
     $ref: './modules/projects/paths/configuration.yaml#/paths/~1field-types'
   /projects/me:
@@ -172,6 +187,37 @@ paths:
     $ref: './modules/projects/paths/custom-fields.yaml#/paths/~1{projectId}~1custom-fields'
   /projects/{projectId}/custom-fields/{fieldId}:
     $ref: './modules/projects/paths/custom-fields.yaml#/paths/~1{projectId}~1custom-fields~1{fieldId}'
+
+  # ==========================================
+  # WORK ITEMS MODULE
+  # ==========================================
+  # --- Configurations ---
+  /work-items/types:
+    $ref: './modules/workitems/paths/configuration.yaml#/paths/~1types'
+  /work-items/statuses:
+    $ref: './modules/workitems/paths/configuration.yaml#/paths/~1statuses'
+
+  # --- Collections & Items ---
+  /projects/{projectId}/work-items:
+    $ref: './modules/workitems/paths/collection.yaml#/paths/~1{projectId}~1work-items'
+  /projects/{projectId}/work-items/{itemId}:
+    $ref: './modules/workitems/paths/item.yaml#/paths/~1{projectId}~1work-items~1{itemId}'
+
+  # --- Time Tracking ---
+  /projects/{projectId}/work-items/{itemId}/work-logs:
+    $ref: './modules/workitems/paths/work-logs.yaml#/paths/~1{projectId}~1work-items~1{itemId}~1work-logs'
+  /projects/{projectId}/work-items/{itemId}/work-logs/{logId}:
+    $ref: './modules/workitems/paths/work-logs.yaml#/paths/~1{projectId}~1work-items~1{itemId}~1work-logs~1{logId}'
+  # --- Attachments & Comments ---
+  /projects/{projectId}/work-items/{itemId}/attachments:
+    $ref: './modules/workitems/paths/attachments.yaml#/paths/~1{projectId}~1work-items~1{itemId}~1attachments'
+  /projects/{projectId}/work-items/{itemId}/attachments/{attachmentId}:
+    $ref: './modules/workitems/paths/attachments.yaml#/paths/~1{projectId}~1work-items~1{itemId}~1attachments~1{attachmentId}'
+
+  /projects/{projectId}/work-items/{itemId}/comments:
+    $ref: './modules/workitems/paths/comments.yaml#/paths/~1{projectId}~1work-items~1{itemId}~1comments'
+  /projects/{projectId}/work-items/{itemId}/comments/{commentId}:
+    $ref: './modules/workitems/paths/comments.yaml#/paths/~1{projectId}~1work-items~1{itemId}~1comments~1{commentId}'
 
 components:
   securitySchemes:

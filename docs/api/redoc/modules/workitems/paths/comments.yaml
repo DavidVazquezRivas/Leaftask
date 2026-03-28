@@ -1,0 +1,196 @@
+paths:
+  /{projectId}/work-items/{itemId}/comments:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: itemId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: List Comments
+      description: Retrieves a paginated list of comments for the specified work item.
+      tags:
+        - Work Item Comments
+      parameters:
+        - $ref: '../../../shared/parameters/LimitParam.yaml'
+        - $ref: '../../../shared/parameters/CursorParam.yaml'
+        - $ref: '../../../shared/parameters/SortParam.yaml'
+      responses:
+        '200':
+          description: Successfully retrieved comments.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/CommentListResponse.yaml'
+        '401':
+          description: Unauthorized. Missing or invalid access token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. User lacks permission to view comments on this work item.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Work item or project not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+    post:
+      summary: Add Comment
+      description: Adds a new comment to the work item. You can link existing `attachmentIds` and notify users explicitly via `mentionedUserIds`.
+      tags:
+        - Work Item Comments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/requests/CreateCommentRequest.yaml'
+      responses:
+        '201':
+          description: Comment created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/CommentResponse.yaml'
+        '400':
+          description: Bad Request. Validation failed (e.g., linked attachment ID does not exist).
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized. Missing or invalid access token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. User lacks permission to comment on this work item.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Work item or project not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+  /{projectId}/work-items/{itemId}/comments/{commentId}:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: itemId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: commentId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    patch:
+      summary: Update Comment
+      description: Edits a comment's content or its associated attachments/mentions. Users can typically only edit their own comments.
+      tags:
+        - Work Item Comments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/requests/UpdateCommentRequest.yaml'
+      responses:
+        '200':
+          description: Comment updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/CommentResponse.yaml'
+        '400':
+          description: Bad Request. Validation failed.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized. Missing or invalid access token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. Cannot edit another user's comment without admin privileges.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Comment, work item, or project not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+    delete:
+      summary: Delete Comment
+      description: Permanently removes a comment. Does not delete associated attachments (they remain linked to the work item).
+      tags:
+        - Work Item Comments
+      responses:
+        '204':
+          description: Comment deleted successfully. No content returned.
+          headers:
+            X-Resource-ID:
+              description: The UUID of the deleted comment.
+              schema:
+                type: string
+                format: uuid
+        '401':
+          description: Unauthorized. Missing or invalid access token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. Cannot delete another user's comment without admin privileges.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Comment, work item, or project not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'

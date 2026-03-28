@@ -1,0 +1,24 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: 'comm-123e4567-e89b-12d3-a456-426614174000'
+  author:
+    $ref: './WorkItemAssignee.yaml'
+  content:
+    type: string
+    example: 'Please review the authentication flow diagram.'
+  createdAt:
+    type: string
+    format: date-time
+    example: '2024-07-01T10:00:00Z'
+  attachments:
+    type: array
+    items:
+      $ref: './WorkItemAttachment.yaml'
+required:
+  - id
+  - author
+  - content
+  - createdAt

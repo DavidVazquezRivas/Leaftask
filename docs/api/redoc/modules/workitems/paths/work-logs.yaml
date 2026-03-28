@@ -1,0 +1,197 @@
+paths:
+  /{projectId}/work-items/{itemId}/work-logs:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: itemId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: List Work Logs
+      description: Retrieves a paginated list of all time entries logged against this work item.
+      tags:
+        - Work Item Time Tracking
+      parameters:
+        - $ref: '../../../shared/parameters/LimitParam.yaml'
+        - $ref: '../../../shared/parameters/CursorParam.yaml'
+        - $ref: '../../../shared/parameters/SortParam.yaml'
+      responses:
+        '200':
+          description: Successfully retrieved work logs.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/WorkLogListResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. Insufficient permissions to view this project or item.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Work item not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+    post:
+      summary: Log Work
+      description: Creates a new work log entry (time tracking) for the authenticated user on this work item.
+      tags:
+        - Work Item Time Tracking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/requests/CreateWorkLogRequest.yaml'
+      responses:
+        '201':
+          description: Work log created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/WorkLogResponse.yaml'
+        '400':
+          description: Bad Request. Validation failed.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. User lacks permission to log work here.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Work item not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+  /{projectId}/work-items/{itemId}/work-logs/{logId}:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: itemId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: logId
+        in: path
+        required: true
+        description: The UUID of the specific work log entry.
+        schema:
+          type: string
+          format: uuid
+    patch:
+      summary: Update Work Log
+      description: Modifies an existing work log. Users can typically only edit their own logs unless they are admins.
+      tags:
+        - Work Item Time Tracking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/requests/UpdateWorkLogRequest.yaml'
+      responses:
+        '200':
+          description: Work log updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/WorkLogResponse.yaml'
+        '400':
+          description: Bad Request. Validation failed.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. Cannot modify another user's work log without admin rights.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Work log or item not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+    delete:
+      summary: Delete Work Log
+      description: Permanently removes a work log entry.
+      tags:
+        - Work Item Time Tracking
+      responses:
+        '204':
+          description: Work log deleted successfully.
+          headers:
+            X-Resource-ID:
+              description: The UUID of the deleted work log.
+              schema:
+                type: string
+                format: uuid
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. Cannot delete another user's work log without admin rights.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Work log not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'

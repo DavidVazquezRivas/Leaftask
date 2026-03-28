@@ -1,0 +1,14 @@
+type: object
+properties:
+  total:
+    type: number
+    format: float
+    description: Total hours logged against this work item.
+    example: 8.0
+  registers:
+    type: integer
+    description: Number of individual time log entries.
+    example: 3
+required:
+  - total
+  - registers

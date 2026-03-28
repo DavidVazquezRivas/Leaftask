@@ -1,0 +1,50 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: '123e4567-e89b-12d3-a456-426614174000'
+  code:
+    type: string
+    description: Human-readable identifier (Project Abbreviation + Auto-increment number).
+    example: 'AUR-51'
+  title:
+    type: string
+    example: 'Implement user authentication'
+  estimation:
+    type: number
+    description: Estimated effort (e.g., story points or hours).
+    example: 8
+  progress:
+    type: number
+    format: float
+    description: Calculated completion percentage (0.0 to 1.0).
+    example: 0.55
+  assignee:
+    $ref: './WorkItemAssignee.yaml'
+  dedication:
+    type: number
+    format: float
+    description: Time logged or dedicated so far.
+    example: 6.4
+  typeId:
+    type: string
+    format: uuid
+    example: '1234e456-5678-90ab-cdef-1234567890ab'
+  statusId:
+    type: string
+    format: uuid
+    example: '5678e456-1234-90ab-cdef-1234567890ab'
+  parentId:
+    type: string
+    format: uuid
+    nullable: true
+    description: UUID of the parent work item. Null if it's placed directly under the project root.
+    example: 'abcd1234-5678-90ab-cdef-1234567890ab'
+required:
+  - id
+  - code
+  - title
+  - progress
+  - typeId
+  - statusId

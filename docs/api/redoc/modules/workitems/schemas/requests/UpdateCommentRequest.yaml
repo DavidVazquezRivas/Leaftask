@@ -1,0 +1,17 @@
+type: object
+properties:
+  content:
+    type: string
+    example: 'Updated comment text.'
+  attachmentIds:
+    type: array
+    description: Replaces the existing linked attachments.
+    items:
+      type: string
+      format: uuid
+  mentionedUserIds:
+    type: array
+    description: Replaces the explicit list of mentioned users.
+    items:
+      type: string
+      format: uuid

@@ -1,0 +1,18 @@
+type: object
+properties:
+  dedication:
+    type: number
+    format: float
+    description: Time to log in hours.
+    example: 3.0
+  date:
+    type: string
+    format: date
+    example: '2024-06-01'
+  description:
+    type: string
+    example: 'Continued development on the task creation endpoint, including validation and error handling.'
+required:
+  - dedication
+  - date
+  - description

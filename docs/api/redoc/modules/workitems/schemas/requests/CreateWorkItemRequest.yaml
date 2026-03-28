@@ -1,0 +1,33 @@
+type: object
+properties:
+  title:
+    type: string
+    example: 'Implement user authentication'
+  description:
+    type: string
+    example: 'Implement user authentication using JWT tokens and OAuth2 standards.'
+  estimation:
+    type: number
+    example: 8
+  assigneeId:
+    type: string
+    format: uuid
+    example: '987e6543-e21b-12d3-a456-426614174000'
+  typeId:
+    type: string
+    format: uuid
+    example: '1234e456-5678-90ab-cdef-1234567890ab'
+  statusId:
+    type: string
+    format: uuid
+    example: '5678e456-1234-90ab-cdef-1234567890ab'
+  parentId:
+    type: string
+    format: uuid
+    description: Mandatory parent node ID (can be another work item or the project root node).
+    example: 'abcd1234-5678-90ab-cdef-1234567890ab'
+required:
+  - title
+  - typeId
+  - statusId
+  - parentId

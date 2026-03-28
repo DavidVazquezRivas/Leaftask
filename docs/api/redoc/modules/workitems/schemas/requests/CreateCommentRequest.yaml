@@ -1,0 +1,22 @@
+type: object
+properties:
+  content:
+    type: string
+    description: The rich-text or markdown content of the comment. Mentions should be formatted as expected by the frontend (e.g., `[@John Doe](user:uuid)`).
+    example: 'Please check this out [@Jane Doe](user:987e6543-e21b-12d3-a456-426614174000). I have attached the logs.'
+  attachmentIds:
+    type: array
+    description: Array of UUIDs from previously uploaded attachments to link to this comment.
+    items:
+      type: string
+      format: uuid
+      example: 'att-123e4567-e89b-12d3-a456-426614174000'
+  mentionedUserIds:
+    type: array
+    description: Explicit array of user UUIDs mentioned in the content. Used by the backend to trigger notifications efficiently without parsing the content string.
+    items:
+      type: string
+      format: uuid
+      example: '987e6543-e21b-12d3-a456-426614174000'
+required:
+  - content

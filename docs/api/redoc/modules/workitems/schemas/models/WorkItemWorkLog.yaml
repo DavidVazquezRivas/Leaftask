@@ -1,0 +1,27 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: '1234e456-5678-90ab-cdef-1234567890ab'
+  dedication:
+    type: number
+    format: float
+    description: Logged time in hours.
+    example: 2.5
+  date:
+    type: string
+    format: date
+    description: The date the work was performed (YYYY-MM-DD).
+    example: '2024-06-01'
+  user:
+    $ref: './WorkItemAssignee.yaml'
+  description:
+    type: string
+    example: 'Working on implementing the new API endpoint for task creation.'
+required:
+  - id
+  - dedication
+  - date
+  - user
+  - description

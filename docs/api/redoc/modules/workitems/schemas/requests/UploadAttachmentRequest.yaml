@@ -1,0 +1,8 @@
+type: object
+properties:
+  file:
+    type: string
+    format: binary
+    description: The physical file to upload.
+required:
+  - file

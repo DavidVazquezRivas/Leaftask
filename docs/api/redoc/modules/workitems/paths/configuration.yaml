@@ -1,17 +1,17 @@
 paths:
-  /privacy-levels:
+  /types:
     get:
-      summary: List Privacy Levels
-      description: Retrieves the static list of available privacy levels for projects.
+      summary: List Work Item Types
+      description: Retrieves the static list of system work item types (e.g., Task, Bug, Epic).
       tags:
-        - Project Configuration
+        - Work Item Configuration
       responses:
         '200':
-          description: Successfully retrieved privacy levels.
+          description: Successfully retrieved types.
           content:
             application/json:
               schema:
-                $ref: '../schemas/responses/PrivacyLevelListResponse.yaml'
+                $ref: '../schemas/responses/WorkItemTypeListResponse.yaml'
         '401':
           description: Unauthorized.
           content:
@@ -21,19 +21,19 @@ paths:
         '500':
           $ref: '../../../shared/responses/InternalServerError.yaml'
 
-  /field-types:
+  /statuses:
     get:
-      summary: List Field Types
-      description: Retrieves the static list of supported custom field types (e.g., Text, Select, Date).
+      summary: List Work Item Statuses
+      description: Retrieves the static list of default work item statuses (e.g., To Do, In Progress, Done).
       tags:
-        - Project Configuration
+        - Work Item Configuration
       responses:
         '200':
-          description: Successfully retrieved field types.
+          description: Successfully retrieved statuses.
           content:
             application/json:
               schema:
-                $ref: '../schemas/responses/FieldTypeListResponse.yaml'
+                $ref: '../schemas/responses/WorkItemStatusListResponse.yaml'
         '401':
           description: Unauthorized.
           content:

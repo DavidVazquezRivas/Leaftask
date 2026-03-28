@@ -1,0 +1,32 @@
+type: object
+properties:
+  title:
+    type: string
+    example: 'Implement user authentication'
+  description:
+    type: string
+    example: 'Implement user authentication using JWT tokens and OAuth2 standards.'
+  estimation:
+    type: number
+    example: 8
+  assigneeId:
+    type: string
+    format: uuid
+    example: '987e6543-e21b-12d3-a456-426614174000'
+  typeId:
+    type: string
+    format: uuid
+    example: '1234e456-5678-90ab-cdef-1234567890ab'
+  statusId:
+    type: string
+    format: uuid
+    example: '5678e456-1234-90ab-cdef-1234567890ab'
+  progress:
+    type: number
+    example: 75
+  customFields:
+    type: object
+    description: A dictionary mapping Custom Field UUIDs to their values (or selected Option UUIDs).
+    additionalProperties:
+      type: string
+      example: '5678e456-1234-90ab-cdef-1234567890ab'

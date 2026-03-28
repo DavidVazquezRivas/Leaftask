@@ -1,0 +1,77 @@
+paths:
+  /{projectId}/work-items:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: List Project Work Items
+      description: Retrieves a paginated list of work items for a specific project.
+      tags:
+        - Work Item Management
+      parameters:
+        - $ref: '../../../shared/parameters/LimitParam.yaml'
+        - $ref: '../../../shared/parameters/CursorParam.yaml'
+        - $ref: '../../../shared/parameters/SortParam.yaml'
+      responses:
+        '200':
+          description: Successfully retrieved work items.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/WorkItemListResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. User lacks access to this project.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+    post:
+      summary: Create Work Item
+      description: Creates a new work item in the specified project.
+      tags:
+        - Work Item Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/requests/CreateWorkItemRequest.yaml'
+      responses:
+        '201':
+          description: Work item created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/WorkItemDetailResponse.yaml'
+        '400':
+          description: Bad Request. Validation failed.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. Insufficient permissions to create work items.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'

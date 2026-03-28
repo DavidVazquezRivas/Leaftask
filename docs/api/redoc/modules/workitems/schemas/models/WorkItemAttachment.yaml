@@ -1,0 +1,17 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: 'att-123e4567-e89b-12d3-a456-426614174000'
+  fileName:
+    type: string
+    example: 'design-doc.pdf'
+  url:
+    type: string
+    format: uri
+    example: 'https://example.com/attachments/att-123e4567-e89b-12d3-a456-426614174000'
+required:
+  - id
+  - fileName
+  - url

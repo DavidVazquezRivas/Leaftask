@@ -1,0 +1,128 @@
+paths:
+  /{projectId}/work-items/{itemId}:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: itemId
+        in: path
+        required: true
+        description: The UUID of the specific work item.
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Get Work Item Details
+      description: Retrieves the complete detail of a work item, including logs, comments, and attachments.
+      tags:
+        - Work Item Management
+      responses:
+        '200':
+          description: Successfully retrieved work item details.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/WorkItemDetailResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Work item not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+    patch:
+      summary: Update Work Item
+      description: Updates specific fields of a work item, including its dynamic custom fields.
+      tags:
+        - Work Item Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/requests/UpdateWorkItemRequest.yaml'
+      responses:
+        '200':
+          description: Work item updated successfully. Returns the updated detail.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/WorkItemDetailResponse.yaml'
+        '400':
+          description: Bad Request. Validation failed.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Work item not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+    delete:
+      summary: Delete Work Item
+      description: Permanently deletes a work item and all its associated data (comments, logs, attachments).
+      tags:
+        - Work Item Management
+      responses:
+        '204':
+          description: Work item deleted successfully.
+          headers:
+            X-Resource-ID:
+              description: The UUID of the deleted work item.
+              schema:
+                type: string
+                format: uuid
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Work item not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
