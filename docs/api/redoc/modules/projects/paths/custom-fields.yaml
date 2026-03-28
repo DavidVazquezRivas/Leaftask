@@ -1,0 +1,169 @@
+paths:
+  /{projectId}/custom-fields:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: List Custom Fields
+      description: Retrieves all custom fields configured for this project.
+      tags:
+        - Project Custom Fields
+      responses:
+        '200':
+          description: Successfully retrieved custom fields.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/CustomFieldListResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+    post:
+      summary: Create Custom Field
+      description: Creates a new custom field and assigns it to specific work item types.
+      tags:
+        - Project Custom Fields
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/requests/CreateCustomFieldRequest.yaml'
+      responses:
+        '201':
+          description: Custom field created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/CustomFieldResponse.yaml'
+        '400':
+          description: Bad Request. Validation failed (e.g., missing options for a Select field).
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. Insufficient permissions.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+  /{projectId}/custom-fields/{fieldId}:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: fieldId
+        in: path
+        required: true
+        description: The UUID of the custom field.
+        schema:
+          type: string
+          format: uuid
+    patch:
+      summary: Update Custom Field
+      description: Updates the configuration of a custom field. Arrays passed here (options, appliesTo) will fully replace existing ones.
+      tags:
+        - Project Custom Fields
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/requests/UpdateCustomFieldRequest.yaml'
+      responses:
+        '200':
+          description: Custom field updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/CustomFieldResponse.yaml'
+        '400':
+          description: Bad Request.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Custom field not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+    delete:
+      summary: Delete Custom Field
+      description: Permanently deletes the custom field from the project. This will also remove the data entered for this field across all work items.
+      tags:
+        - Project Custom Fields
+      responses:
+        '204':
+          description: Custom field deleted successfully.
+          headers:
+            X-Resource-ID:
+              description: The UUID of the deleted custom field.
+              schema:
+                type: string
+                format: uuid
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Custom field not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'

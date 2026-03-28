@@ -35,6 +35,7 @@ x-tagGroups:
       - Project Roles
       - Project Members
       - Project Invitations
+      - Project Custom Fields
 
 tags:
   - name: Session
@@ -63,6 +64,8 @@ tags:
     description: Management of active human users and AI agents within a project.
   - name: Project Invitations
     description: Handling of invitations for human users to join a project.
+  - name: Project Custom Fields
+    description: Engine for creating dynamic, data-driven custom properties for work items.
 
 paths:
   # ==========================================
@@ -127,6 +130,10 @@ paths:
   # --- Project Configurations & Collections ---
   /projects/privacy-levels:
     $ref: './modules/projects/paths/configuration.yaml#/paths/~1privacy-levels'
+  /projects/work-item-types:
+    $ref: './modules/projects/paths/configuration.yaml#/paths/~1work-item-types'
+  /projects/field-types:
+    $ref: './modules/projects/paths/configuration.yaml#/paths/~1field-types'
   /projects/me:
     $ref: './modules/projects/paths/collections.yaml#/paths/~1me'
   /projects/organization/{orgId}:
@@ -159,6 +166,12 @@ paths:
     $ref: './modules/projects/paths/invitations.yaml#/paths/~1{projectId}~1invitations'
   /projects/{projectId}/invitations/{invitationId}:
     $ref: './modules/projects/paths/invitations.yaml#/paths/~1{projectId}~1invitations~1{invitationId}'
+
+  # --- Project Custom Fields ---
+  /projects/{projectId}/custom-fields:
+    $ref: './modules/projects/paths/custom-fields.yaml#/paths/~1{projectId}~1custom-fields'
+  /projects/{projectId}/custom-fields/{fieldId}:
+    $ref: './modules/projects/paths/custom-fields.yaml#/paths/~1{projectId}~1custom-fields~1{fieldId}'
 
 components:
   securitySchemes:

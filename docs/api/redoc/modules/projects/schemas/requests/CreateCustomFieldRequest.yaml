@@ -1,0 +1,29 @@
+type: object
+properties:
+  name:
+    type: string
+    example: 'Severity'
+  type:
+    type: string
+    format: uuid
+    description: The UUID of the FieldType.
+    example: '123e4567-e89b-12d3-a456-426614174006'
+  options:
+    type: array
+    description: Required only if 'type' is Select or MultiSelect.
+    items:
+      $ref: '../models/CustomFieldOptionRequest.yaml'
+  required:
+    type: boolean
+    example: true
+  appliesTo:
+    type: array
+    description: List of WorkItemType UUIDs.
+    items:
+      type: string
+      format: uuid
+required:
+  - name
+  - type
+  - required
+  - appliesTo

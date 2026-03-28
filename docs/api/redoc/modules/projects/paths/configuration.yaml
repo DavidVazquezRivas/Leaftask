@@ -20,3 +20,47 @@ paths:
                 $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
         '500':
           $ref: '../../../shared/responses/InternalServerError.yaml'
+
+  /work-item-types:
+    get:
+      summary: List Work Item Types
+      description: Retrieves the static list of system work item types (e.g., Task, Bug).
+      tags:
+        - Project Configuration
+      responses:
+        '200':
+          description: Successfully retrieved work item types.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/WorkItemTypeListResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+  /field-types:
+    get:
+      summary: List Field Types
+      description: Retrieves the static list of supported custom field types (e.g., Text, Select, Date).
+      tags:
+        - Project Configuration
+      responses:
+        '200':
+          description: Successfully retrieved field types.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/FieldTypeListResponse.yaml'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'

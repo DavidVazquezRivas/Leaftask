@@ -1,0 +1,9 @@
+type: object
+properties:
+  data:
+    $ref: '../models/CustomField.yaml'
+  meta:
+    $ref: '../../../../shared/schemas/Meta.yaml'
+required:
+  - data
+  - meta

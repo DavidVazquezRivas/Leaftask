@@ -1,0 +1,23 @@
+type: object
+properties:
+  name:
+    type: string
+    example: 'Severity'
+  type:
+    type: string
+    format: uuid
+    example: '123e4567-e89b-12d3-a456-426614174006'
+  options:
+    type: array
+    description: Overwrites the existing options completely. Omit existing options here to delete them.
+    items:
+      $ref: '../models/CustomFieldOptionRequest.yaml'
+  required:
+    type: boolean
+    example: true
+  appliesTo:
+    type: array
+    description: Overwrites the existing WorkItemType associations completely.
+    items:
+      type: string
+      format: uuid

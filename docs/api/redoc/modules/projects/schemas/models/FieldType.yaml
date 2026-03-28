@@ -1,0 +1,16 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: '123e4567-e89b-12d3-a456-426614174002'
+  name:
+    type: string
+    example: 'Text'
+  description:
+    type: string
+    example: 'A simple text field that can hold any string value.'
+required:
+  - id
+  - name
+  - description

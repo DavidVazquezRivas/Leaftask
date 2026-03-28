@@ -1,0 +1,8 @@
+type: object
+properties:
+  value:
+    type: string
+    description: The text value for this option.
+    example: 'High'
+required:
+  - value

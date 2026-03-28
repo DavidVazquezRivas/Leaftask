@@ -1,0 +1,36 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: '123e4567-e89b-12d3-a456-426614174010'
+  name:
+    type: string
+    example: 'Severity'
+  type:
+    type: string
+    format: uuid
+    description: The UUID of the FieldType (e.g., Select, Text).
+    example: '123e4567-e89b-12d3-a456-426614174006'
+  options:
+    type: array
+    description: Available choices. Only populated if the field type is Select or MultiSelect.
+    items:
+      $ref: './CustomFieldOptionResponse.yaml'
+  required:
+    type: boolean
+    description: Whether this field is mandatory when creating a matching work item.
+    example: true
+  appliesTo:
+    type: array
+    description: List of WorkItemType UUIDs this field is assigned to (e.g., Bugs, Tasks).
+    items:
+      type: string
+      format: uuid
+      example: '123e4567-e89b-12d3-a456-426614174000'
+required:
+  - id
+  - name
+  - type
+  - required
+  - appliesTos
