@@ -1,0 +1,8 @@
+type: object
+properties:
+  status:
+    type: string
+    enum: [approved, rejected]
+    example: 'approved'
+required:
+  - status

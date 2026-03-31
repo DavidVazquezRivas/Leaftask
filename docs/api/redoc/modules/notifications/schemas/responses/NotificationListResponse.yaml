@@ -3,7 +3,7 @@ properties:
   data:
     type: array
     items:
-      $ref: '../models/WorkItemWorkLog.yaml'
+      $ref: '../models/Notification.yaml'
   meta:
     $ref: '../../../../shared/schemas/PaginatedMeta.yaml'
 required:

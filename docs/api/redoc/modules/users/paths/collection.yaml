@@ -21,13 +21,6 @@ paths:
           required: false
           schema:
             type: string
-        - name: email
-          in: query
-          description: Exact match filter for the user's email.
-          required: false
-          schema:
-            type: string
-            format: email
       responses:
         '200':
           description: Successfully retrieved the list of users.

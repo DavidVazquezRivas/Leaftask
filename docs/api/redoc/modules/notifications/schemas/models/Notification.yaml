@@ -1,0 +1,35 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: '123e4567-e89b-12d3-a456-426614174000'
+  type:
+    type: string
+    enum: [assignment, mention, request, invitation]
+    example: 'assignment'
+  context:
+    $ref: './SimpleReference.yaml'
+    description: The space where this happened (e.g., Project or Organization).
+  target:
+    $ref: './SimpleReference.yaml'
+    description: The specific item this notification is about (e.g., a Work Item or a Comment).
+  timestamp:
+    type: string
+    format: date-time
+    example: '2024-06-01T12:34:56Z'
+  actor:
+    $ref: './SimpleReference.yaml'
+    nullable: true
+    description: The user who triggered this notification. Null if system-generated.
+  read:
+    type: boolean
+    description: Indicates whether the user has viewed this notification.
+    example: false
+required:
+  - id
+  - type
+  - context
+  - target
+  - timestamp
+  - read

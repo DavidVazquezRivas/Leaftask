@@ -8,34 +8,7 @@ properties:
     type: string
     format: date-time
     example: '2024-06-01T12:00:00Z'
-  filters:
-    type: object
-    description: Key-value pairs of filters applied in the request.
-    additionalProperties: true
-    example:
-      status: 'active'
-      category: 'tasks'
-  sort:
-    type: array
-    items:
-      type: object
-      properties:
-        field:
-          type: string
-        direction:
-          type: string
-          enum: [asc, desc]
-  pagination:
-    type: object
-    properties:
-      limit:
-        type: integer
-      nextCursor:
-        type: string
-        nullable: true
-        description: Opaque token for fetching the next page. Null if there are no more pages.
-      hasMore:
-        type: boolean
+
 required:
   - requestId
   - timestamp

@@ -5,7 +5,7 @@ properties:
     items:
       $ref: '../models/OrganizationMember.yaml'
   meta:
-    $ref: '../../../../shared/schemas/Meta.yaml'
+    $ref: '../../../../shared/schemas/PaginatedMeta.yaml'
 required:
   - data
   - meta

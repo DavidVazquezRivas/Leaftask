@@ -1,0 +1,20 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: '555e6666-e89b-12d3-a456-426614174000'
+  author:
+    $ref: './SimpleReference.yaml'
+  content:
+    type: string
+    example: 'I have some concerns about this request.'
+  timestamp:
+    type: string
+    format: date-time
+    example: '2024-06-01T13:00:00Z'
+required:
+  - id
+  - author
+  - content
+  - timestamp

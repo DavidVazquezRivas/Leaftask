@@ -1,0 +1,12 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: '456e7890-e89b-12d3-a456-426614174000'
+  name:
+    type: string
+    example: 'Project Alpha'
+required:
+  - id
+  - name

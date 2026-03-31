@@ -51,6 +51,10 @@ x-tagGroups:
     tags:
       - Chat Management
       - Chat Messaging
+  - name: Notifications
+    tags:
+      - Notifications
+      - Approvals
 
 tags:
   - name: Session
@@ -99,6 +103,10 @@ tags:
     description: Core operations for listing active conversations and polling for new incoming messages globally.
   - name: Chat Messaging
     description: Operations within a specific conversation thread, including fetching history and sending messages to humans or agents.
+  - name: Notifications
+    description: Global feed of events, mentions, and updates relevant to the user.
+  - name: Approvals
+    description: Actionable workflow requests awaiting the user's explicit approval or rejection.
 
 paths:
   # ==========================================
@@ -260,6 +268,23 @@ paths:
   # --- Chat Actions ---
   /chats/{chatId}/messages:
     $ref: './modules/chats/paths/messages.yaml#/paths/~1{chatId}~1messages'
+
+  # ==========================================
+  # NOTIFICATIONS & APPROVALS
+  # ==========================================
+  # --- Notifications ---
+  /notifications:
+    $ref: './modules/notifications/paths/notifications.yaml#/paths/~1'
+  /notifications/{notificationId}/read:
+    $ref: './modules/notifications/paths/notifications.yaml#/paths/~1{notificationId}~1read'
+
+  # --- Approvals ---
+  /approvals:
+    $ref: './modules/notifications/paths/approvals.yaml#/paths/~1'
+  /approvals/{approvalId}:
+    $ref: './modules/notifications/paths/approvals.yaml#/paths/~1{approvalId}'
+  /approvals/{approvalId}/comments:
+    $ref: './modules/notifications/paths/approvals.yaml#/paths/~1{approvalId}~1comments'
 
 components:
   securitySchemes:

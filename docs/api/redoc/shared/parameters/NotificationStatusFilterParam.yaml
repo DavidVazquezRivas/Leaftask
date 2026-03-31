@@ -1,0 +1,8 @@
+name: status
+in: query
+description: Filter notifications by their read status.
+required: false
+schema:
+  type: string
+  enum: [read, unread, all]
+  default: all

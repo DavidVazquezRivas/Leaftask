@@ -1,0 +1,7 @@
+type: object
+properties:
+  content:
+    type: string
+    example: 'I have some concerns about this request. Are you sure everything has been reviewed?'
+required:
+  - content

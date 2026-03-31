@@ -1,0 +1,26 @@
+paths:
+  /:
+    get:
+      summary: List My Notifications
+      description: Retrieves a paginated list of notifications for the authenticated user.
+      tags:
+        - Notifications
+      parameters:
+        - $ref: '../../../shared/parameters/LimitParam.yaml'
+        - $ref: '../../../shared/parameters/CursorParam.yaml'
+        - $ref: '../../../shared/parameters/NotificationStatusFilterParam.yaml'
+      responses:
+        '200':
+          description: Successfully retrieved notifications.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/NotificationListResponse.yaml'
+        '401':
+          description: Unauthorized. Missing or invalid access token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'

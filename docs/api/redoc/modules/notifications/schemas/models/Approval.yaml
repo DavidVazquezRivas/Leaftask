@@ -1,0 +1,32 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: '321e6547-e89b-12d3-a456-426614174000'
+  status:
+    type: string
+    enum: [pending, approved, rejected]
+    example: 'pending'
+  context:
+    $ref: './SimpleReference.yaml'
+  target:
+    $ref: './SimpleReference.yaml'
+  requester:
+    $ref: './SimpleReference.yaml'
+  createdAt:
+    type: string
+    format: date-time
+    example: '2024-06-01T12:34:56Z'
+  comments:
+    type: array
+    items:
+      $ref: './ApprovalComment.yaml'
+required:
+  - id
+  - status
+  - context
+  - target
+  - requester
+  - createdAt
+  - comments

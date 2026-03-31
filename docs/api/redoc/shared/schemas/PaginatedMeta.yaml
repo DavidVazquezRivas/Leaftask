@@ -1,0 +1,28 @@
+type: object
+allOf:
+  - $ref: './Meta.yaml'
+  - type: object
+    properties:
+      sort:
+        type: array
+        items:
+          type: object
+          properties:
+            field:
+              type: string
+            direction:
+              type: string
+              enum: [asc, desc]
+      pagination:
+        type: object
+        properties:
+          limit:
+            type: integer
+          nextCursor:
+            type: string
+            nullable: true
+            description: Opaque token for fetching the next page. Null if there are no more pages.
+          hasMore:
+            type: boolean
+    required:
+      - pagination
