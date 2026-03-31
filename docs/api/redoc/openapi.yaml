@@ -43,6 +43,10 @@ x-tagGroups:
       - Work Item Time Tracking
       - Work Item Attachments
       - Work Item Comments
+  - name: Agents
+    tags:
+      - Agent Configuration
+      - Agents Management
 
 tags:
   - name: Session
@@ -83,6 +87,10 @@ tags:
     description: Upload and management of physical files via multipart/form-data.
   - name: Work Item Comments
     description: Discussion threads with support for mentions and attachment linking.
+  - name: Agent Configuration
+    description: Access to system-wide predefined AI agent templates.
+  - name: Agents Management
+    description: Creation, configuration, and lifecycle management of AI agents.
 
 paths:
   # ==========================================
@@ -218,6 +226,19 @@ paths:
     $ref: './modules/workitems/paths/comments.yaml#/paths/~1{projectId}~1work-items~1{itemId}~1comments'
   /projects/{projectId}/work-items/{itemId}/comments/{commentId}:
     $ref: './modules/workitems/paths/comments.yaml#/paths/~1{projectId}~1work-items~1{itemId}~1comments~1{commentId}'
+
+  # ==========================================
+  # AGENTS MODULE
+  # ==========================================
+  # --- Configuration ---
+  /agents/templates:
+    $ref: './modules/agents/paths/templates.yaml#/paths/~1templates'
+
+  # --- Agent Lifecycle ---
+  /agents:
+    $ref: './modules/agents/paths/agents.yaml#/paths/~1'
+  /agents/{agentId}:
+    $ref: './modules/agents/paths/agents.yaml#/paths/~1{agentId}'
 
 components:
   securitySchemes:

@@ -1,0 +1,129 @@
+paths:
+  /:
+    post:
+      summary: Create Agent
+      description: Deploys a new AI agent and links it to a specific project.
+      tags:
+        - Agents Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/requests/CreateAgentRequest.yaml'
+      responses:
+        '201':
+          description: Agent successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/AgentResponse.yaml'
+        '400':
+          description: Bad Request. Validation failed.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized. Missing or invalid access token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. User lacks permission to add agents to the specified project.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+  /{agentId}:
+    parameters:
+      - name: agentId
+        in: path
+        required: true
+        description: The UUID of the agent.
+        schema:
+          type: string
+          format: uuid
+    patch:
+      summary: Update Agent
+      description: Modifies the instructions, name, or template reference of an existing AI agent.
+      tags:
+        - Agents Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/requests/UpdateAgentRequest.yaml'
+      responses:
+        '200':
+          description: Agent successfully updated.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/AgentResponse.yaml'
+        '400':
+          description: Bad Request. Validation failed.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized. Missing or invalid access token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. User lacks permission to modify this agent.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Agent not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+    delete:
+      summary: Delete Agent
+      description: Permanently shuts down and removes an AI agent from the system.
+      tags:
+        - Agents Management
+      responses:
+        '204':
+          description: Agent deleted successfully. No content returned.
+          headers:
+            X-Resource-ID:
+              description: The UUID of the deleted agent.
+              schema:
+                type: string
+                format: uuid
+        '401':
+          description: Unauthorized. Missing or invalid access token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. User lacks permission to delete this agent.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Agent not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'

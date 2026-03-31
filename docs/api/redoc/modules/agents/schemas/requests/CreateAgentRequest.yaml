@@ -1,0 +1,21 @@
+type: object
+properties:
+  projectId:
+    type: string
+    format: uuid
+    example: '123e4567-e89b-12d3-a456-426614174000'
+  name:
+    type: string
+    example: 'StandUp Manager'
+  instructions:
+    type: string
+    example: 'Descripción detallada del agente, incluyendo su propósito, tareas específicas que debe realizar...'
+  templateId:
+    type: string
+    format: uuid
+    description: Opcional. Si se provee, indica de qué plantilla base se creó este agente.
+    example: '123e4567-e89b-12d3-a456-426614174000'
+required:
+  - projectId
+  - name
+  - instructions

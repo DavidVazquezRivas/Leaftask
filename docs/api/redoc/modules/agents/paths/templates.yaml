@@ -1,0 +1,22 @@
+paths:
+  /templates:
+    get:
+      summary: List Agent Templates
+      description: Retrieves a catalog of predefined AI agent templates available for use across projects.
+      tags:
+        - Agent Configuration
+      responses:
+        '200':
+          description: Successfully retrieved agent templates.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/AgentTemplateListResponse.yaml'
+        '401':
+          description: Unauthorized. Missing or invalid access token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'

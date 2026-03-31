@@ -1,0 +1,21 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: '123e4567-e89b-12d3-a456-426614174000'
+  name:
+    type: string
+    example: 'Template 1'
+  description:
+    type: string
+    example: 'Descripción del template 1'
+  instructions:
+    type: string
+    description: Instrucciones detalladas para el template, propósito y restricciones.
+    example: 'Instrucciones detalladas para el template 1, que pueden incluir el propósito del agente...'
+required:
+  - id
+  - name
+  - description
+  - instructions

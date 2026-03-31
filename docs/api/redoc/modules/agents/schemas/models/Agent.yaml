@@ -1,0 +1,33 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: 'agent-1234-5678-90ab-cdef12345678'
+  projectId:
+    type: string
+    format: uuid
+    example: '123e4567-e89b-12d3-a456-426614174000'
+  name:
+    type: string
+    example: 'StandUp Manager'
+  instructions:
+    type: string
+    description: Descripción completa del agente para guiar sus acciones (no es el system prompt directo).
+    example: 'Descripción detallada del agente, incluyendo su propósito, tareas específicas que debe realizar...'
+  templateId:
+    type: string
+    format: uuid
+    nullable: true
+    description: El UUID del template original en el que se basó este agente, si aplica.
+    example: '123e4567-e89b-12d3-a456-426614174000'
+  createdAt:
+    type: string
+    format: date-time
+    example: '2024-08-01T10:00:00Z'
+required:
+  - id
+  - projectId
+  - name
+  - instructions
+  - createdAt
