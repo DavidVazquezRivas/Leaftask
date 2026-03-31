@@ -1,0 +1,44 @@
+paths:
+  /:
+    get:
+      summary: List All Chats
+      description: Retrieves a list of all active chats (conversations with users or AI agents) for the authenticated user, ordered by the latest message.
+      tags:
+        - Chat Management
+      responses:
+        '200':
+          description: Successfully retrieved the list of chats.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/ChatListResponse.yaml'
+        '401':
+          description: Unauthorized. Missing or invalid access token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+  /polling:
+    get:
+      summary: Poll New Messages
+      description: Retrieves all new messages across all chats since the user's last fetch. The server automatically tracks the timestamp of the last fetch for the current user session. Messages returned will automatically transition from 'pending' to 'delivered'.
+      tags:
+        - Chat Management
+      responses:
+        '200':
+          description: Successfully retrieved new messages.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/ChatMessageListResponse.yaml'
+        '401':
+          description: Unauthorized. Missing or invalid access token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'

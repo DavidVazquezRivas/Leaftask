@@ -1,0 +1,29 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: '123e4567-e89b-12d3-a456-426614174002'
+  chatId:
+    type: string
+    format: uuid
+    example: '123e4567-e89b-12d3-a456-426614174000'
+  content:
+    type: string
+    example: "Sure, I'll get to it by EOD"
+  timestamp:
+    type: string
+    format: date-time
+    example: '2024-06-01T13:00:00Z'
+  status:
+    type: string
+    enum: [read, delivered, pending]
+    example: 'delivered'
+  sender:
+    $ref: './ChatSender.yaml'
+required:
+  - id
+  - chatId
+  - content
+  - timestamp
+  - status

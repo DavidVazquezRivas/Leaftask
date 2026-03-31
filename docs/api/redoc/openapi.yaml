@@ -47,6 +47,10 @@ x-tagGroups:
     tags:
       - Agent Configuration
       - Agents Management
+  - name: Chat
+    tags:
+      - Chat Management
+      - Chat Messaging
 
 tags:
   - name: Session
@@ -91,6 +95,10 @@ tags:
     description: Access to system-wide predefined AI agent templates.
   - name: Agents Management
     description: Creation, configuration, and lifecycle management of AI agents.
+  - name: Chat Management
+    description: Core operations for listing active conversations and polling for new incoming messages globally.
+  - name: Chat Messaging
+    description: Operations within a specific conversation thread, including fetching history and sending messages to humans or agents.
 
 paths:
   # ==========================================
@@ -239,6 +247,19 @@ paths:
     $ref: './modules/agents/paths/agents.yaml#/paths/~1'
   /agents/{agentId}:
     $ref: './modules/agents/paths/agents.yaml#/paths/~1{agentId}'
+
+  # ==========================================
+  # CHATS MODULE
+  # ==========================================
+  # --- General & Polling ---
+  /chats:
+    $ref: './modules/chats/paths/general.yaml#/paths/~1'
+  /chats/polling:
+    $ref: './modules/chats/paths/general.yaml#/paths/~1polling'
+
+  # --- Chat Actions ---
+  /chats/{chatId}/messages:
+    $ref: './modules/chats/paths/messages.yaml#/paths/~1{chatId}~1messages'
 
 components:
   securitySchemes:

@@ -1,0 +1,90 @@
+paths:
+  /{chatId}/messages:
+    parameters:
+      - name: chatId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: List Chat Messages
+      description: Retrieves the paginated history of messages for a specific chat. Messages fetched will transition from 'pending' to 'delivered' or 'read'.
+      tags:
+        - Chat Messaging
+      parameters:
+        - $ref: '../../../shared/parameters/LimitParam.yaml'
+        - $ref: '../../../shared/parameters/CursorParam.yaml'
+        - $ref: '../../../shared/parameters/SortParam.yaml'
+      responses:
+        '200':
+          description: Successfully retrieved message history.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/ChatMessageListResponse.yaml'
+        '401':
+          description: Unauthorized. Missing or invalid access token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. User is not a participant in this chat.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Chat not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+    post:
+      summary: Send Message
+      description: Sends a new message to the specified chat. Can be directed to a human or an AI agent.
+      tags:
+        - Chat Messaging
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/requests/SendMessageRequest.yaml'
+      responses:
+        '201':
+          description: Message sent successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/ChatMessageResponse.yaml'
+        '400':
+          description: Bad Request. Empty or invalid content.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized. Missing or invalid access token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. User is not a participant in this chat.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Chat not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'

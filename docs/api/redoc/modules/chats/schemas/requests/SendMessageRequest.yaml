@@ -1,0 +1,8 @@
+type: object
+properties:
+  content:
+    type: string
+    description: The text content of the message.
+    example: 'Let me review the PR'
+required:
+  - content

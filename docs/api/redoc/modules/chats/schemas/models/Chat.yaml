@@ -1,0 +1,23 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: '123e4567-e89b-12d3-a456-426614174000'
+  name:
+    type: string
+    example: 'Alice'
+  lastMessage:
+    $ref: './ChatLastMessage.yaml'
+  type:
+    type: string
+    enum: [person, agent]
+    example: 'person'
+  project:
+    $ref: './ChatProject.yaml'
+    description: Only present if the chat type is 'agent'. Indicates the project context.
+required:
+  - id
+  - name
+  - lastMessage
+  - type

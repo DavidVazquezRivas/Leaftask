@@ -1,0 +1,18 @@
+type: object
+properties:
+  content:
+    type: string
+    example: 'Let me review the PR'
+  timestamp:
+    type: string
+    format: date-time
+    example: '2024-06-01T12:34:56Z'
+  status:
+    type: string
+    enum: [read, delivered, pending]
+    description: Current read/delivery status of the message.
+    example: 'read'
+required:
+  - content
+  - timestamp
+  - status
