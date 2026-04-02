@@ -1,0 +1,27 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="Api.Host/Api.Host.csproj" />
+  </Folder>
+  <Folder Name="/src/BuildingBlocks/">
+    <Project Path="BuildingBlocks.Application/BuildingBlocks.Application.csproj" />
+    <Project Path="BuildingBlocks.Domain/BuildingBlocks.Domain.csproj" />
+    <Project Path="BuildingBlocks.DrivenInfrastructure/BuildingBlocks.DrivenInfrastructure.csproj" />
+    <Project Path="BuildingBlocks.DrivingInfrastructure/BuildingBlocks.DrivingInfrastructure.csproj" Id="635d0488-f31f-4e82-81df-79406876c397" />
+  </Folder>
+  <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/Users/">
+    <Project Path="Modules.User.Application/Modules.Users.Application.csproj" />
+    <Project Path="Modules.User.Domain/Modules.Users.Domain.csproj" />
+    <Project Path="Modules.User.DrivenInfrastructure/Modules.Users.DrivenInfrastructure.csproj" />
+    <Project Path="Modules.User.DrivingInfrastructure/Modules.Users.DrivingInfrastructure.csproj" />
+    <Project Path="Modules.User.Integration/Modules.Users.Integration.csproj" />
+  </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
+</Solution>
