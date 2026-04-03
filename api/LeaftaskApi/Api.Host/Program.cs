@@ -1,3 +1,4 @@
+using Api.Host;
 using Api.Host.Infrastructure;
 using Api.Host.Infrastructure.DatabaseExtensions;
 using BuildingBlocks.DrivingInfrastructure;
@@ -8,7 +9,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 // --- Host base configuration ---
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerConfiguration();
 
 // --- Error handling configuration ---
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -17,6 +18,10 @@ builder.Services.AddProblemDetails();
 // --- Register modules and building blocks ---
 builder.Services.AddBuildingBlocks();
 builder.Services.AddUsersModule(builder.Configuration, builder.Environment.IsDevelopment());
+
+// --- Authentication and authorization configuration ---
+builder.Services.AddAuthenticationConfig(builder.Configuration);
+builder.Services.AddAuthorization();
 
 WebApplication app = builder.Build();
 
@@ -37,6 +42,8 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
 }
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

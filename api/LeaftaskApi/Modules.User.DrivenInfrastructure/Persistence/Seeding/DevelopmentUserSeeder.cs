@@ -11,9 +11,9 @@ public sealed class DevelopmentUserSeeder : IUserSeederStrategy
         {
             User[] users =
             [
-                User.Create(Guid.NewGuid(), "Admin", "Developer", "admin@dev.com"),
-                User.Create(Guid.NewGuid(), "John", "Doe", "john@dev.com"),
-                User.Create(Guid.NewGuid(), "Jane", "Smith", "jane@dev.com")
+                User.Create("Admin", "Developer", "admin@dev.com"),
+                User.Create("John", "Doe", "john@dev.com"),
+                User.Create("Jane", "Smith", "jane@dev.com")
             ];
 
             await dbContext.Users.AddRangeAsync(users, cancellationToken);

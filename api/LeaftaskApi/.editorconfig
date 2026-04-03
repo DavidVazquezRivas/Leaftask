@@ -324,3 +324,7 @@ dotnet_diagnostic.IDE0320.severity = none
 
 # IDE0011: Add braces
 dotnet_diagnostic.IDE0011.severity = none
+
+resharper_enforce_if_statement_braces_highlighting = none
+
+resharper_arrange_method_or_operator_body_highlighting = none

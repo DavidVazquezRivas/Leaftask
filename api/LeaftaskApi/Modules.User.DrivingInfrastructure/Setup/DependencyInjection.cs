@@ -4,9 +4,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Modules.Users.Application.Management.GetAll;
+using Modules.Users.Application.Session.Jwt;
+using Modules.Users.Application.Session.OAuth.Google;
+using Modules.Users.Domain.Factories;
+using Modules.Users.Domain.Repositories;
 using Modules.Users.DrivenInfrastructure.Persistence;
 using Modules.Users.DrivenInfrastructure.Persistence.Seeding;
 using Modules.Users.DrivenInfrastructure.Queries;
+using Modules.Users.DrivenInfrastructure.Repositories;
+using Modules.Users.DrivenInfrastructure.Session.Jwt;
+using Modules.Users.DrivenInfrastructure.Session.OAuth;
 
 namespace Modules.Users.DrivingInfrastructure.Setup;
 
@@ -18,11 +25,16 @@ public static class DependencyInjection
         bool isDevelopment)
     {
         services.AddDatabase(configuration);
+
         services.AddMessaging();
         services.AddValidators();
+
         services.AddRepositories();
         services.AddQueryServices();
+
         services.AddSeedingStrategy(isDevelopment);
+
+        services.AddSessionServices(configuration);
 
         return services;
     }
@@ -55,9 +67,12 @@ public static class DependencyInjection
         return services;
     }
 
-    private static IServiceCollection AddRepositories(this IServiceCollection services) =>
-        //services.AddScoped<IUserRepository, UserRepository>(); User repository is not implemented yet
-        services;
+    private static IServiceCollection AddRepositories(this IServiceCollection services)
+    {
+        services.AddScoped<IUserRepository, UserRepository>();
+
+        return services;
+    }
 
     private static IServiceCollection AddQueryServices(this IServiceCollection services)
     {
@@ -78,6 +93,20 @@ public static class DependencyInjection
         {
             services.AddScoped<IUserSeederStrategy, ProductionUserSeeder>();
         }
+
+        return services;
+    }
+
+    private static IServiceCollection AddSessionServices(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+        services.AddScoped<IJwtService, JwtService>();
+
+        services.Configure<GoogleAuthOptions>(configuration.GetSection(GoogleAuthOptions.SectionName));
+        services.AddScoped<IGoogleTokenValidator, GoogleTokenValidator>();
+
+        services.AddScoped<IRefreshTokenExpirationPolicy, RefreshTokenExpirationPolicy>();
+        services.AddScoped<IRefreshTokenFactory, RefreshTokenFactory>();
 
         return services;
     }
