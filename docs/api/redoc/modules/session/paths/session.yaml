@@ -77,8 +77,8 @@ paths:
           $ref: '../../../shared/responses/InternalServerError.yaml'
 
   /logout:
-    post:
-      summary: Terminate Session
+    delete:
+      summary: Logout
       description: Invalidates the current session and clears the refresh token cookie.
       tags:
         - Session
