@@ -2,7 +2,7 @@
 
 public class JwtOptions
 {
-    public const string SectionName = "Session:Jwt";
+    public const string SectionName = "Modules:Users:Session:Jwt";
 
     public string Issuer { get; init; } = string.Empty;
     public string Audience { get; init; } = string.Empty;

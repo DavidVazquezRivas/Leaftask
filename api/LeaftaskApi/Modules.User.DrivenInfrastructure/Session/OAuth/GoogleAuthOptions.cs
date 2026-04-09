@@ -2,6 +2,6 @@
 
 public class GoogleAuthOptions
 {
-    public const string SectionName = "Session:OAuth:Google";
+    public const string SectionName = "Modules:Users:Session:OAuth:Google";
     public string ClientId { get; init; } = string.Empty;
 }

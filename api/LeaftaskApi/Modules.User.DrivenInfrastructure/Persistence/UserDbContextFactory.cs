@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using Modules.Users.Application.Events;
 
 namespace Modules.Users.DrivenInfrastructure.Persistence;
 
@@ -22,6 +23,6 @@ public class UserDbContextFactory : IDesignTimeDbContextFactory<UserDbContext>
 
         optionsBuilder.UseNpgsql(connectionString);
 
-        return new UserDbContext(optionsBuilder.Options, new NoOpDomainEventsDispatcher());
+        return new UserDbContext(optionsBuilder.Options, new NoOpDomainEventsDispatcher(), new UserModuleEventMapper());
     }
 }

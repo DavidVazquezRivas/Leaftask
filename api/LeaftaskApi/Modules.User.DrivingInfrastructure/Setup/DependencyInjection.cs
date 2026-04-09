@@ -1,8 +1,10 @@
 ﻿using BuildingBlocks.Application.Behaviors;
+using BuildingBlocks.DrivingInfrastructure.Jobs.Quartz;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Modules.Users.Application.Events;
 using Modules.Users.Application.Management.GetAll;
 using Modules.Users.Application.Session.Jwt;
 using Modules.Users.Application.Session.OAuth.Google;
@@ -14,6 +16,9 @@ using Modules.Users.DrivenInfrastructure.Queries;
 using Modules.Users.DrivenInfrastructure.Repositories;
 using Modules.Users.DrivenInfrastructure.Session.Jwt;
 using Modules.Users.DrivenInfrastructure.Session.OAuth;
+using Modules.Users.DrivingInfrastructure.Jobs;
+using Modules.Users.DrivingInfrastructure.Jobs.Outbox;
+using Quartz;
 
 namespace Modules.Users.DrivingInfrastructure.Setup;
 
@@ -26,6 +31,7 @@ public static class DependencyInjection
     {
         services.AddDatabase(configuration);
 
+        services.AddJobs(configuration);
         services.AddMessaging();
         services.AddValidators();
 
@@ -47,6 +53,15 @@ public static class DependencyInjection
         return services;
     }
 
+    private static IServiceCollection AddJobs(this IServiceCollection services, IConfiguration configuration)
+    {
+        OutboxOptions outboxOptions = configuration.GetSection("Modules:Users:Outbox").Get<OutboxOptions>() ??
+                                      new OutboxOptions();
+
+        services.AddQuartz(q => q.AddOutboxJob<UsersOutboxJob>(outboxOptions));
+        return services;
+    }
+
     private static IServiceCollection AddMessaging(this IServiceCollection services)
     {
         services.AddMediatR(config =>
@@ -56,6 +71,8 @@ public static class DependencyInjection
             config.AddOpenBehavior(typeof(LoggingBehavior<,>));
             config.AddOpenBehavior(typeof(ValidationBehavior<,>));
         });
+
+        services.AddSingleton<UserModuleEventMapper>();
 
         return services;
     }

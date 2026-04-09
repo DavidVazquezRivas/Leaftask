@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Domain.Entities;
 using BuildingBlocks.Domain.Result;
 using Modules.Users.Domain.Errors;
+using Modules.Users.Domain.Events;
 using Modules.Users.Domain.Factories;
 
 namespace Modules.Users.Domain.Entities;
@@ -19,13 +20,19 @@ public sealed class User : Entity
     }
 
     public Guid Id { get; }
-    public string FirstName { get; private set; }
-    public string LastName { get; private set; }
-    public string Email { get; private set; }
+    public string FirstName { get; }
+    public string LastName { get; }
+    public string Email { get; }
     public IReadOnlyCollection<RefreshToken> RefreshTokens => _refreshTokens.AsReadOnly();
 
-    public static User Create(string firstName, string lastName, string email) =>
-        new(Guid.NewGuid(), firstName, lastName, email);
+    public static User Create(string firstName, string lastName, string email)
+    {
+        User user = new(Guid.NewGuid(), firstName, lastName, email);
+
+        user.Raise(new UserCreatedDomainEvent(user.Id, user.FirstName, user.LastName, user.Email));
+
+        return user;
+    }
 
     public RefreshToken AddRefreshToken(IRefreshTokenFactory factory)
     {

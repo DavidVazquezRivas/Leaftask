@@ -11,6 +11,7 @@
     <Project Path="Api.Host/Api.Host.csproj" />
   </Folder>
   <Folder Name="/src/BuildingBlocks/">
+    <Project Path="BuildingBlocks.Integration/BuildingBlocks.Integration.csproj" Id="0eb1c7d0-2867-4fbb-8b11-0adc73f9864a" />
     <Project Path="BuildingBlocks.Application/BuildingBlocks.Application.csproj" />
     <Project Path="BuildingBlocks.Domain/BuildingBlocks.Domain.csproj" />
     <Project Path="BuildingBlocks.DrivenInfrastructure/BuildingBlocks.DrivenInfrastructure.csproj" />

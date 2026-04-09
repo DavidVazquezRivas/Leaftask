@@ -19,10 +19,11 @@ internal static class DependencyInjection
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
 
-                    ValidIssuer = configuration["Session:Jwt:Issuer"],
-                    ValidAudience = configuration["Session:Jwt:Audience"],
+                    ValidIssuer = configuration["Modules:Users:Session:Jwt:Issuer"],
+                    ValidAudience = configuration["Modules:Users:Session:Jwt:Audience"],
                     IssuerSigningKey =
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Session:Jwt:SecretKey"]!))
+                        new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(configuration["Modules:Users:Session:Jwt:SecretKey"]!))
                 });
 
         return services;

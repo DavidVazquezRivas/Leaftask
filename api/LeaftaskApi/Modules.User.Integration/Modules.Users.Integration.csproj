@@ -2,4 +2,7 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BuildingBlocks.Integration\BuildingBlocks.Integration.csproj" />
+  </ItemGroup>
 </Project>

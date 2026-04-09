@@ -1,13 +1,15 @@
 ﻿using BuildingBlocks.Infrastructure.Events;
 using BuildingBlocks.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Modules.Users.Application.Events;
 using Modules.Users.Domain.Entities;
 
 namespace Modules.Users.DrivenInfrastructure.Persistence;
 
 public sealed class UserDbContext(
     DbContextOptions<UserDbContext> options,
-    IDomainEventsDispatcher domainEventsDispatcher) : AppDbContext(options, domainEventsDispatcher)
+    IDomainEventsDispatcher domainEventsDispatcher,
+    UserModuleEventMapper eventMapper) : AppDbContext(options, domainEventsDispatcher, eventMapper)
 {
     public DbSet<User> Users { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
