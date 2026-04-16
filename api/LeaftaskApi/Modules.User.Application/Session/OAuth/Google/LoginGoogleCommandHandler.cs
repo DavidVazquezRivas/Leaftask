@@ -7,7 +7,7 @@ using Modules.Users.Domain.Repositories;
 
 namespace Modules.Users.Application.Session.OAuth.Google;
 
-internal sealed class LoginGoogleCommandHandler(
+public sealed class LoginGoogleCommandHandler(
     IUserRepository userRepository,
     IGoogleTokenValidator googleTokenValidator,
     IJwtService jwtService,

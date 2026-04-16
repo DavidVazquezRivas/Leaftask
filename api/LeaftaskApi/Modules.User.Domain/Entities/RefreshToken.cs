@@ -15,7 +15,7 @@ public sealed class RefreshToken
     public DateTime CreatedAt { get; private set; }
     public DateTime? RevokedAt { get; private set; }
 
-    internal static RefreshToken Create(Guid userId, TimeSpan duration) =>
+    public static RefreshToken Create(Guid userId, TimeSpan duration) =>
         new()
         {
             UserId = userId,

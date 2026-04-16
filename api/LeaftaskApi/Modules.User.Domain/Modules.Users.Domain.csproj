@@ -5,4 +5,8 @@
   <ItemGroup>
     <ProjectReference Include="..\BuildingBlocks.Domain\BuildingBlocks.Domain.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+	<InternalsVisibleTo Include="Modules.Users.Domain.UnitTests" />
+  </ItemGroup>
 </Project>

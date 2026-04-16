@@ -13,15 +13,15 @@ public class UserManagementController : ApiBaseController
     public async Task<IActionResult> GetAll(
         [FromQuery] int limit = 10,
         [FromQuery] string? cursor = null,
-        [FromQuery] string[]? sort = null,
+        [FromQuery] IReadOnlyCollection<string>? sort = null,
         [FromQuery] string? search = null,
         CancellationToken cancellationToken = default)
     {
-        GetAllUsersQuery query = new GetAllUsersQuery()
+        GetAllUsersQuery query = new()
         {
             Limit = limit,
             Cursor = cursor,
-            Sort = sort,
+            Sort = sort ?? [],
             Search = search
         };
 
@@ -39,4 +39,3 @@ public class UserManagementController : ApiBaseController
         return HandleResult(result, 200, sortMeta, paginationMeta);
     }
 }
-

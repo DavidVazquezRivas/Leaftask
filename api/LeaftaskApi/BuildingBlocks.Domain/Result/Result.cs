@@ -32,15 +32,11 @@ public class Result
         new(default, false, error);
 }
 
-public class Result<TValue> : Result
+public class Result<TValue>(TValue? value, bool isSuccess, Error error) : Result(isSuccess, error)
 {
-    private readonly TValue? _value;
-
-    public Result(TValue? value, bool isSuccess, Error error) : base(isSuccess, error) => _value = value;
-
     [NotNull]
     public TValue Value => IsSuccess
-        ? _value!
+        ? value!
         : throw new InvalidOperationException("Cannot access the value of a failure result.");
 
     public static implicit operator Result<TValue>(TValue? value) =>

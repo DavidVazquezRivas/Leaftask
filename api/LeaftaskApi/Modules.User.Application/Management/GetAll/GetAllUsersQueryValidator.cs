@@ -7,10 +7,8 @@ namespace Modules.Users.Application.Management.GetAll;
 public sealed class GetAllUsersQueryValidator
     : PaginatedQueryValidator<GetAllUsersQuery, Result<IReadOnlyCollection<SimpleUserDto>>>
 {
-    public GetAllUsersQueryValidator()
-    {
+    public GetAllUsersQueryValidator() =>
         RuleFor(x => x.Search)
             .MaximumLength(50)
             .WithMessage("The search cannot exceed 50 characters.");
-    }
 }

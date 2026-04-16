@@ -25,6 +25,16 @@
     <Project Path="Modules.User.DrivingInfrastructure/Modules.Users.DrivingInfrastructure.csproj" />
     <Project Path="Modules.User.Integration/Modules.Users.Integration.csproj" />
   </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/BuildingBlocks/">
+    <Project Path="BuildingBlocks.Application.UnitTests/BuildingBlocks.Application.UnitTests.csproj" Id="99bf71a8-22d9-418c-9619-4ffc49ae93d6" />
+    <Project Path="BuildingBlocks.Domain.UnitTests/BuildingBlocks.Domain.UnitTests.csproj" Id="df3ddfa3-af75-4f47-b6d2-6e4bf12c19b9" />
+  </Folder>
+  <Folder Name="/tests/Modules/" />
+  <Folder Name="/tests/Modules/Users/">
+    <Project Path="Modules.Users.Application.UnitTests/Modules.Users.Application.UnitTests.csproj" Id="0abaccd0-4173-41bf-8095-9a89f89c2e49" />
+    <Project Path="Modules.Users.Domain.UnitTests/Modules.Users.Domain.UnitTests.csproj" Id="d40887fc-f4f1-4c78-af31-85340b41552f" />
+  </Folder>
   <Project Path="docker-compose.dcproj">
     <Build />
   </Project>

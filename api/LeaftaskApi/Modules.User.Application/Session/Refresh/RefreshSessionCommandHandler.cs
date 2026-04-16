@@ -8,7 +8,7 @@ using Modules.Users.Domain.Repositories;
 
 namespace Modules.Users.Application.Session.Refresh;
 
-internal class RefreshSessionCommandHandler(
+public class RefreshSessionCommandHandler(
     IUserRepository userRepository,
     IJwtService jwtService,
     IRefreshTokenFactory refreshTokenFactory)
