@@ -1,4 +1,5 @@
-﻿using Modules.Users.DrivingInfrastructure.Setup;
+﻿using Modules.Organizations.DrivingInfrastructure.Setup;
+using Modules.Users.DrivingInfrastructure.Setup;
 
 namespace Api.Host.Infrastructure.DatabaseExtensions;
 
@@ -9,6 +10,7 @@ internal static class MigrationDatabaseExtensions
         try
         {
             await UsersModuleInitialization.ApplyMigrationsAsync(app.Services);
+            await OrganizationModuleInitialization.ApplyMigrationsAsync(app.Services);
         }
         catch (Exception ex)
         {

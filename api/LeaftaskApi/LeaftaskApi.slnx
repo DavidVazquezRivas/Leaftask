@@ -18,6 +18,12 @@
     <Project Path="BuildingBlocks.DrivingInfrastructure/BuildingBlocks.DrivingInfrastructure.csproj" Id="635d0488-f31f-4e82-81df-79406876c397" />
   </Folder>
   <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/Organizations/">
+    <Project Path="Modules.Organizations.Application/Modules.Organizations.Application.csproj" Id="15f9ba06-4dea-4e39-84a7-70a30ceee5a3" />
+    <Project Path="Modules.Organizations.Domain/Modules.Organizations.Domain.csproj" Id="53000f7a-4bc8-4141-8ef8-65dff4a6407f" />
+    <Project Path="Modules.Organizations.DrivenInfrastructure/Modules.Organizations.DrivenInfrastructure.csproj" Id="59a998f9-73e6-4f05-a908-4050fb02e8e8" />
+    <Project Path="Modules.Organizations.DrivingInfrastructure/Modules.Organizations.DrivingInfrastructure.csproj" />
+  </Folder>
   <Folder Name="/src/Modules/Users/">
     <Project Path="Modules.User.Application/Modules.Users.Application.csproj" />
     <Project Path="Modules.User.Domain/Modules.Users.Domain.csproj" />
