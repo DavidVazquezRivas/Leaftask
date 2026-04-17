@@ -1,5 +1,6 @@
 ﻿using BuildingBlocks.Application.Behaviors;
 using BuildingBlocks.DrivingInfrastructure.Jobs.Quartz;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Modules.Organizations.Application.Events;
 using Modules.Organizations.Application.Management;
 using Modules.Organizations.Application.Management.Create;
+using Modules.Organizations.Application.Management.GetMyOrganizations;
 using Modules.Organizations.Domain.Repositories;
 using Modules.Organizations.DrivenInfrastructure.Persistence;
 using Modules.Organizations.DrivenInfrastructure.Queries;
@@ -72,7 +74,11 @@ public static class DependencyInjection
         return services;
     }
 
-    private static IServiceCollection AddValidators(this IServiceCollection services) => services;
+    private static IServiceCollection AddValidators(this IServiceCollection services)
+    {
+        services.AddValidatorsFromAssembly(typeof(GetMyOrganizationsQueryValidator).Assembly);
+        return services;
+    }
 
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
@@ -85,6 +91,7 @@ public static class DependencyInjection
     private static IServiceCollection AddQueryServices(this IServiceCollection services)
     {
         services.AddScoped<IGetOrganizationDetailsQueryService, GetOrganizationDetailsQueryService>();
+        services.AddScoped<IGetMyOrganizationsQueryService, GetMyOrganizationsQueryService>();
 
         return services;
     }

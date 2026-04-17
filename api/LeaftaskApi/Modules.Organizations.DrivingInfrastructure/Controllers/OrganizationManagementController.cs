@@ -1,9 +1,12 @@
-﻿using BuildingBlocks.Domain.Result;
+﻿using BuildingBlocks.Application.Queries;
+using BuildingBlocks.Domain.Result;
 using BuildingBlocks.DrivingInfrastructure.Controllers;
+using BuildingBlocks.DrivingInfrastructure.Responses.Meta;
 using Microsoft.AspNetCore.Mvc;
 using Modules.Organizations.Application.Management;
 using Modules.Organizations.Application.Management.Create;
 using Modules.Organizations.Application.Management.GetDetails;
+using Modules.Organizations.Application.Management.GetMyOrganizations;
 using Modules.Organizations.DrivingInfrastructure.Models.Requests;
 
 namespace Modules.Organizations.DrivingInfrastructure.Controllers;
@@ -32,6 +35,38 @@ public class OrganizationManagementController : ApiBaseController
 
         Result<BasicOrganizationResponse> result = await Sender.Send(query, cancellationToken);
 
-        return HandleResult(result, 200);
+        return HandleResult(result);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetMyOrganizations(
+        [FromQuery] int limit = 10,
+        [FromQuery] string? cursor = null,
+        [FromQuery] IReadOnlyCollection<string>? sort = null,
+        CancellationToken cancellationToken = default)
+    {
+        GetMyOrganizationsQuery query = new()
+        {
+            Limit = limit,
+            Cursor = cursor,
+            Sort = sort ?? []
+        };
+
+        Result<PaginatedResult<SimpleOrganizationDto>> result = await Sender.Send(query, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return HandleFailure(result.Error);
+        }
+
+        IReadOnlyList<SortMeta>? sortMeta = SortMetaParser.Parse(sort);
+        PaginationMeta paginationMeta = new()
+        {
+            Limit = limit,
+            NextCursor = result.Value.NextCursor,
+            HasMore = result.Value.HasMore
+        };
+
+        return StatusCode(200, BuildSuccessResponse(result.Value.Items, sortMeta, paginationMeta));
     }
 }

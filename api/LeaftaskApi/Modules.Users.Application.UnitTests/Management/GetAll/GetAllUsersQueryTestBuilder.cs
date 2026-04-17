@@ -7,7 +7,7 @@ internal sealed class GetAllUsersQueryTestBuilder
     private string? _cursor;
     private int _limit = 10;
     private string? _search;
-    private List<string> _sort;
+    private List<string> _sort = [];
 
     private GetAllUsersQueryTestBuilder() { }
 

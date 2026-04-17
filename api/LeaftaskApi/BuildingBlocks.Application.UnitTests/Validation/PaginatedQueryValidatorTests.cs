@@ -57,52 +57,6 @@ public class PaginatedQueryValidatorTests
             .WithErrorMessage("Limit must be between 1 and 100.");
     }
 
-    // --- CURSOR TESTS ---
-
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    public void Cursor_Should_NotHaveError_When_NullOrEmpty(string? emptyCursor)
-    {
-        // Arrange
-        TestPaginatedQuery query = new() { Limit = 10, Cursor = emptyCursor };
-
-        // Act
-        TestValidationResult<TestPaginatedQuery>? result = _validator.TestValidate(query);
-
-        // Assert
-        result.ShouldNotHaveValidationErrorFor(x => x.Cursor);
-    }
-
-    [Fact]
-    public void Cursor_Should_NotHaveError_When_ValidGuid()
-    {
-        // Arrange
-        TestPaginatedQuery query = new() { Limit = 10, Cursor = Guid.NewGuid().ToString() };
-
-        // Act
-        TestValidationResult<TestPaginatedQuery>? result = _validator.TestValidate(query);
-
-        // Assert
-        result.ShouldNotHaveValidationErrorFor(x => x.Cursor);
-    }
-
-    [Theory]
-    [InlineData("not-a-guid")]
-    [InlineData("12345")]
-    public void Cursor_Should_HaveError_When_InvalidGuid(string invalidCursor)
-    {
-        // Arrange
-        TestPaginatedQuery query = new() { Limit = 10, Cursor = invalidCursor };
-
-        // Act
-        TestValidationResult<TestPaginatedQuery>? result = _validator.TestValidate(query);
-
-        // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Cursor)
-            .WithErrorMessage("Cursor must be a valid Guid.");
-    }
-
     // --- SORT TESTS ---
 
     [Fact]

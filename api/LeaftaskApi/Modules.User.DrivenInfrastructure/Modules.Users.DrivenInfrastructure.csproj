@@ -12,7 +12,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BuildingBlocks.Application\BuildingBlocks.Application.csproj" />
     <ProjectReference Include="..\BuildingBlocks.DrivenInfrastructure\BuildingBlocks.DrivenInfrastructure.csproj" />
+    <ProjectReference Include="..\BuildingBlocks.DrivingInfrastructure\BuildingBlocks.DrivingInfrastructure.csproj" />
     <ProjectReference Include="..\Modules.User.Application\Modules.Users.Application.csproj" />
     <ProjectReference Include="..\Modules.User.Domain\Modules.Users.Domain.csproj" />
   </ItemGroup>

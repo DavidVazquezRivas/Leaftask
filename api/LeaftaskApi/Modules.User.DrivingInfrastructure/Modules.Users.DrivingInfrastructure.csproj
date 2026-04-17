@@ -5,6 +5,7 @@
     <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BuildingBlocks.Application\BuildingBlocks.Application.csproj" />
     <ProjectReference Include="..\BuildingBlocks.DrivingInfrastructure\BuildingBlocks.DrivingInfrastructure.csproj" />
     <ProjectReference Include="..\Modules.User.Application\Modules.Users.Application.csproj" />
     <ProjectReference Include="..\Modules.User.DrivenInfrastructure\Modules.Users.DrivenInfrastructure.csproj" />

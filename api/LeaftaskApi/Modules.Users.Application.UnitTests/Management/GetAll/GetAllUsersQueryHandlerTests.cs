@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Domain.Result;
+﻿using BuildingBlocks.Application.Queries;
+using BuildingBlocks.Domain.Result;
 using FluentAssertions;
 using Modules.Users.Application.Management.GetAll;
 using NSubstitute;
@@ -20,26 +21,33 @@ public class GetAllUsersQueryHandlerTests
     public async Task Handle_Should_ReturnSuccessResultWithUsers_When_ServiceReturnsData()
     {
         // Arrange
-        GetAllUsersQuery query = GetAllUsersQueryTestBuilder.AQuery().Build();
+        string cursor = "cursor-token";
+        GetAllUsersQuery query = GetAllUsersQueryTestBuilder.AQuery()
+            .WithLimit(2)
+            .WithCursor(cursor)
+            .WithSort(["email:asc"])
+            .Build();
 
         List<SimpleUserDto> userDtos =
         [
-            SimpleUserDtoTestBuilder.ADto().WithFirstName("Clark").Build(),
-            SimpleUserDtoTestBuilder.ADto().WithFirstName("Diana").Build()
+            SimpleUserDtoTestBuilder.ADto().Build(),
+            SimpleUserDtoTestBuilder.ADto().Build()
         ];
 
-        _serviceMock.GetAllAsync(Arg.Any<CancellationToken>())
-            .Returns(userDtos);
+        _serviceMock.GetAllAsync(query.Limit, query.Cursor, query.Sort, Arg.Any<CancellationToken>())
+            .Returns(new PaginatedResult<SimpleUserDto>(userDtos, "next-cursor", true));
 
         // Act
-        Result<IReadOnlyCollection<SimpleUserDto>> result = await _handler.Handle(query, CancellationToken.None);
+        Result<PaginatedResult<SimpleUserDto>> result = await _handler.Handle(query, CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().HaveCount(2);
-        result.Value.Should().BeEquivalentTo(userDtos);
+        result.Value.Items.Should().HaveCount(2);
+        result.Value.Items.Should().BeEquivalentTo(userDtos);
+        result.Value.NextCursor.Should().Be("next-cursor");
+        result.Value.HasMore.Should().BeTrue();
 
-        await _serviceMock.Received(1).GetAllAsync(Arg.Any<CancellationToken>());
+        await _serviceMock.Received(1).GetAllAsync(query.Limit, query.Cursor, query.Sort, Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -48,14 +56,16 @@ public class GetAllUsersQueryHandlerTests
         // Arrange
         GetAllUsersQuery query = GetAllUsersQueryTestBuilder.AQuery().Build();
 
-        _serviceMock.GetAllAsync(Arg.Any<CancellationToken>())
-            .Returns([]);
+        _serviceMock.GetAllAsync(query.Limit, query.Cursor, query.Sort, Arg.Any<CancellationToken>())
+            .Returns(new PaginatedResult<SimpleUserDto>([], null, false));
 
         // Act
-        Result<IReadOnlyCollection<SimpleUserDto>> result = await _handler.Handle(query, CancellationToken.None);
+        Result<PaginatedResult<SimpleUserDto>> result = await _handler.Handle(query, CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().BeEmpty();
+        result.Value.Items.Should().BeEmpty();
+        result.Value.NextCursor.Should().BeNull();
+        result.Value.HasMore.Should().BeFalse();
     }
 }

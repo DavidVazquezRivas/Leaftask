@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BuildingBlocks.DrivenInfrastructure\BuildingBlocks.DrivenInfrastructure.csproj" />
+    <ProjectReference Include="..\BuildingBlocks.DrivingInfrastructure\BuildingBlocks.DrivingInfrastructure.csproj" />
     <ProjectReference Include="..\Modules.Organizations.Application\Modules.Organizations.Application.csproj" />
     <ProjectReference Include="..\Modules.Organizations.Domain\Modules.Organizations.Domain.csproj" />
   </ItemGroup>

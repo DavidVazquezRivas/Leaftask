@@ -53,4 +53,51 @@ public class GetAllUsersQueryValidatorTests
         // Assert
         result.ShouldHaveValidationErrorFor(x => x.Limit);
     }
+
+    [Fact]
+    public void Validator_Should_NotHaveError_When_SortFieldIsValid()
+    {
+        // Arrange
+        GetAllUsersQuery query = GetAllUsersQueryTestBuilder.AQuery()
+            .WithSort(["email:asc", "firstName:desc"])
+            .Build();
+
+        // Act
+        TestValidationResult<GetAllUsersQuery> result = _validator.TestValidate(query);
+
+        // Assert
+        result.ShouldNotHaveValidationErrorFor(x => x.Sort);
+    }
+
+    [Fact]
+    public void Validator_Should_HaveError_When_SortFieldIsInvalid()
+    {
+        // Arrange
+        GetAllUsersQuery query = GetAllUsersQueryTestBuilder.AQuery()
+            .WithSort(["invalid:asc"])
+            .Build();
+
+        // Act
+        TestValidationResult<GetAllUsersQuery> result = _validator.TestValidate(query);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.Sort)
+            .WithErrorMessage("The sort fields must be valid and unique.");
+    }
+
+    [Fact]
+    public void Validator_Should_HaveError_When_SortFieldIsDuplicated()
+    {
+        // Arrange
+        GetAllUsersQuery query = GetAllUsersQueryTestBuilder.AQuery()
+            .WithSort(["email:asc", "email:desc"])
+            .Build();
+
+        // Act
+        TestValidationResult<GetAllUsersQuery> result = _validator.TestValidate(query);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.Sort)
+            .WithErrorMessage("The sort fields must be valid and unique.");
+    }
 }
