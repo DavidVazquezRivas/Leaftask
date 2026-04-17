@@ -11,6 +11,7 @@ using Modules.Organizations.DrivenInfrastructure.Persistence;
 using Modules.Organizations.DrivenInfrastructure.Queries;
 using Modules.Organizations.DrivenInfrastructure.Repositories;
 using Modules.Organizations.DrivingInfrastructure.Jobs;
+using Modules.Organizations.DrivingInfrastructure.Subscribers;
 using Modules.Users.DrivingInfrastructure.Jobs.Outbox;
 using Quartz;
 
@@ -56,6 +57,7 @@ public static class DependencyInjection
         services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssembly(typeof(CreateOrganizationCommand).Assembly);
+            config.RegisterServicesFromAssembly(typeof(UserCreatedIntegrationEventHandler).Assembly);
 
             config.AddOpenBehavior(typeof(LoggingBehavior<,>));
             config.AddOpenBehavior(typeof(ValidationBehavior<,>));
@@ -71,6 +73,7 @@ public static class DependencyInjection
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+        services.AddScoped<IUserReadModelRepository, UserReadModelRepository>();
 
         return services;
     }

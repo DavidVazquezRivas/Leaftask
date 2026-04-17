@@ -10,5 +10,6 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\BuildingBlocks.Domain\BuildingBlocks.Domain.csproj" />
 	  <ProjectReference Include="..\BuildingBlocks.DrivenInfrastructure\BuildingBlocks.DrivenInfrastructure.csproj" />
+	  <ProjectReference Include="..\BuildingBlocks.Integration\BuildingBlocks.Integration.csproj" />
 	</ItemGroup>
 </Project>

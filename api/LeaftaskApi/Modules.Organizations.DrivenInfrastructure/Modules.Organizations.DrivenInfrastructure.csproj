@@ -15,4 +15,8 @@
     <ProjectReference Include="..\Modules.Organizations.Domain\Modules.Organizations.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ReadModels\" />
+  </ItemGroup>
+
 </Project>

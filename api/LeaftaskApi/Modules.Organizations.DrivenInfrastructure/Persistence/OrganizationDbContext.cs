@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Infrastructure.Events;
+﻿using BuildingBlocks.DrivenInfrastructure.Inbox;
+using BuildingBlocks.Infrastructure.Events;
 using BuildingBlocks.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Modules.Organizations.Application.Events;
@@ -12,6 +13,8 @@ public sealed class OrganizationDbContext(
     OrganizationModuleEventMapper mapper) : AppDbContext(options, domainEventsDispatcher, mapper)
 {
     public DbSet<Organization> Organizations { get; set; }
+    public DbSet<UserReadModel> UserReadModels { get; set; }
+    public DbSet<InboxMessage> InboxMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

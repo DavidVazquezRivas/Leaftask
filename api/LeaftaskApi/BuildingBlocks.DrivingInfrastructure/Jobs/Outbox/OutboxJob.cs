@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using BuildingBlocks.DrivenInfrastructure.Outbox;
+using BuildingBlocks.DrivingInfrastructure.Events;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,8 @@ public abstract class OutboxJob<TContext>(
         using IServiceScope scope = scopeFactory.CreateScope();
         TContext dbContext = scope.ServiceProvider.GetRequiredService<TContext>();
         IPublisher publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
+        IIntegrationEventContextAccessor integrationEventContextAccessor =
+            scope.ServiceProvider.GetRequiredService<IIntegrationEventContextAccessor>();
 
         int batchSize = context.MergedJobDataMap.GetIntValue("BatchSize");
         if (batchSize == 0)
@@ -40,15 +43,20 @@ public abstract class OutboxJob<TContext>(
         {
             try
             {
-                Type? type = Type.GetType(message.Type);
-                if (type is not null)
+                integrationEventContextAccessor.CurrentMessageId = message.Id;
+
+                Type type = Type.GetType(message.Type) ??
+                            throw new InvalidOperationException(
+                                $"Unable to resolve integration event type '{message.Type}'.");
+
+                object? integrationEvent = JsonSerializer.Deserialize(message.Content, type);
+                if (integrationEvent is not INotification notification)
                 {
-                    object? integrationEvent = JsonSerializer.Deserialize(message.Content, type);
-                    if (integrationEvent is INotification notification)
-                    {
-                        await publisher.Publish(notification, context.CancellationToken);
-                    }
+                    throw new InvalidOperationException(
+                        $"Deserialized message does not implement {nameof(INotification)} for type '{message.Type}'.");
                 }
+
+                await publisher.Publish(notification, context.CancellationToken);
 
                 message.Process();
             }
@@ -56,6 +64,10 @@ public abstract class OutboxJob<TContext>(
             {
                 logger.LogError(ex, "Error processing the outbox message {Id}", message.Id);
                 message.Error = ex.Message;
+            }
+            finally
+            {
+                integrationEventContextAccessor.CurrentMessageId = null;
             }
         }
 

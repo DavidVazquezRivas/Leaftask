@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Application.Abstractions;
 using BuildingBlocks.DrivenInfrastructure.Events;
 using BuildingBlocks.DrivingInfrastructure.Authentication;
+using BuildingBlocks.DrivingInfrastructure.Events;
 using BuildingBlocks.Infrastructure.Events;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +15,7 @@ public static class DependencyInjection
 
         services.AddHttpContextAccessor();
         services.AddScoped<IUserContext, UserContext>();
+        services.AddScoped<IIntegrationEventContextAccessor, IntegrationEventContextAccessor>();
 
         return services;
     }

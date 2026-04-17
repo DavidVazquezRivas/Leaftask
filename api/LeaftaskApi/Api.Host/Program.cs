@@ -5,8 +5,14 @@ using BuildingBlocks.DrivingInfrastructure;
 using BuildingBlocks.DrivingInfrastructure.Jobs.Quartz;
 using Modules.Organizations.DrivingInfrastructure.Setup;
 using Modules.Users.DrivingInfrastructure.Setup;
+using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, services, configuration) =>
+    configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .Enrich.FromLogContext());
 
 // --- Host base configuration ---
 builder.Services.AddControllers();
