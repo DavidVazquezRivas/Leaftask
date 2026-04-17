@@ -18,11 +18,29 @@ public sealed class Organization : Entity
     }
 
     public Guid Id { get; }
-    public string Name { get; }
-    public string Description { get; }
-    public string Website { get; }
+    public string Name { get; private set; }
+    public string Description { get; private set; }
+    public string Website { get; private set; }
     public DateTime CreatedAt { get; } = DateTime.UtcNow;
     public IReadOnlyCollection<OrganizationInvitation> Invitations => _invitations.AsReadOnly();
+
+    public void Update(string? name = null, string? description = null, string? website = null)
+    {
+        if (name is not null)
+        {
+            Name = name;
+        }
+
+        if (description is not null)
+        {
+            Description = description;
+        }
+
+        if (website is not null)
+        {
+            Website = website;
+        }
+    }
 
     public static Organization Create(string name, string description, string website, Guid creatorUserId)
     {

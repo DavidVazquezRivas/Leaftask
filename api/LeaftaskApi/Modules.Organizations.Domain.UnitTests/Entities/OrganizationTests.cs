@@ -41,5 +41,20 @@ public class OrganizationTests
         invitation.Status.Should().Be(InvitationStatus.Accepted);
         invitation.RespondedAt.Should().NotBeNull();
     }
+
+    [Fact]
+    public void Update_Should_ChangeOnlyProvidedFields()
+    {
+        // Arrange
+        Organization organization = OrganizationTestBuilder.AnOrganization().Build();
+
+        // Act
+        organization.Update(name: "Updated name", website: "https://updated.example.com");
+
+        // Assert
+        organization.Name.Should().Be("Updated name");
+        organization.Description.Should().Be("Default organization description");
+        organization.Website.Should().Be("https://updated.example.com");
+    }
 #pragma warning restore CA1822
 }

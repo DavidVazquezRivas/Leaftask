@@ -7,6 +7,7 @@ using Modules.Organizations.Application.Management;
 using Modules.Organizations.Application.Management.Create;
 using Modules.Organizations.Application.Management.GetDetails;
 using Modules.Organizations.Application.Management.GetMyOrganizations;
+using Modules.Organizations.Application.Management.Patch;
 using Modules.Organizations.DrivingInfrastructure.Models.Requests;
 
 namespace Modules.Organizations.DrivingInfrastructure.Controllers;
@@ -24,6 +25,19 @@ public class OrganizationManagementController : ApiBaseController
         Result<BasicOrganizationResponse> result = await Sender.Send(command, cancellationToken);
 
         return HandleResult(result, 201);
+    }
+
+    [HttpPatch("{id:guid}")]
+    public async Task<IActionResult> PatchOrganization(
+        [FromRoute] Guid id,
+        [FromBody] PatchOrganizationRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        PatchOrganizationCommand command = new(id, request.Name, request.Description, request.Website);
+
+        Result<BasicOrganizationResponse> result = await Sender.Send(command, cancellationToken);
+
+        return HandleResult(result);
     }
 
     [HttpGet("{id:guid}")]
