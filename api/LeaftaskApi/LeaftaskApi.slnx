@@ -37,6 +37,10 @@
     <Project Path="BuildingBlocks.Domain.UnitTests/BuildingBlocks.Domain.UnitTests.csproj" Id="df3ddfa3-af75-4f47-b6d2-6e4bf12c19b9" />
   </Folder>
   <Folder Name="/tests/Modules/" />
+  <Folder Name="/tests/Modules/Organizations/">
+    <Project Path="Modules.Organizations.Application.UnitTests/Modules.Organizations.Application.UnitTests.csproj" Id="c7733e47-ec53-49a2-a411-3fe016bf2c40" />
+    <Project Path="Modules.Organizations.Domain.UnitTests/Modules.Organizations.Domain.UnitTests.csproj" Id="e5b799e7-8075-4014-89ae-04309c016375" />
+  </Folder>
   <Folder Name="/tests/Modules/Users/">
     <Project Path="Modules.Users.Application.UnitTests/Modules.Users.Application.UnitTests.csproj" Id="0abaccd0-4173-41bf-8095-9a89f89c2e49" />
     <Project Path="Modules.Users.Domain.UnitTests/Modules.Users.Domain.UnitTests.csproj" Id="d40887fc-f4f1-4c78-af31-85340b41552f" />

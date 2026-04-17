@@ -4,6 +4,8 @@ namespace Modules.Organizations.Domain.Entities;
 
 public sealed class Organization : Entity
 {
+    private readonly List<OrganizationInvitation> _invitations = [];
+
     private Organization() { }
 
     private Organization(Guid id, string name, string description, string website, DateTime createdAt)
@@ -20,9 +22,17 @@ public sealed class Organization : Entity
     public string Description { get; }
     public string Website { get; }
     public DateTime CreatedAt { get; } = DateTime.UtcNow;
+    public IReadOnlyCollection<OrganizationInvitation> Invitations => _invitations.AsReadOnly();
 
-    public static Organization Create(string name, string description, string website)
+    public static Organization Create(string name, string description, string website, Guid creatorUserId)
     {
-        return new Organization(Guid.NewGuid(), name, description, website, DateTime.UtcNow);
+        Organization organization = new(Guid.NewGuid(), name, description, website, DateTime.UtcNow);
+
+        OrganizationInvitation invitation = OrganizationInvitation.Create(organization.Id, creatorUserId);
+        invitation.Accept();
+
+        organization._invitations.Add(invitation);
+
+        return organization;
     }
 }

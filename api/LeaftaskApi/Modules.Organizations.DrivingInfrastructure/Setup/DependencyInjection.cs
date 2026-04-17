@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Application.Behaviors;
 using BuildingBlocks.DrivingInfrastructure.Jobs.Quartz;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Modules.Organizations.Application.Events;
@@ -38,7 +39,10 @@ public static class DependencyInjection
     private static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<OrganizationDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("Database")));
+        {
+            options.UseNpgsql(configuration.GetConnectionString("Database"));
+            options.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
+        });
 
         return services;
     }
@@ -80,7 +84,7 @@ public static class DependencyInjection
 
     private static IServiceCollection AddQueryServices(this IServiceCollection services)
     {
-        services.AddScoped<IGetBasicOrganizationQueryService, GetBasicOrganizationQueryService>();
+        services.AddScoped<IGetOrganizationDetailsQueryService, GetOrganizationDetailsQueryService>();
 
         return services;
     }

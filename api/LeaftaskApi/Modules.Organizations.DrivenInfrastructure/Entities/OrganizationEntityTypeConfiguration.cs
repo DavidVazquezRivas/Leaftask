@@ -13,6 +13,7 @@ internal sealed class OrganizationEntityTypeConfiguration : IEntityTypeConfigura
 
         builder.HasKey(o => o.Id);
 
+
         builder.Property(o => o.Name)
             .HasColumnName("name")
             .IsRequired()
@@ -29,5 +30,15 @@ internal sealed class OrganizationEntityTypeConfiguration : IEntityTypeConfigura
         builder.Property(o => o.CreatedAt)
             .HasColumnName("created_at")
             .IsRequired();
+
+
+        builder.Metadata
+            .FindNavigation(nameof(Organization.Invitations))!
+            .SetPropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.HasMany(o => o.Invitations)
+            .WithOne()
+            .HasForeignKey(invitation => invitation.OrganizationId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

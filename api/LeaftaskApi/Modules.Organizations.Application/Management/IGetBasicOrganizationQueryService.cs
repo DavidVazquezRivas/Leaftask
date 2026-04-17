@@ -1,8 +1,8 @@
 ﻿namespace Modules.Organizations.Application.Management;
 
-public interface IGetBasicOrganizationQueryService
+public interface IGetOrganizationDetailsQueryService
 {
-    Task<BasicOrganizationResponse?> GetBasicOrganizationsAsync(
+    Task<BasicOrganizationResponse?> GetOrganizationDetailsAsync(
         Guid id,
         CancellationToken cancellationToken = default);
 }

@@ -1,17 +1,25 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Modules.Organizations.Application.Management;
+using Modules.Organizations.Domain.Entities;
 using Modules.Organizations.DrivenInfrastructure.Persistence;
 
 namespace Modules.Organizations.DrivenInfrastructure.Queries;
 
-public sealed class GetBasicOrganizationQueryService(OrganizationDbContext dbContext)
-    : IGetBasicOrganizationQueryService
+public sealed class GetOrganizationDetailsQueryService(OrganizationDbContext dbContext)
+    : IGetOrganizationDetailsQueryService
 {
-    public async Task<BasicOrganizationResponse?> GetBasicOrganizationsAsync(Guid id,
+    public async Task<BasicOrganizationResponse?> GetOrganizationDetailsAsync(Guid id,
         CancellationToken cancellationToken = default) =>
         await dbContext.Organizations
             .AsNoTracking()
-            .Select(organization => new BasicOrganizationResponse(id, organization.Name, organization.Description, 0, 0,
-                0, organization.CreatedAt))
+            .Where(organization => organization.Id == id)
+            .Select(organization => new BasicOrganizationResponse(
+                organization.Id,
+                organization.Name,
+                organization.Description,
+                organization.Invitations.Count(invitation => invitation.Status == InvitationStatus.Accepted),
+                0,
+                0,
+                organization.CreatedAt))
             .FirstOrDefaultAsync(cancellationToken);
 }

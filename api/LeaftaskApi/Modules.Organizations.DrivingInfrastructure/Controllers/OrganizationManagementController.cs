@@ -3,6 +3,7 @@ using BuildingBlocks.DrivingInfrastructure.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Modules.Organizations.Application.Management;
 using Modules.Organizations.Application.Management.Create;
+using Modules.Organizations.Application.Management.GetDetails;
 using Modules.Organizations.DrivingInfrastructure.Models.Requests;
 
 namespace Modules.Organizations.DrivingInfrastructure.Controllers;
@@ -20,5 +21,17 @@ public class OrganizationManagementController : ApiBaseController
         Result<BasicOrganizationResponse> result = await Sender.Send(command, cancellationToken);
 
         return HandleResult(result, 201);
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetOrganizationDetails(
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        GetOrganizationDetailsQuery query = new(id);
+
+        Result<BasicOrganizationResponse> result = await Sender.Send(query, cancellationToken);
+
+        return HandleResult(result, 200);
     }
 }

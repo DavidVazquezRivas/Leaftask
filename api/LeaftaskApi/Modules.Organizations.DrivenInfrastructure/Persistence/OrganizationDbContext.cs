@@ -13,6 +13,7 @@ public sealed class OrganizationDbContext(
     OrganizationModuleEventMapper mapper) : AppDbContext(options, domainEventsDispatcher, mapper)
 {
     public DbSet<Organization> Organizations { get; set; }
+    public DbSet<OrganizationInvitation> OrganizationInvitations { get; set; }
     public DbSet<UserReadModel> UserReadModels { get; set; }
     public DbSet<InboxMessage> InboxMessages { get; set; }
 
