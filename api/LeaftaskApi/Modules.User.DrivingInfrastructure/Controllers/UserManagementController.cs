@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Domain.Result;
+﻿using BuildingBlocks.Application.Queries;
+using BuildingBlocks.Domain.Result;
 using BuildingBlocks.DrivingInfrastructure.Controllers;
 using BuildingBlocks.DrivingInfrastructure.Responses.Meta;
 using Microsoft.AspNetCore.Mvc;
@@ -25,17 +26,21 @@ public class UserManagementController : ApiBaseController
             Search = search
         };
 
-        Result<IReadOnlyCollection<SimpleUserDto>> result = await Sender.Send(query, cancellationToken);
+        Result<PaginatedResult<SimpleUserDto>> result = await Sender.Send(query, cancellationToken);
 
-        // TODO metadata not implemented yet
+        if (result.IsFailure)
+        {
+            return HandleFailure(result.Error);
+        }
+
         IReadOnlyList<SortMeta>? sortMeta = SortMetaParser.Parse(sort);
         PaginationMeta paginationMeta = new()
         {
             Limit = limit,
-            NextCursor = cursor,
-            HasMore = true
+            NextCursor = result.Value.NextCursor,
+            HasMore = result.Value.HasMore
         };
 
-        return HandleResult(result, 200, sortMeta, paginationMeta);
+        return StatusCode(200, BuildSuccessResponse(result.Value.Items, sortMeta, paginationMeta));
     }
 }

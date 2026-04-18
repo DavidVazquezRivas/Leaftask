@@ -4,13 +4,17 @@ using BuildingBlocks.Domain.Result;
 namespace Modules.Users.Application.Management.GetAll;
 
 public sealed class GetAllUsersQueryHandler(IGetAllUsersQueryService service)
-    : IQueryHandler<GetAllUsersQuery, Result<IReadOnlyCollection<SimpleUserDto>>>
+    : IQueryHandler<GetAllUsersQuery, Result<PaginatedResult<SimpleUserDto>>>
 {
-    public async Task<Result<IReadOnlyCollection<SimpleUserDto>>> Handle(GetAllUsersQuery request,
+    public async Task<Result<PaginatedResult<SimpleUserDto>>> Handle(GetAllUsersQuery request,
         CancellationToken cancellationToken)
     {
-        // TODO pagination
-        IReadOnlyCollection<SimpleUserDto> users = await service.GetAllAsync(cancellationToken);
+        PaginatedResult<SimpleUserDto> users = await service.GetAllAsync(
+            request.Limit,
+            request.Cursor,
+            request.Sort,
+            cancellationToken);
+
         return Result.Success(users);
     }
 }

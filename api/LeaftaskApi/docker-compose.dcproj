@@ -8,6 +8,7 @@
   <ItemGroup>
     <None Include=".env" />
     <None Include=".env.example" />
+    <None Include=".github\copilot-instructions.md" />
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>

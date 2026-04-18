@@ -1,6 +1,12 @@
-﻿namespace Modules.Users.Application.Management.GetAll;
+﻿using BuildingBlocks.Application.Queries;
+
+namespace Modules.Users.Application.Management.GetAll;
 
 public interface IGetAllUsersQueryService
 {
-    Task<IReadOnlyList<SimpleUserDto>> GetAllAsync(CancellationToken cancellationToken);
+    Task<PaginatedResult<SimpleUserDto>> GetAllAsync(
+        int limit,
+        string? cursor,
+        IReadOnlyCollection<string> sort,
+        CancellationToken cancellationToken);
 }

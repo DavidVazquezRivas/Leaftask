@@ -3,9 +3,16 @@ using Api.Host.Infrastructure;
 using Api.Host.Infrastructure.DatabaseExtensions;
 using BuildingBlocks.DrivingInfrastructure;
 using BuildingBlocks.DrivingInfrastructure.Jobs.Quartz;
+using Modules.Organizations.DrivingInfrastructure.Setup;
 using Modules.Users.DrivingInfrastructure.Setup;
+using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, services, configuration) =>
+    configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .Enrich.FromLogContext());
 
 // --- Host base configuration ---
 builder.Services.AddControllers();
@@ -20,6 +27,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddBuildingBlocks();
 builder.Services.AddQuartzInfrastructure();
 builder.Services.AddUsersModule(builder.Configuration, builder.Environment.IsDevelopment());
+builder.Services.AddOrganizationsModule(builder.Configuration, builder.Environment.IsDevelopment());
 
 // --- Authentication and authorization configuration ---
 builder.Services.AddAuthenticationConfig(builder.Configuration);

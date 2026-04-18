@@ -15,12 +15,15 @@
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
 		<PackageReference Include="Newtonsoft.Json" />
 		<PackageReference Include="FluentValidation" />
+		<PackageReference Include="Serilog.AspNetCore" />
+		<PackageReference Include="Serilog.Sinks.Seq" />
 		<PackageReference Include="Swashbuckle.AspNetCore" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\BuildingBlocks.DrivingInfrastructure\BuildingBlocks.DrivingInfrastructure.csproj" />
 	  <ProjectReference Include="..\Modules.User.DrivingInfrastructure\Modules.Users.DrivingInfrastructure.csproj" />
+	  <ProjectReference Include="..\Modules.Organizations.DrivingInfrastructure\Modules.Organizations.DrivingInfrastructure.csproj" />
 	</ItemGroup>
 
 </Project>

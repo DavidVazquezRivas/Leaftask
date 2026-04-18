@@ -18,6 +18,12 @@
     <Project Path="BuildingBlocks.DrivingInfrastructure/BuildingBlocks.DrivingInfrastructure.csproj" Id="635d0488-f31f-4e82-81df-79406876c397" />
   </Folder>
   <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/Organizations/">
+    <Project Path="Modules.Organizations.Application/Modules.Organizations.Application.csproj" Id="15f9ba06-4dea-4e39-84a7-70a30ceee5a3" />
+    <Project Path="Modules.Organizations.Domain/Modules.Organizations.Domain.csproj" Id="53000f7a-4bc8-4141-8ef8-65dff4a6407f" />
+    <Project Path="Modules.Organizations.DrivenInfrastructure/Modules.Organizations.DrivenInfrastructure.csproj" Id="59a998f9-73e6-4f05-a908-4050fb02e8e8" />
+    <Project Path="Modules.Organizations.DrivingInfrastructure/Modules.Organizations.DrivingInfrastructure.csproj" />
+  </Folder>
   <Folder Name="/src/Modules/Users/">
     <Project Path="Modules.User.Application/Modules.Users.Application.csproj" />
     <Project Path="Modules.User.Domain/Modules.Users.Domain.csproj" />
@@ -31,6 +37,10 @@
     <Project Path="BuildingBlocks.Domain.UnitTests/BuildingBlocks.Domain.UnitTests.csproj" Id="df3ddfa3-af75-4f47-b6d2-6e4bf12c19b9" />
   </Folder>
   <Folder Name="/tests/Modules/" />
+  <Folder Name="/tests/Modules/Organizations/">
+    <Project Path="Modules.Organizations.Application.UnitTests/Modules.Organizations.Application.UnitTests.csproj" Id="c7733e47-ec53-49a2-a411-3fe016bf2c40" />
+    <Project Path="Modules.Organizations.Domain.UnitTests/Modules.Organizations.Domain.UnitTests.csproj" Id="e5b799e7-8075-4014-89ae-04309c016375" />
+  </Folder>
   <Folder Name="/tests/Modules/Users/">
     <Project Path="Modules.Users.Application.UnitTests/Modules.Users.Application.UnitTests.csproj" Id="0abaccd0-4173-41bf-8095-9a89f89c2e49" />
     <Project Path="Modules.Users.Domain.UnitTests/Modules.Users.Domain.UnitTests.csproj" Id="d40887fc-f4f1-4c78-af31-85340b41552f" />

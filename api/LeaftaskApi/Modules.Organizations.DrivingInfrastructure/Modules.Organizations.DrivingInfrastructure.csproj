@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BuildingBlocks.Application\BuildingBlocks.Application.csproj" />
+    <ProjectReference Include="..\BuildingBlocks.DrivingInfrastructure\BuildingBlocks.DrivingInfrastructure.csproj" />
+    <ProjectReference Include="..\Modules.Organizations.DrivenInfrastructure\Modules.Organizations.DrivenInfrastructure.csproj" />
+    <ProjectReference Include="..\Modules.User.Integration\Modules.Users.Integration.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\Responses\" />
+  </ItemGroup>
+</Project>
