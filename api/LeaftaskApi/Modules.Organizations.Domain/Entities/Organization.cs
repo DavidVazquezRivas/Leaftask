@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Domain.Entities;
 using BuildingBlocks.Domain.Result;
 using Modules.Organizations.Domain.Errors;
+using Modules.Organizations.Domain.Events;
 
 namespace Modules.Organizations.Domain.Entities;
 
@@ -51,6 +52,14 @@ public sealed class Organization : Entity
         OrganizationRole role = new(name, Id, permissions);
         _roles.Add(role);
         return role;
+    }
+
+    public OrganizationInvitation AddInvitation(Guid userId, Guid organizationRoleId)
+    {
+        OrganizationInvitation invitation = OrganizationInvitation.Create(Id, userId, organizationRoleId);
+        _invitations.Add(invitation);
+        Raise(new OrganizationInvitationCreatedDomainEvent(invitation.Id, invitation.OrganizationId, invitation.UserId, invitation.OrganizationRoleId));
+        return invitation;
     }
 
     public Result UpdateRole(Guid roleId, string name, IReadOnlyCollection<(Guid OrganizationPermissionId, PermissionLevel Level)>? permissions = null)
@@ -130,6 +139,7 @@ public sealed class Organization : Entity
         invitation.Accept();
 
         organization._invitations.Add(invitation);
+        organization.Raise(new OrganizationCreatedDomainEvent(organization.Id, creatorUserId));
 
         return organization;
     }

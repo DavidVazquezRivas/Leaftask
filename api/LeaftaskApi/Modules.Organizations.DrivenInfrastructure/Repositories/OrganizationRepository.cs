@@ -21,6 +21,9 @@ public class OrganizationRepository(OrganizationDbContext dbContext) : IOrganiza
     public async Task AddRoleAsync(OrganizationRole role, CancellationToken cancellationToken = default) =>
         await dbContext.AddAsync(role, cancellationToken);
 
+    public async Task AddInvitationAsync(OrganizationInvitation invitation, CancellationToken cancellationToken = default) =>
+        await dbContext.AddAsync(invitation, cancellationToken);
+
     public Task RemoveAsync(Organization organization, CancellationToken cancellationToken = default)
     {
         dbContext.Remove(organization);

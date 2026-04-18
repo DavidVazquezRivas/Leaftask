@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Domain.Entities;
 using BuildingBlocks.Domain.Result;
 using Modules.Organizations.Domain.Errors;
+using Modules.Organizations.Domain.Events;
 
 namespace Modules.Organizations.Domain.Entities;
 
@@ -45,41 +46,11 @@ public sealed class OrganizationInvitation : Entity
         return Result.Success();
     }
 
-    public Result Accept()
-    {
-        if (Status != InvitationStatus.Pending)
-        {
-            return Result.Failure(OrganizationErrors.InvalidInvitationStatus);
-        }
+    public Result Accept() => Respond(InvitationStatus.Accepted);
 
-        Status = InvitationStatus.Accepted;
-        RespondedAt = DateTime.UtcNow;
-        return Result.Success();
-    }
+    public Result Reject() => Respond(InvitationStatus.Rejected);
 
-    public Result Reject()
-    {
-        if (Status != InvitationStatus.Pending)
-        {
-            return Result.Failure(OrganizationErrors.InvalidInvitationStatus);
-        }
-
-        Status = InvitationStatus.Rejected;
-        RespondedAt = DateTime.UtcNow;
-        return Result.Success();
-    }
-
-    public Result Cancel()
-    {
-        if (Status != InvitationStatus.Pending)
-        {
-            return Result.Failure(OrganizationErrors.InvalidInvitationStatus);
-        }
-
-        Status = InvitationStatus.Canceled;
-        RespondedAt = DateTime.UtcNow;
-        return Result.Success();
-    }
+    public Result Cancel() => Respond(InvitationStatus.Canceled);
 
     public Result Abandon()
     {
@@ -90,6 +61,20 @@ public sealed class OrganizationInvitation : Entity
 
         Status = InvitationStatus.Abandoned;
         AbandonedAt = DateTime.UtcNow;
+        Raise(new OrganizationInvitationRespondedDomainEvent(Id, OrganizationId, UserId, OrganizationRoleId, Status));
+        return Result.Success();
+    }
+
+    private Result Respond(InvitationStatus status)
+    {
+        if (Status != InvitationStatus.Pending)
+        {
+            return Result.Failure(OrganizationErrors.InvalidInvitationStatus);
+        }
+
+        Status = status;
+        RespondedAt = DateTime.UtcNow;
+        Raise(new OrganizationInvitationRespondedDomainEvent(Id, OrganizationId, UserId, OrganizationRoleId, status));
         return Result.Success();
     }
 }

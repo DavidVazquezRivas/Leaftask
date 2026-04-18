@@ -2,6 +2,7 @@ using BuildingBlocks.Domain.Result;
 using FluentAssertions;
 using Modules.Organizations.Domain.Entities;
 using Modules.Organizations.Domain.Errors;
+using Modules.Organizations.Domain.Events;
 using Modules.Organizations.Domain.UnitTests.TestBuilders;
 using Xunit;
 
@@ -48,6 +49,50 @@ public class OrganizationTests
         invitation.UserId.Should().Be(creatorUserId);
         invitation.Status.Should().Be(InvitationStatus.Accepted);
         invitation.RespondedAt.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void Create_Should_RaiseOrganizationCreatedDomainEvent()
+    {
+        // Arrange
+        Guid creatorUserId = Guid.NewGuid();
+
+        // Act
+        Organization organization = OrganizationTestBuilder.AnOrganization()
+            .WithCreatorUserId(creatorUserId)
+            .Build();
+
+        // Assert
+        OrganizationCreatedDomainEvent created = organization.DomainEvents.Should()
+            .ContainSingle(domainEvent => domainEvent is OrganizationCreatedDomainEvent)
+            .Subject as OrganizationCreatedDomainEvent ?? throw new InvalidOperationException();
+
+        created.OrganizationId.Should().Be(organization.Id);
+        created.CreatorUserId.Should().Be(creatorUserId);
+    }
+
+    [Fact]
+    public void AddInvitation_Should_AddInvitation_And_RaiseDomainEvent()
+    {
+        // Arrange
+        Organization organization = OrganizationTestBuilder.AnOrganization().Build();
+        OrganizationRole role = organization.Roles.Single();
+        Guid userId = Guid.NewGuid();
+
+        // Act
+        OrganizationInvitation invitation = organization.AddInvitation(userId, role.Id);
+
+        // Assert
+        organization.Invitations.Should().ContainSingle(x => x.Id == invitation.Id && x.UserId == userId && x.OrganizationRoleId == role.Id);
+
+        OrganizationInvitationCreatedDomainEvent created = organization.DomainEvents.Should()
+            .Contain(domainEvent => domainEvent is OrganizationInvitationCreatedDomainEvent)
+            .Subject as OrganizationInvitationCreatedDomainEvent ?? throw new InvalidOperationException();
+
+        created.OrganizationInvitationId.Should().Be(invitation.Id);
+        created.OrganizationId.Should().Be(organization.Id);
+        created.UserId.Should().Be(userId);
+        created.OrganizationRoleId.Should().Be(role.Id);
     }
 
     [Fact]
