@@ -36,9 +36,18 @@ internal sealed class OrganizationEntityTypeConfiguration : IEntityTypeConfigura
             .FindNavigation(nameof(Organization.Invitations))!
             .SetPropertyAccessMode(PropertyAccessMode.Field);
 
+        builder.Metadata
+            .FindNavigation(nameof(Organization.Roles))!
+            .SetPropertyAccessMode(PropertyAccessMode.Field);
+
         builder.HasMany(o => o.Invitations)
             .WithOne()
             .HasForeignKey(invitation => invitation.OrganizationId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(o => o.Roles)
+            .WithOne()
+            .HasForeignKey(role => role.OrganizationId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

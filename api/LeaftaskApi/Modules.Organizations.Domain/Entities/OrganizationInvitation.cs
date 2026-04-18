@@ -10,7 +10,7 @@ public sealed class OrganizationInvitation : Entity
 
     private OrganizationInvitation(Guid id, InvitationStatus status, DateTime invitedAt, DateTime? respondedAt,
         DateTime? abandonedAt,
-        Guid organizationId, Guid userId)
+        Guid organizationId, Guid userId, Guid organizationRoleId)
     {
         Id = id;
         Status = status;
@@ -19,6 +19,7 @@ public sealed class OrganizationInvitation : Entity
         AbandonedAt = abandonedAt;
         OrganizationId = organizationId;
         UserId = userId;
+        OrganizationRoleId = organizationRoleId;
     }
 
     public Guid Id { get; }
@@ -28,9 +29,10 @@ public sealed class OrganizationInvitation : Entity
     public DateTime? AbandonedAt { get; private set; }
     public Guid OrganizationId { get; }
     public Guid UserId { get; }
+    public Guid OrganizationRoleId { get; }
 
-    public static OrganizationInvitation Create(Guid organizationId, Guid userId) =>
-        new(Guid.NewGuid(), InvitationStatus.Pending, DateTime.UtcNow, null, null, organizationId, userId);
+    public static OrganizationInvitation Create(Guid organizationId, Guid userId, Guid organizationRoleId) =>
+        new(Guid.NewGuid(), InvitationStatus.Pending, DateTime.UtcNow, null, null, organizationId, userId, organizationRoleId);
 
     public Result Accept()
     {

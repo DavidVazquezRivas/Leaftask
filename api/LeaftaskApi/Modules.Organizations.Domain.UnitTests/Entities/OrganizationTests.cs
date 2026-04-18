@@ -1,5 +1,7 @@
+using BuildingBlocks.Domain.Result;
 using FluentAssertions;
 using Modules.Organizations.Domain.Entities;
+using Modules.Organizations.Domain.Errors;
 using Modules.Organizations.Domain.UnitTests.TestBuilders;
 using Xunit;
 
@@ -34,9 +36,15 @@ public class OrganizationTests
         organization.Website.Should().Be(website);
         organization.CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(5));
 
+        organization.Roles.Should().ContainSingle();
+        OrganizationRole role = organization.Roles.Single();
+        role.OrganizationId.Should().Be(organization.Id);
+        role.Name.Should().Be("Owner");
+
         organization.Invitations.Should().ContainSingle();
         OrganizationInvitation invitation = organization.Invitations.Single();
         invitation.OrganizationId.Should().Be(organization.Id);
+        invitation.OrganizationRoleId.Should().Be(role.Id);
         invitation.UserId.Should().Be(creatorUserId);
         invitation.Status.Should().Be(InvitationStatus.Accepted);
         invitation.RespondedAt.Should().NotBeNull();
@@ -55,6 +63,57 @@ public class OrganizationTests
         organization.Name.Should().Be("Updated name");
         organization.Description.Should().Be("Default organization description");
         organization.Website.Should().Be("https://updated.example.com");
+    }
+
+    [Fact]
+    public void UpdateRole_Should_UpdateRoleName_And_Permissions()
+    {
+        // Arrange
+        Organization organization = OrganizationTestBuilder.AnOrganization().Build();
+        OrganizationPermission[] permissions =
+        [
+            new("organization.configure", "Configure Organization"),
+            new("organization.invite_members", "Invite Members")
+        ];
+
+        OrganizationRole role = organization.AddRole("Manager", permissions);
+
+        // Act
+        Result result = organization.UpdateRole(role.Id, "Manager Updated", [(permissions[0].Id, PermissionLevel.Full)]);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        role.Name.Should().Be("Manager Updated");
+        role.Permissions.Should().ContainSingle(permission => permission.OrganizationPermissionId == permissions[0].Id && permission.Level == PermissionLevel.Full);
+        role.Permissions.Should().ContainSingle(permission => permission.OrganizationPermissionId == permissions[1].Id && permission.Level == PermissionLevel.None);
+    }
+
+    [Fact]
+    public void UpdateRole_Should_ReturnFailure_When_RoleDoesNotExist()
+    {
+        // Arrange
+        Organization organization = OrganizationTestBuilder.AnOrganization().Build();
+
+        // Act
+        Result result = organization.UpdateRole(Guid.NewGuid(), "Updated role");
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(OrganizationErrors.OrganizationRoleNotFound);
+    }
+
+    [Fact]
+    public void RemoveRole_Should_ReturnFailure_When_RoleDoesNotExist()
+    {
+        // Arrange
+        Organization organization = OrganizationTestBuilder.AnOrganization().Build();
+
+        // Act
+        Result result = organization.RemoveRole(Guid.NewGuid());
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(OrganizationErrors.OrganizationRoleNotFound);
     }
 #pragma warning restore CA1822
 }

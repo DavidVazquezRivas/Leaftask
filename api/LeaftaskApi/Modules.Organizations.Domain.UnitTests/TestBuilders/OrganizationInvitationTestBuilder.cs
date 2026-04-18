@@ -7,6 +7,7 @@ public sealed class OrganizationInvitationTestBuilder
 #pragma warning restore CA1515
 {
     private Guid _organizationId = Guid.NewGuid();
+    private Guid _organizationRoleId = Guid.NewGuid();
     private Guid _userId = Guid.NewGuid();
 
     private OrganizationInvitationTestBuilder() { }
@@ -19,11 +20,17 @@ public sealed class OrganizationInvitationTestBuilder
         return this;
     }
 
+    public OrganizationInvitationTestBuilder WithOrganizationRoleId(Guid organizationRoleId)
+    {
+        _organizationRoleId = organizationRoleId;
+        return this;
+    }
+
     public OrganizationInvitationTestBuilder WithUserId(Guid userId)
     {
         _userId = userId;
         return this;
     }
 
-    public OrganizationInvitation Build() => OrganizationInvitation.Create(_organizationId, _userId);
+    public OrganizationInvitation Build() => OrganizationInvitation.Create(_organizationId, _userId, _organizationRoleId);
 }

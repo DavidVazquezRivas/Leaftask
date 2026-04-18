@@ -34,9 +34,18 @@ internal sealed class OrganizationInvitationEntityTypeConfiguration : IEntityTyp
             .HasColumnName("user_id")
             .IsRequired();
 
+        builder.Property(invitation => invitation.OrganizationRoleId)
+            .HasColumnName("organization_role_id")
+            .IsRequired();
+
         builder.HasIndex(invitation => new { invitation.OrganizationId, invitation.UserId })
             .IsUnique();
 
         builder.HasIndex(invitation => new { invitation.OrganizationId, invitation.Status });
+
+        builder.HasOne<OrganizationRole>()
+            .WithMany()
+            .HasForeignKey(invitation => invitation.OrganizationRoleId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

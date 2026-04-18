@@ -5,6 +5,7 @@ using BuildingBlocks.DrivingInfrastructure.Responses.Meta;
 using Microsoft.AspNetCore.Mvc;
 using Modules.Organizations.Application.Management;
 using Modules.Organizations.Application.Management.Create;
+using Modules.Organizations.Application.Management.Delete;
 using Modules.Organizations.Application.Management.GetDetails;
 using Modules.Organizations.Application.Management.GetMyOrganizations;
 using Modules.Organizations.Application.Management.Patch;
@@ -36,6 +37,18 @@ public class OrganizationManagementController : ApiBaseController
         PatchOrganizationCommand command = new(id, request.Name, request.Description, request.Website);
 
         Result<BasicOrganizationResponse> result = await Sender.Send(command, cancellationToken);
+
+        return HandleResult(result);
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteOrganization(
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        DeleteOrganizationCommand command = new(id);
+
+        Result result = await Sender.Send(command, cancellationToken);
 
         return HandleResult(result);
     }

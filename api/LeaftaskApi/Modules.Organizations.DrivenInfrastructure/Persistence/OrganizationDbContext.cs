@@ -14,6 +14,9 @@ public sealed class OrganizationDbContext(
 {
     public DbSet<Organization> Organizations { get; set; }
     public DbSet<OrganizationInvitation> OrganizationInvitations { get; set; }
+    public DbSet<OrganizationPermission> OrganizationPermissions { get; set; }
+    public DbSet<OrganizationRole> OrganizationRoles { get; set; }
+    public DbSet<OrganizationRolePermission> OrganizationRolePermissions { get; set; }
     public DbSet<UserReadModel> UserReadModels { get; set; }
     public DbSet<InboxMessage> InboxMessages { get; set; }
 

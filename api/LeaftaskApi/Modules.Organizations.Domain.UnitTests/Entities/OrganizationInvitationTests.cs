@@ -17,17 +17,20 @@ public class OrganizationInvitationTests
     {
         // Arrange
         Guid organizationId = Guid.NewGuid();
+        Guid organizationRoleId = Guid.NewGuid();
         Guid userId = Guid.NewGuid();
 
         // Act
         OrganizationInvitation invitation = OrganizationInvitationTestBuilder.AnInvitation()
             .WithOrganizationId(organizationId)
+            .WithOrganizationRoleId(organizationRoleId)
             .WithUserId(userId)
             .Build();
 
         // Assert
         invitation.Id.Should().NotBe(Guid.Empty);
         invitation.OrganizationId.Should().Be(organizationId);
+        invitation.OrganizationRoleId.Should().Be(organizationRoleId);
         invitation.UserId.Should().Be(userId);
         invitation.Status.Should().Be(InvitationStatus.Pending);
         invitation.RespondedAt.Should().BeNull();

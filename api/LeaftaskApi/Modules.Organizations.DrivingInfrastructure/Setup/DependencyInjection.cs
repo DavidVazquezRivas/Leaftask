@@ -9,8 +9,12 @@ using Modules.Organizations.Application.Events;
 using Modules.Organizations.Application.Management;
 using Modules.Organizations.Application.Management.Create;
 using Modules.Organizations.Application.Management.GetMyOrganizations;
+using Modules.Organizations.Application.Roles.Create;
+using Modules.Organizations.Application.Roles.GetPermissions;
+using Modules.Organizations.Application.Roles.GetRoles;
 using Modules.Organizations.Domain.Repositories;
 using Modules.Organizations.DrivenInfrastructure.Persistence;
+using Modules.Organizations.DrivenInfrastructure.Persistence.Seeding;
 using Modules.Organizations.DrivenInfrastructure.Queries;
 using Modules.Organizations.DrivenInfrastructure.Repositories;
 using Modules.Organizations.DrivingInfrastructure.Jobs;
@@ -24,7 +28,8 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddOrganizationsModule(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        bool isDevelopment)
     {
         services.AddDatabase(configuration);
 
@@ -34,6 +39,7 @@ public static class DependencyInjection
 
         services.AddRepositories();
         services.AddQueryServices();
+        services.AddSeedingStrategy(isDevelopment);
 
         return services;
     }
@@ -83,6 +89,7 @@ public static class DependencyInjection
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+        services.AddScoped<IOrganizationPermissionRepository, OrganizationPermissionRepository>();
         services.AddScoped<IUserReadModelRepository, UserReadModelRepository>();
 
         return services;
@@ -92,6 +99,23 @@ public static class DependencyInjection
     {
         services.AddScoped<IGetOrganizationDetailsQueryService, GetOrganizationDetailsQueryService>();
         services.AddScoped<IGetMyOrganizationsQueryService, GetMyOrganizationsQueryService>();
+        services.AddScoped<IGetOrganizationPermissionsQueryService, GetOrganizationPermissionsQueryService>();
+        services.AddScoped<IGetOrganizationRoleDetailsQueryService, GetOrganizationRoleDetailsQueryService>();
+        services.AddScoped<IGetOrganizationRolesQueryService, GetOrganizationRolesQueryService>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddSeedingStrategy(this IServiceCollection services, bool isDevelopment)
+    {
+        if (isDevelopment)
+        {
+            services.AddScoped<IOrganizationSeederStrategy, DevelopmentOrganizationSeeder>();
+        }
+        else
+        {
+            services.AddScoped<IOrganizationSeederStrategy, ProductionOrganizationSeeder>();
+        }
 
         return services;
     }

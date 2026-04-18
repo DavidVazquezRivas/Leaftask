@@ -15,15 +15,17 @@ public class CreateOrganizationCommandHandlerTests
 {
     private readonly CreateOrganizationCommandHandler _handler;
     private readonly IGetOrganizationDetailsQueryService _queryServiceMock;
+    private readonly IOrganizationPermissionRepository _permissionRepositoryMock;
     private readonly IOrganizationRepository _repositoryMock;
     private readonly IUserContext _userContextMock;
 
     public CreateOrganizationCommandHandlerTests()
     {
         _repositoryMock = Substitute.For<IOrganizationRepository>();
+        _permissionRepositoryMock = Substitute.For<IOrganizationPermissionRepository>();
         _queryServiceMock = Substitute.For<IGetOrganizationDetailsQueryService>();
         _userContextMock = Substitute.For<IUserContext>();
-        _handler = new CreateOrganizationCommandHandler(_repositoryMock, _queryServiceMock, _userContextMock);
+        _handler = new CreateOrganizationCommandHandler(_repositoryMock, _permissionRepositoryMock, _queryServiceMock, _userContextMock);
     }
 
     [Fact]
@@ -38,6 +40,13 @@ public class CreateOrganizationCommandHandlerTests
 
         Guid creatorUserId = Guid.NewGuid();
         _userContextMock.UserId.Returns(creatorUserId);
+
+        OrganizationPermission[] permissions =
+        [
+            new("organization.read", "Read organizations"),
+            new("organization.update", "Update organizations")
+        ];
+        _permissionRepositoryMock.GetAllAsync(Arg.Any<CancellationToken>()).Returns(permissions);
 
         Organization? addedOrganization = null;
 
@@ -58,10 +67,14 @@ public class CreateOrganizationCommandHandlerTests
         addedOrganization!.Name.Should().Be(command.Name);
         addedOrganization.Description.Should().Be(command.Description);
         addedOrganization.Website.Should().Be(command.Website);
+        addedOrganization.Roles.Should().ContainSingle();
+        addedOrganization.Roles.Single().Permissions.Should().HaveCount(2);
+        addedOrganization.Roles.Single().Permissions.Should().OnlyContain(permission => permission.Level == PermissionLevel.Full);
         addedOrganization.Invitations.Should().ContainSingle();
         addedOrganization.Invitations.Single().UserId.Should().Be(creatorUserId);
         addedOrganization.Invitations.Single().Status.Should().Be(InvitationStatus.Accepted);
 
+        await _permissionRepositoryMock.Received(1).GetAllAsync(Arg.Any<CancellationToken>());
         await _repositoryMock.Received(1).AddAsync(Arg.Any<Organization>(), Arg.Any<CancellationToken>());
         await _repositoryMock.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
         await _queryServiceMock.Received(1)
@@ -75,6 +88,8 @@ public class CreateOrganizationCommandHandlerTests
         CreateOrganizationCommand command = CreateOrganizationCommandTestBuilder.ACommand().Build();
 
         _userContextMock.UserId.Returns(Guid.NewGuid());
+        _permissionRepositoryMock.GetAllAsync(Arg.Any<CancellationToken>())
+            .Returns(Array.Empty<OrganizationPermission>());
 
         _queryServiceMock.GetOrganizationDetailsAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns((BasicOrganizationResponse?)null);
@@ -86,6 +101,7 @@ public class CreateOrganizationCommandHandlerTests
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(OrganizationErrors.OrganizationNotFound);
 
+        await _permissionRepositoryMock.Received(1).GetAllAsync(Arg.Any<CancellationToken>());
         await _repositoryMock.Received(1).AddAsync(Arg.Any<Organization>(), Arg.Any<CancellationToken>());
         await _repositoryMock.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }

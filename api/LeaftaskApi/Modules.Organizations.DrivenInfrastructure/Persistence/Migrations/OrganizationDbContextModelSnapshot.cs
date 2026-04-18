@@ -124,6 +124,10 @@ namespace Modules.Organizations.DrivenInfrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("organization_id");
 
+                    b.Property<Guid>("OrganizationRoleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("organization_role_id");
+
                     b.Property<DateTime?>("RespondedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("responded_at");
@@ -138,12 +142,92 @@ namespace Modules.Organizations.DrivenInfrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("OrganizationRoleId");
+
                     b.HasIndex("OrganizationId", "Status");
 
                     b.HasIndex("OrganizationId", "UserId")
                         .IsUnique();
 
                     b.ToTable("organization_invitations", "organization");
+                });
+
+            modelBuilder.Entity("Modules.Organizations.Domain.Entities.OrganizationPermission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("organization_permissions", "organization");
+                });
+
+            modelBuilder.Entity("Modules.Organizations.Domain.Entities.OrganizationRole", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("organization_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganizationId", "Name")
+                        .IsUnique();
+
+                    b.ToTable("organization_roles", "organization");
+                });
+
+            modelBuilder.Entity("Modules.Organizations.Domain.Entities.OrganizationRolePermission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("integer")
+                        .HasColumnName("level");
+
+                    b.Property<Guid>("OrganizationPermissionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("organization_permission_id");
+
+                    b.Property<Guid>("OrganizationRoleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("organization_role_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganizationPermissionId");
+
+                    b.HasIndex("OrganizationRoleId", "OrganizationPermissionId")
+                        .IsUnique();
+
+                    b.ToTable("organization_role_permissions", "organization");
                 });
 
             modelBuilder.Entity("Modules.Organizations.Domain.Entities.UserReadModel", b =>
@@ -185,11 +269,48 @@ namespace Modules.Organizations.DrivenInfrastructure.Persistence.Migrations
                         .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Modules.Organizations.Domain.Entities.OrganizationRole", null)
+                        .WithMany()
+                        .HasForeignKey("OrganizationRoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Modules.Organizations.Domain.Entities.OrganizationRole", b =>
+                {
+                    b.HasOne("Modules.Organizations.Domain.Entities.Organization", null)
+                        .WithMany("Roles")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Modules.Organizations.Domain.Entities.OrganizationRolePermission", b =>
+                {
+                    b.HasOne("Modules.Organizations.Domain.Entities.OrganizationPermission", null)
+                        .WithMany()
+                        .HasForeignKey("OrganizationPermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Modules.Organizations.Domain.Entities.OrganizationRole", null)
+                        .WithMany("Permissions")
+                        .HasForeignKey("OrganizationRoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Modules.Organizations.Domain.Entities.Organization", b =>
                 {
                     b.Navigation("Invitations");
+
+                    b.Navigation("Roles");
+                });
+
+            modelBuilder.Entity("Modules.Organizations.Domain.Entities.OrganizationRole", b =>
+                {
+                    b.Navigation("Permissions");
                 });
 #pragma warning restore 612, 618
         }

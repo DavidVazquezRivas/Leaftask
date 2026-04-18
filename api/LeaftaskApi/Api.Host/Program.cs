@@ -27,7 +27,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddBuildingBlocks();
 builder.Services.AddQuartzInfrastructure();
 builder.Services.AddUsersModule(builder.Configuration, builder.Environment.IsDevelopment());
-builder.Services.AddOrganizationsModule(builder.Configuration);
+builder.Services.AddOrganizationsModule(builder.Configuration, builder.Environment.IsDevelopment());
 
 // --- Authentication and authorization configuration ---
 builder.Services.AddAuthenticationConfig(builder.Configuration);

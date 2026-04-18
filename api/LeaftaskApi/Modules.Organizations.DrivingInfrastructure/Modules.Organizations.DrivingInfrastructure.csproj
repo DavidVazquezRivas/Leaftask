@@ -9,4 +9,7 @@
     <ProjectReference Include="..\Modules.Organizations.DrivenInfrastructure\Modules.Organizations.DrivenInfrastructure.csproj" />
     <ProjectReference Include="..\Modules.User.Integration\Modules.Users.Integration.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\Responses\" />
+  </ItemGroup>
 </Project>
