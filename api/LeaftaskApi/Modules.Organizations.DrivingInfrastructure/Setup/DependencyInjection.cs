@@ -9,9 +9,14 @@ using Modules.Organizations.Application.Events;
 using Modules.Organizations.Application.Management;
 using Modules.Organizations.Application.Management.Create;
 using Modules.Organizations.Application.Management.GetMyOrganizations;
+using Modules.Organizations.Application.Members.Delete;
+using Modules.Organizations.Application.Members.GetDistribution;
+using Modules.Organizations.Application.Members.GetMembers;
+using Modules.Organizations.Application.Members.UpdateRole;
 using Modules.Organizations.Application.Roles.Create;
 using Modules.Organizations.Application.Roles.GetPermissions;
 using Modules.Organizations.Application.Roles.GetRoles;
+using Modules.Organizations.Application.Roles.Patch;
 using Modules.Organizations.Domain.Repositories;
 using Modules.Organizations.DrivenInfrastructure.Persistence;
 using Modules.Organizations.DrivenInfrastructure.Persistence.Seeding;
@@ -102,6 +107,8 @@ public static class DependencyInjection
         services.AddScoped<IGetOrganizationPermissionsQueryService, GetOrganizationPermissionsQueryService>();
         services.AddScoped<IGetOrganizationRoleDetailsQueryService, GetOrganizationRoleDetailsQueryService>();
         services.AddScoped<IGetOrganizationRolesQueryService, GetOrganizationRolesQueryService>();
+        services.AddScoped<IGetOrganizationMembersDistributionQueryService, GetOrganizationMembersDistributionQueryService>();
+        services.AddScoped<IGetOrganizationMembersQueryService, GetOrganizationMembersQueryService>();
 
         return services;
     }

@@ -38,6 +38,36 @@ public class OrganizationInvitationTests
     }
 
     [Fact]
+    public void UpdateRole_Should_ReturnSuccess_When_InvitationIsAccepted()
+    {
+        // Arrange
+        OrganizationInvitation invitation = OrganizationInvitationTestBuilder.AnInvitation().Build();
+        invitation.Accept();
+        Guid newRoleId = Guid.NewGuid();
+
+        // Act
+        Result result = invitation.UpdateRole(newRoleId);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        invitation.OrganizationRoleId.Should().Be(newRoleId);
+    }
+
+    [Fact]
+    public void UpdateRole_Should_ReturnFailure_When_InvitationIsNotAccepted()
+    {
+        // Arrange
+        OrganizationInvitation invitation = OrganizationInvitationTestBuilder.AnInvitation().Build();
+
+        // Act
+        Result result = invitation.UpdateRole(Guid.NewGuid());
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(OrganizationErrors.InvalidInvitationStatus);
+    }
+
+    [Fact]
     public void Accept_Should_ReturnSuccess_When_InvitationIsPending()
     {
         // Arrange

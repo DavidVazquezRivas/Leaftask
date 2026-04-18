@@ -29,10 +29,21 @@ public sealed class OrganizationInvitation : Entity
     public DateTime? AbandonedAt { get; private set; }
     public Guid OrganizationId { get; }
     public Guid UserId { get; }
-    public Guid OrganizationRoleId { get; }
+    public Guid OrganizationRoleId { get; private set; }
 
     public static OrganizationInvitation Create(Guid organizationId, Guid userId, Guid organizationRoleId) =>
         new(Guid.NewGuid(), InvitationStatus.Pending, DateTime.UtcNow, null, null, organizationId, userId, organizationRoleId);
+
+    public Result UpdateRole(Guid organizationRoleId)
+    {
+        if (Status != InvitationStatus.Accepted)
+        {
+            return Result.Failure(OrganizationErrors.InvalidInvitationStatus);
+        }
+
+        OrganizationRoleId = organizationRoleId;
+        return Result.Success();
+    }
 
     public Result Accept()
     {

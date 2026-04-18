@@ -64,6 +64,38 @@ public sealed class Organization : Entity
         return role.Update(name, permissions);
     }
 
+    public Result UpdateMemberRole(Guid memberId, Guid roleId)
+    {
+        OrganizationRole? role = _roles.SingleOrDefault(role => role.Id == roleId);
+        if (role is null)
+        {
+            return Result.Failure(OrganizationErrors.OrganizationRoleNotFound);
+        }
+
+        OrganizationInvitation? invitation = _invitations.SingleOrDefault(invitation =>
+            invitation.UserId == memberId && invitation.Status == InvitationStatus.Accepted);
+
+        if (invitation is null)
+        {
+            return Result.Failure(OrganizationErrors.OrganizationMemberNotFound);
+        }
+
+        return invitation.UpdateRole(roleId);
+    }
+
+    public Result RemoveMember(Guid memberId)
+    {
+        OrganizationInvitation? invitation = _invitations.SingleOrDefault(invitation =>
+            invitation.UserId == memberId && invitation.Status == InvitationStatus.Accepted);
+
+        if (invitation is null)
+        {
+            return Result.Failure(OrganizationErrors.OrganizationMemberNotFound);
+        }
+
+        return invitation.Abandon();
+    }
+
     public Result RemoveRole(Guid roleId)
     {
         OrganizationRole? role = _roles.SingleOrDefault(role => role.Id == roleId);

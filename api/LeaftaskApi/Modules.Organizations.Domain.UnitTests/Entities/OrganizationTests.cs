@@ -89,6 +89,75 @@ public class OrganizationTests
     }
 
     [Fact]
+    public void UpdateMemberRole_Should_UpdateAcceptedMemberRole()
+    {
+        // Arrange
+        Organization organization = OrganizationTestBuilder.AnOrganization().Build();
+        OrganizationPermission[] permissions =
+        [
+            new("organization.configure", "Configure Organization")
+        ];
+
+        OrganizationRole newRole = organization.AddRole("Member", permissions);
+
+        OrganizationInvitation invitation = organization.Invitations.Single();
+        Guid memberId = invitation.UserId;
+
+        // Act
+        Result result = organization.UpdateMemberRole(memberId, newRole.Id);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        invitation.OrganizationRoleId.Should().Be(newRole.Id);
+    }
+
+    [Fact]
+    public void RemoveMember_Should_AbandonAcceptedInvitation()
+    {
+        // Arrange
+        Organization organization = OrganizationTestBuilder.AnOrganization().Build();
+        OrganizationInvitation invitation = organization.Invitations.Single();
+        Guid memberId = invitation.UserId;
+
+        // Act
+        Result result = organization.RemoveMember(memberId);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        invitation.Status.Should().Be(InvitationStatus.Abandoned);
+        invitation.AbandonedAt.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void RemoveMember_Should_ReturnFailure_When_MemberDoesNotExist()
+    {
+        // Arrange
+        Organization organization = OrganizationTestBuilder.AnOrganization().Build();
+
+        // Act
+        Result result = organization.RemoveMember(Guid.NewGuid());
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(OrganizationErrors.OrganizationMemberNotFound);
+    }
+
+    [Fact]
+    public void UpdateMemberRole_Should_ReturnFailure_When_MemberDoesNotExist()
+    {
+        // Arrange
+        Organization organization = OrganizationTestBuilder.AnOrganization().Build();
+        OrganizationRole role = organization.Roles.Single();
+
+        // Act
+        Result result = organization.UpdateMemberRole(Guid.NewGuid(), role.Id);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(OrganizationErrors.OrganizationMemberNotFound);
+    }
+
+    [Fact]
     public void UpdateRole_Should_ReturnFailure_When_RoleDoesNotExist()
     {
         // Arrange

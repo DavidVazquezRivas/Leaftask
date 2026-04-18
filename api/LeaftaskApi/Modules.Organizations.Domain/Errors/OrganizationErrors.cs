@@ -16,6 +16,9 @@ public static class OrganizationErrors
     public static readonly Error OrganizationMembershipRequired =
         new("Organization.Membership.Required", "You must be a member of the organization to perform this operation.", 403);
 
+    public static readonly Error OrganizationMemberNotFound =
+        new("Organization.Member.NotFound", "The specified organization member was not found.", 404);
+
     public static readonly Error InvalidInvitationStatus =
         new("Organization.Invitation.InvalidStatus", "The invitation status is invalid for this operation.", 409);
 
