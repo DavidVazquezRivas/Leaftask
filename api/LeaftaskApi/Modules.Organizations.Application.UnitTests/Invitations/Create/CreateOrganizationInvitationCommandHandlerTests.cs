@@ -7,7 +7,6 @@ using Modules.Organizations.Domain.Entities;
 using Modules.Organizations.Domain.Errors;
 using Modules.Organizations.Domain.Events;
 using Modules.Organizations.Domain.Repositories;
-using Modules.Organizations.Domain.UnitTests.TestBuilders;
 using NSubstitute;
 
 namespace Modules.Organizations.Application.UnitTests.Invitations.Create;
@@ -24,7 +23,7 @@ public class CreateOrganizationInvitationCommandHandlerTests
         _repositoryMock = Substitute.For<IOrganizationRepository>();
         _permissionRepositoryMock = Substitute.For<IOrganizationPermissionRepository>();
         _userContextMock = Substitute.For<IUserContext>();
-        _handler = new CreateOrganizationInvitationCommandHandler(_repositoryMock, _permissionRepositoryMock, _userContextMock);
+        _handler = new CreateOrganizationInvitationCommandHandler(_repositoryMock);
     }
 
     [Fact]
@@ -34,7 +33,8 @@ public class CreateOrganizationInvitationCommandHandlerTests
         Guid creatorUserId = Guid.NewGuid();
         _userContextMock.UserId.Returns(creatorUserId);
 
-        OrganizationPermission invitePermission = new("Invite Members", "Send invitations to new members to join the organization");
+        OrganizationPermission invitePermission =
+            new("Invite Members", "Send invitations to new members to join the organization");
         OrganizationPermission[] permissions = [invitePermission];
 
         Organization organization = Organization.Create(
@@ -54,7 +54,8 @@ public class CreateOrganizationInvitationCommandHandlerTests
 
         _repositoryMock.GetByIdAsync(organization.Id, Arg.Any<CancellationToken>()).Returns(organization);
         _permissionRepositoryMock.GetAllAsync(Arg.Any<CancellationToken>()).Returns(permissions);
-        _repositoryMock.AddInvitationAsync(Arg.Do<OrganizationInvitation>(invitation => addedInvitation = invitation), Arg.Any<CancellationToken>())
+        _repositoryMock.AddInvitationAsync(Arg.Do<OrganizationInvitation>(invitation => addedInvitation = invitation),
+                Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
 
         // Act
@@ -66,15 +67,18 @@ public class CreateOrganizationInvitationCommandHandlerTests
         result.Value.UserId.Should().Be(targetUserId);
         result.Value.OrganizationRoleId.Should().Be(inviteRole.Id);
         result.Value.Status.Should().Be(InvitationStatus.Pending.ToString());
-        organization.Invitations.Should().ContainSingle(invitation => invitation.UserId == creatorUserId && invitation.Status == InvitationStatus.Accepted);
+        organization.Invitations.Should().ContainSingle(invitation =>
+            invitation.UserId == creatorUserId && invitation.Status == InvitationStatus.Accepted);
         addedInvitation.Should().NotBeNull();
         addedInvitation!.OrganizationId.Should().Be(organization.Id);
         addedInvitation.UserId.Should().Be(targetUserId);
         addedInvitation.OrganizationRoleId.Should().Be(inviteRole.Id);
         addedInvitation.Status.Should().Be(InvitationStatus.Pending);
-        addedInvitation.DomainEvents.Should().ContainSingle(domainEvent => domainEvent is OrganizationInvitationCreatedDomainEvent);
+        addedInvitation.DomainEvents.Should()
+            .ContainSingle(domainEvent => domainEvent is OrganizationInvitationCreatedDomainEvent);
         organization.DomainEvents.Should().Contain(domainEvent => domainEvent is OrganizationCreatedDomainEvent);
-        await _repositoryMock.Received(1).AddInvitationAsync(Arg.Any<OrganizationInvitation>(), Arg.Any<CancellationToken>());
+        await _repositoryMock.Received(1)
+            .AddInvitationAsync(Arg.Any<OrganizationInvitation>(), Arg.Any<CancellationToken>());
         await _repositoryMock.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
@@ -85,7 +89,8 @@ public class CreateOrganizationInvitationCommandHandlerTests
         Guid creatorUserId = Guid.NewGuid();
         _userContextMock.UserId.Returns(Guid.NewGuid());
 
-        OrganizationPermission invitePermission = new("Invite Members", "Send invitations to new members to join the organization");
+        OrganizationPermission invitePermission =
+            new("Invite Members", "Send invitations to new members to join the organization");
         OrganizationPermission[] permissions = [invitePermission];
 
         Organization organization = Organization.Create(
@@ -109,7 +114,8 @@ public class CreateOrganizationInvitationCommandHandlerTests
         // Assert
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(OrganizationErrors.OrganizationPermissionDenied);
-        await _repositoryMock.DidNotReceive().AddInvitationAsync(Arg.Any<OrganizationInvitation>(), Arg.Any<CancellationToken>());
+        await _repositoryMock.DidNotReceive()
+            .AddInvitationAsync(Arg.Any<OrganizationInvitation>(), Arg.Any<CancellationToken>());
         await _repositoryMock.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
@@ -120,7 +126,8 @@ public class CreateOrganizationInvitationCommandHandlerTests
         Guid creatorUserId = Guid.NewGuid();
         _userContextMock.UserId.Returns(creatorUserId);
 
-        OrganizationPermission invitePermission = new("Invite Members", "Send invitations to new members to join the organization");
+        OrganizationPermission invitePermission =
+            new("Invite Members", "Send invitations to new members to join the organization");
         OrganizationPermission[] permissions = [invitePermission];
 
         Organization organization = Organization.Create(
@@ -141,7 +148,8 @@ public class CreateOrganizationInvitationCommandHandlerTests
         // Assert
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(OrganizationErrors.OrganizationRoleNotFound);
-        await _repositoryMock.DidNotReceive().AddInvitationAsync(Arg.Any<OrganizationInvitation>(), Arg.Any<CancellationToken>());
+        await _repositoryMock.DidNotReceive()
+            .AddInvitationAsync(Arg.Any<OrganizationInvitation>(), Arg.Any<CancellationToken>());
         await _repositoryMock.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 }

@@ -25,6 +25,11 @@ public sealed class OrganizationModuleEventMapper : IIntegrationEventMapper
                 responded.UserId,
                 responded.OrganizationRoleId,
                 GetStatusName(responded.Status)),
+            OrganizationPermissionActionRequestedDomainEvent requested => new OrganizationPermissionActionRequestedIntegrationEvent(
+                requested.OrganizationId,
+                requested.RequestedByUserId,
+                requested.PermissionName,
+                requested.ActionName),
             _ => null
         };
 

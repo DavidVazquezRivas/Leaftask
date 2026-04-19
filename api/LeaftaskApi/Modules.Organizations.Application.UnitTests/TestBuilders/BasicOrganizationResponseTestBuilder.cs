@@ -11,6 +11,7 @@ internal sealed class BasicOrganizationResponseTestBuilder
     private Guid _id = Guid.NewGuid();
     private string _name = "Wayne Enterprises";
     private int _totalMembers;
+    private string _website = "https://wayne-enterprises.com";
 
     private BasicOrganizationResponseTestBuilder() { }
 
@@ -31,6 +32,12 @@ internal sealed class BasicOrganizationResponseTestBuilder
     public BasicOrganizationResponseTestBuilder WithDescription(string description)
     {
         _description = description;
+        return this;
+    }
+
+    public BasicOrganizationResponseTestBuilder WithWebsite(string website)
+    {
+        _website = website;
         return this;
     }
 
@@ -59,5 +66,5 @@ internal sealed class BasicOrganizationResponseTestBuilder
     }
 
     public BasicOrganizationResponse Build() =>
-        new(_id, _name, _description, _totalMembers, _activeProjects, _customRoles, _createdAt);
+        new(_id, _name, _description, _website, _totalMembers, _activeProjects, _customRoles, _createdAt);
 }

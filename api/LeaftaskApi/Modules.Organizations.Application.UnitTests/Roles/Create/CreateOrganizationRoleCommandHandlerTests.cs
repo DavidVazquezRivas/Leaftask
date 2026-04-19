@@ -1,13 +1,10 @@
 using BuildingBlocks.Application.Abstractions;
 using BuildingBlocks.Domain.Result;
 using FluentAssertions;
-using Modules.Organizations.Application.Management;
 using Modules.Organizations.Application.Roles.Create;
-using Modules.Organizations.Application.UnitTests.TestBuilders;
 using Modules.Organizations.Domain.Entities;
 using Modules.Organizations.Domain.Errors;
 using Modules.Organizations.Domain.Repositories;
-using Modules.Organizations.Domain.UnitTests.TestBuilders;
 using NSubstitute;
 
 namespace Modules.Organizations.Application.UnitTests.Roles.Create;
@@ -15,8 +12,8 @@ namespace Modules.Organizations.Application.UnitTests.Roles.Create;
 public class CreateOrganizationRoleCommandHandlerTests
 {
     private readonly CreateOrganizationRoleCommandHandler _handler;
-    private readonly IGetOrganizationRoleDetailsQueryService _queryServiceMock;
     private readonly IOrganizationPermissionRepository _permissionRepositoryMock;
+    private readonly IGetOrganizationRoleDetailsQueryService _queryServiceMock;
     private readonly IOrganizationRepository _repositoryMock;
     private readonly IUserContext _userContextMock;
 
@@ -29,8 +26,7 @@ public class CreateOrganizationRoleCommandHandlerTests
         _handler = new CreateOrganizationRoleCommandHandler(
             _repositoryMock,
             _permissionRepositoryMock,
-            _queryServiceMock,
-            _userContextMock);
+            _queryServiceMock);
     }
 
     [Fact]
@@ -40,8 +36,10 @@ public class CreateOrganizationRoleCommandHandlerTests
         Guid creatorUserId = Guid.NewGuid();
         _userContextMock.UserId.Returns(creatorUserId);
 
-        OrganizationPermission configurePermission = new("Configure Organization", "Modify organization settings, branding, and general configuration");
-        OrganizationPermission inviteMembersPermission = new("Invite Members", "Send invitations to new members to join the organization");
+        OrganizationPermission configurePermission = new("Configure Organization",
+            "Modify organization settings, branding, and general configuration");
+        OrganizationPermission inviteMembersPermission =
+            new("Invite Members", "Send invitations to new members to join the organization");
         OrganizationPermission[] permissions = [configurePermission, inviteMembersPermission];
 
         Organization organization = Organization.Create(
@@ -55,8 +53,8 @@ public class CreateOrganizationRoleCommandHandlerTests
             organization.Id,
             "Leaftask Admin",
             [
-                new(configurePermission.Id, PermissionLevel.Full),
-                new(inviteMembersPermission.Id, PermissionLevel.Supervised)
+                new CreateOrganizationRolePermissionInput(configurePermission.Id, PermissionLevel.Full),
+                new CreateOrganizationRolePermissionInput(inviteMembersPermission.Id, PermissionLevel.Supervised)
             ]);
 
         OrganizationRole? addedRole = null;
@@ -87,13 +85,17 @@ public class CreateOrganizationRoleCommandHandlerTests
         addedRole.Should().NotBeNull();
         addedRole!.OrganizationId.Should().Be(organization.Id);
         addedRole.Name.Should().Be(command.Name);
-        addedRole.Permissions.Should().ContainSingle(permission => permission.OrganizationPermissionId == configurePermission.Id && permission.Level == PermissionLevel.Full);
-        addedRole.Permissions.Should().ContainSingle(permission => permission.OrganizationPermissionId == inviteMembersPermission.Id && permission.Level == PermissionLevel.Supervised);
+        addedRole.Permissions.Should().ContainSingle(permission =>
+            permission.OrganizationPermissionId == configurePermission.Id && permission.Level == PermissionLevel.Full);
+        addedRole.Permissions.Should().ContainSingle(permission =>
+            permission.OrganizationPermissionId == inviteMembersPermission.Id &&
+            permission.Level == PermissionLevel.Supervised);
 
         await _repositoryMock.Received(1).AddRoleAsync(Arg.Any<OrganizationRole>(), Arg.Any<CancellationToken>());
         await _repositoryMock.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
         await _permissionRepositoryMock.Received(1).GetAllAsync(Arg.Any<CancellationToken>());
-        await _queryServiceMock.Received(1).GetOrganizationRoleAsync(organization.Id, Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await _queryServiceMock.Received(1)
+            .GetOrganizationRoleAsync(organization.Id, Arg.Any<Guid>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -103,7 +105,8 @@ public class CreateOrganizationRoleCommandHandlerTests
         Guid creatorUserId = Guid.NewGuid();
         _userContextMock.UserId.Returns(Guid.NewGuid());
 
-        OrganizationPermission configurePermission = new("Configure Organization", "Modify organization settings, branding, and general configuration");
+        OrganizationPermission configurePermission = new("Configure Organization",
+            "Modify organization settings, branding, and general configuration");
         OrganizationPermission[] permissions = [configurePermission];
 
         Organization organization = Organization.Create(
@@ -116,7 +119,7 @@ public class CreateOrganizationRoleCommandHandlerTests
         CreateOrganizationRoleCommand command = new(
             organization.Id,
             "Leaftask Admin",
-            [new(configurePermission.Id, PermissionLevel.Full)]);
+            [new CreateOrganizationRolePermissionInput(configurePermission.Id, PermissionLevel.Full)]);
 
         _repositoryMock.GetByIdAsync(organization.Id, Arg.Any<CancellationToken>()).Returns(organization);
         _permissionRepositoryMock.GetAllAsync(Arg.Any<CancellationToken>()).Returns(permissions);
@@ -130,7 +133,8 @@ public class CreateOrganizationRoleCommandHandlerTests
 
         await _repositoryMock.DidNotReceive().AddRoleAsync(Arg.Any<OrganizationRole>(), Arg.Any<CancellationToken>());
         await _repositoryMock.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
-        await _queryServiceMock.DidNotReceive().GetOrganizationRoleAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await _queryServiceMock.DidNotReceive()
+            .GetOrganizationRoleAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -140,7 +144,8 @@ public class CreateOrganizationRoleCommandHandlerTests
         Guid creatorUserId = Guid.NewGuid();
         _userContextMock.UserId.Returns(creatorUserId);
 
-        OrganizationPermission configurePermission = new("Configure Organization", "Modify organization settings, branding, and general configuration");
+        OrganizationPermission configurePermission = new("Configure Organization",
+            "Modify organization settings, branding, and general configuration");
         OrganizationPermission[] permissions = [configurePermission];
 
         Organization organization = Organization.Create(
@@ -153,7 +158,7 @@ public class CreateOrganizationRoleCommandHandlerTests
         CreateOrganizationRoleCommand command = new(
             organization.Id,
             "Leaftask Admin",
-            [new(Guid.NewGuid(), PermissionLevel.Full)]);
+            [new CreateOrganizationRolePermissionInput(Guid.NewGuid(), PermissionLevel.Full)]);
 
         _repositoryMock.GetByIdAsync(organization.Id, Arg.Any<CancellationToken>()).Returns(organization);
         _permissionRepositoryMock.GetAllAsync(Arg.Any<CancellationToken>()).Returns(permissions);

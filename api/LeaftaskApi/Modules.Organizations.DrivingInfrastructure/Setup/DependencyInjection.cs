@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Modules.Organizations.Application.Authorization;
 using Modules.Organizations.Application.Events;
 using Modules.Organizations.Application.Management;
 using Modules.Organizations.Application.Management.Create;
@@ -79,6 +80,7 @@ public static class DependencyInjection
 
             config.AddOpenBehavior(typeof(LoggingBehavior<,>));
             config.AddOpenBehavior(typeof(ValidationBehavior<,>));
+            config.AddOpenBehavior(typeof(OrganizationPermissionBehavior<,>));
         });
 
         services.AddSingleton<OrganizationModuleEventMapper>();

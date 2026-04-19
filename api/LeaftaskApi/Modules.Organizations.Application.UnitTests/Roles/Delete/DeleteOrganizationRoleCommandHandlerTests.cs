@@ -5,7 +5,6 @@ using Modules.Organizations.Application.Roles.Delete;
 using Modules.Organizations.Domain.Entities;
 using Modules.Organizations.Domain.Errors;
 using Modules.Organizations.Domain.Repositories;
-using Modules.Organizations.Domain.UnitTests.TestBuilders;
 using NSubstitute;
 
 namespace Modules.Organizations.Application.UnitTests.Roles.Delete;
@@ -22,7 +21,7 @@ public class DeleteOrganizationRoleCommandHandlerTests
         _repositoryMock = Substitute.For<IOrganizationRepository>();
         _permissionRepositoryMock = Substitute.For<IOrganizationPermissionRepository>();
         _userContextMock = Substitute.For<IUserContext>();
-        _handler = new DeleteOrganizationRoleCommandHandler(_repositoryMock, _permissionRepositoryMock, _userContextMock);
+        _handler = new DeleteOrganizationRoleCommandHandler(_repositoryMock);
     }
 
     [Fact]
@@ -32,7 +31,8 @@ public class DeleteOrganizationRoleCommandHandlerTests
         Guid creatorUserId = Guid.NewGuid();
         _userContextMock.UserId.Returns(creatorUserId);
 
-        OrganizationPermission configurePermission = new("Configure Organization", "Modify organization settings, branding, and general configuration");
+        OrganizationPermission configurePermission = new("Configure Organization",
+            "Modify organization settings, branding, and general configuration");
         OrganizationPermission[] permissions = [configurePermission];
 
         Organization organization = Organization.Create(
@@ -66,7 +66,8 @@ public class DeleteOrganizationRoleCommandHandlerTests
         Guid creatorUserId = Guid.NewGuid();
         _userContextMock.UserId.Returns(Guid.NewGuid());
 
-        OrganizationPermission configurePermission = new("Configure Organization", "Modify organization settings, branding, and general configuration");
+        OrganizationPermission configurePermission = new("Configure Organization",
+            "Modify organization settings, branding, and general configuration");
         OrganizationPermission[] permissions = [configurePermission];
 
         Organization organization = Organization.Create(
@@ -100,7 +101,8 @@ public class DeleteOrganizationRoleCommandHandlerTests
         Guid creatorUserId = Guid.NewGuid();
         _userContextMock.UserId.Returns(creatorUserId);
 
-        OrganizationPermission configurePermission = new("Configure Organization", "Modify organization settings, branding, and general configuration");
+        OrganizationPermission configurePermission = new("Configure Organization",
+            "Modify organization settings, branding, and general configuration");
         OrganizationPermission[] permissions = [configurePermission];
 
         Organization organization = Organization.Create(

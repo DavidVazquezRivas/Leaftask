@@ -17,6 +17,7 @@ public sealed class GetOrganizationDetailsQueryService(OrganizationDbContext dbC
                 organization.Id,
                 organization.Name,
                 organization.Description,
+                organization.Website,
                 organization.Invitations.Count(invitation => invitation.Status == InvitationStatus.Accepted),
                 0,
                 0,

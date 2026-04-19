@@ -4,6 +4,7 @@ public record BasicOrganizationResponse(
     Guid Id,
     string Name,
     string Description,
+    string Website,
     int TotalMembers,
     int ActiveProjects,
     int CustomRoles,
