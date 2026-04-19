@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.Json;
 using BuildingBlocks.Application.Abstractions;
 using BuildingBlocks.Domain.Result;
 using MediatR;
@@ -34,7 +35,8 @@ public sealed class OrganizationPermissionBehavior<TRequest, TResponse>(
             return await next(cancellationToken);
         }
 
-        Organization? organization = await organizationRepository.GetByIdAsync(permissionRequest.OrganizationId, cancellationToken);
+        Organization? organization =
+            await organizationRepository.GetByIdAsync(permissionRequest.OrganizationId, cancellationToken);
         if (organization is null)
         {
             return CreateFailureResponse(OrganizationErrors.OrganizationNotFound);
@@ -74,7 +76,8 @@ public sealed class OrganizationPermissionBehavior<TRequest, TResponse>(
                 organization.Id,
                 userContext.UserId,
                 requiredPermission.Name,
-                request.GetType().Name));
+                request.GetType().Name,
+                JsonSerializer.Serialize(request, request.GetType())));
 
             await organizationRepository.SaveChangesAsync(cancellationToken);
 

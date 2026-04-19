@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Application.Events;
 using BuildingBlocks.Domain.Events;
 using BuildingBlocks.Integration;
+using Modules.Organizations.Domain.Entities;
 using Modules.Organizations.Domain.Events;
 using Modules.Organizations.Integration;
 
@@ -25,22 +26,24 @@ public sealed class OrganizationModuleEventMapper : IIntegrationEventMapper
                 responded.UserId,
                 responded.OrganizationRoleId,
                 GetStatusName(responded.Status)),
-            OrganizationPermissionActionRequestedDomainEvent requested => new OrganizationPermissionActionRequestedIntegrationEvent(
-                requested.OrganizationId,
-                requested.RequestedByUserId,
-                requested.PermissionName,
-                requested.ActionName),
+            OrganizationPermissionActionRequestedDomainEvent requested => new
+                OrganizationPermissionActionRequestedIntegrationEvent(
+                    requested.OrganizationId,
+                    requested.RequestedByUserId,
+                    requested.PermissionName,
+                    requested.ActionName,
+                    requested.ActionPayload),
             _ => null
         };
 
-    private static string GetStatusName(Modules.Organizations.Domain.Entities.InvitationStatus status) =>
+    private static string GetStatusName(InvitationStatus status) =>
         status switch
         {
-            Modules.Organizations.Domain.Entities.InvitationStatus.Accepted => "accepted",
-            Modules.Organizations.Domain.Entities.InvitationStatus.Rejected => "rejected",
-            Modules.Organizations.Domain.Entities.InvitationStatus.Canceled => "canceled",
-            Modules.Organizations.Domain.Entities.InvitationStatus.Abandoned => "abandoned",
-            Modules.Organizations.Domain.Entities.InvitationStatus.Pending => "pending",
+            InvitationStatus.Accepted => "accepted",
+            InvitationStatus.Rejected => "rejected",
+            InvitationStatus.Canceled => "canceled",
+            InvitationStatus.Abandoned => "abandoned",
+            InvitationStatus.Pending => "pending",
             _ => throw new ArgumentOutOfRangeException(nameof(status), status, null)
         };
 }

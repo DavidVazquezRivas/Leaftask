@@ -6,4 +6,5 @@ public sealed record OrganizationPermissionActionRequestedDomainEvent(
     Guid OrganizationId,
     Guid RequestedByUserId,
     string PermissionName,
-    string ActionName) : IDomainEvent;
+    string ActionName,
+    string ActionPayload) : IDomainEvent;

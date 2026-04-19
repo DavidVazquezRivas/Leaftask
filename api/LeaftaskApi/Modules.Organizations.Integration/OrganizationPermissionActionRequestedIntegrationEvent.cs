@@ -6,4 +6,5 @@ public sealed record OrganizationPermissionActionRequestedIntegrationEvent(
     Guid OrganizationId,
     Guid RequestedByUserId,
     string PermissionName,
-    string ActionName) : IIntegrationEvent;
+    string ActionName,
+    string ActionPayload) : IIntegrationEvent;

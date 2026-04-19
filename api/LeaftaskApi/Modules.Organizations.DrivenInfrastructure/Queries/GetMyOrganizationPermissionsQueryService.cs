@@ -33,11 +33,12 @@ public sealed class GetMyOrganizationPermissionsQueryService(OrganizationDbConte
                 dbContext.OrganizationPermissions.AsNoTracking(),
                 rolePermission => rolePermission.OrganizationPermissionId,
                 permission => permission.Id,
-                (rolePermission, permission) => new MyOrganizationPermissionDto(
-                    permission.Id,
-                    permission.Name,
-                    (int)rolePermission.Level))
-            .OrderBy(permission => permission.Name)
+                (rolePermission, permission) => new { rolePermission, permission })
+            .OrderBy(item => item.permission.Name)
+            .Select(item => new MyOrganizationPermissionDto(
+                item.permission.Id,
+                item.permission.Name,
+                (int)item.rolePermission.Level))
             .ToListAsync(cancellationToken);
     }
 }

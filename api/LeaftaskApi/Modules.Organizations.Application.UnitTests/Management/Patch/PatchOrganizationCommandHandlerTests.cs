@@ -35,7 +35,14 @@ public class PatchOrganizationCommandHandlerTests
             .Returns(organization);
 
         _queryServiceMock.GetOrganizationDetailsAsync(organization.Id, Arg.Any<CancellationToken>())
-            .Returns(new BasicOrganizationResponse(organization.Id, "Updated name", organization.Description, 0, 0, 0,
+            .Returns(new BasicOrganizationResponse(
+                organization.Id,
+                "Updated name",
+                organization.Description,
+                "https://updated.example.com",
+                0,
+                0,
+                0,
                 organization.CreatedAt));
 
         // Act
