@@ -36,14 +36,18 @@ export interface ApiErrorResponse {
 
 export type ApiResponse<TData> = ApiSuccessResponse<TData> | ApiErrorResponse
 
-export const isApiSuccessResponse = <TData>(
-  payload: ApiResponse<TData>
-): payload is ApiSuccessResponse<TData> => {
-  return 'data' in payload
+const isRecord = (value: unknown): value is Record<string, unknown> => {
+  return typeof value === 'object' && value !== null
 }
 
-export const isApiErrorResponse = <TData>(
-  payload: ApiResponse<TData>
+export const isApiSuccessResponse = <TData>(
+  payload: unknown
+): payload is ApiSuccessResponse<TData> => {
+  return isRecord(payload) && 'data' in payload
+}
+
+export const isApiErrorResponse = (
+  payload: unknown
 ): payload is ApiErrorResponse => {
-  return 'error' in payload
+  return isRecord(payload) && 'error' in payload
 }

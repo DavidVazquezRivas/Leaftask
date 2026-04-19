@@ -28,7 +28,7 @@ export class SessionGateway {
 
     try {
       const response = await sessionClient.delete<SessionLogoutApiResponse>(
-        ApiRoutes.SESSION_LOGOUT,
+        ApiRoutes.User.Session.Logout,
         {
           headers: accessToken
             ? {
@@ -59,7 +59,7 @@ export class SessionGateway {
     const accessToken = getAccessToken()
 
     const response = await sessionClient.get<SessionMeApiResponse>(
-      ApiRoutes.SESSION_ME,
+      ApiRoutes.User.Session.Me,
       {
         headers: accessToken
           ? {
@@ -91,7 +91,7 @@ export class SessionGateway {
     const requestPayload: GoogleOAuthRequest = { token }
 
     const response = await sessionClient.post<GoogleOAuthSessionApiResponse>(
-      ApiRoutes.SESSION_OAUTH_GOOGLE,
+      ApiRoutes.User.Session.OAuthGoogle,
       requestPayload
     )
 
@@ -115,7 +115,7 @@ export class SessionGateway {
 
   static async refreshSession(): Promise<string> {
     const response = await sessionClient.post<RefreshSessionApiResponse>(
-      ApiRoutes.SESSION_REFRESH
+      ApiRoutes.User.Session.Refresh
     )
 
     const payload = response.data

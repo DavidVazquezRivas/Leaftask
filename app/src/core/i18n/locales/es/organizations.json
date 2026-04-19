@@ -1,0 +1,100 @@
+{
+  "management": {
+    "title": "Organizaciones",
+    "workspace": {
+      "subtitle": "Espacio de organizacion",
+      "placeholder": "Los proyectos de la organizacion apareceran aqui pronto.",
+      "settings": "Ajustes de organizacion",
+      "projectsTitle": "Proyectos de organizacion"
+    },
+    "sidebar": {
+      "label": "Organizaciones",
+      "empty": "Todavia no hay organizaciones"
+    },
+    "create": {
+      "trigger": "Crear organizacion",
+      "validation": {
+        "required": "Este campo es obligatorio"
+      },
+      "modal": {
+        "title": "Crear organizacion",
+        "description": "Agrega una nueva organizacion y completa su informacion basica.",
+        "cancel": "Cancelar",
+        "submit": "Crear organizacion",
+        "submitting": "Creando..."
+      },
+      "fields": {
+        "name": {
+          "label": "Nombre",
+          "placeholder": "Nombre de la organizacion"
+        },
+        "description": {
+          "label": "Descripcion",
+          "placeholder": "De que trata esta organizacion?"
+        },
+        "website": {
+          "label": "Sitio web",
+          "placeholder": "https://ejemplo.com"
+        }
+      }
+    },
+    "settings": {
+      "tabs": {
+        "general": "General",
+        "rolesPermissions": "Roles y permisos",
+        "members": "Miembros"
+      },
+      "general": {
+        "title": "Configuracion de organizacion",
+        "subtitle": "Configura detalles de la organizacion, roles, permisos y acceso de miembros.",
+        "validation": {
+          "required": "Este campo es obligatorio"
+        },
+        "permissions": {
+          "noConfigure": "No tienes permisos para configurar esta organizacion.",
+          "supervisedHint": "Tus acciones son supervisadas y pueden requerir aprobacion.",
+          "noDelete": "No tienes permisos para eliminar esta organizacion.",
+          "forbiddenAction": "Esta accion requiere aprobacion y no se puede completar ahora mismo."
+        },
+        "fields": {
+          "name": {
+            "label": "Nombre de la organizacion",
+            "placeholder": "Acme Corp",
+            "hint": "El nombre publico de tu organizacion"
+          },
+          "description": {
+            "label": "Descripcion",
+            "placeholder": "Soluciones de software empresarial y consultoria",
+            "hint": "Una descripcion corta visible para todos los miembros"
+          },
+          "website": {
+            "label": "Sitio web",
+            "placeholder": "https://acme.com",
+            "hint": "La URL del sitio web de tu organizacion"
+          }
+        },
+        "metrics": {
+          "totalMembers": "Miembros totales",
+          "activeProjects": "Proyectos activos",
+          "customRoles": "Roles personalizados"
+        },
+        "actions": {
+          "save": "Guardar cambios",
+          "saving": "Guardando...",
+          "cancel": "Cancelar"
+        },
+        "dangerZone": {
+          "title": "Zona de peligro",
+          "description": "Eliminar esta organizacion quitara permanentemente todos los proyectos, miembros y datos. Esta accion no se puede deshacer.",
+          "deleteAction": "Eliminar organizacion",
+          "deleting": "Eliminando..."
+        },
+        "feedback": {
+          "updated": "La configuracion de la organizacion se guardo correctamente.",
+          "deleted": "La organizacion se elimino correctamente.",
+          "created": "La organizacion se creo correctamente."
+        }
+      }
+    }
+  }
+}

@@ -21,6 +21,7 @@
   },
   "privateLayout": {
     "user": "Usuario",
+    "organizations": "Organizaciones",
     "language": "Idioma",
     "theme": "Cambiar tema",
     "notifications": "Notificaciones",
@@ -28,12 +29,18 @@
   },
   "privatePanel": {
     "title": "Proyectos personales",
-    "collapse": "Colapsar panel",
+    "subtitle": "Espacio personal",
     "placeholder": "Tus proyectos personales apareceran aqui pronto.",
     "newPersonalProject": "Nuevo proyecto personal",
     "settings": "Ajustes de usuario",
     "userUnknown": "Usuario",
     "userRolePlaceholder": "Aqui ira el rol"
+  },
+  "organizationPanel": {
+    "title": "Proyectos de organizacion",
+    "subtitle": "Espacio de organizacion",
+    "placeholder": "Los proyectos de la organizacion apareceran aqui pronto.",
+    "settings": "Ajustes de organizacion"
   },
   "common": {
     "retry": "Reintentar",

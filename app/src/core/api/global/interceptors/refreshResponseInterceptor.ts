@@ -42,7 +42,7 @@ export const setupRefreshResponseInterceptor = (
 
       const isUnauthorized = error.response?.status === 401
       const isRefreshRequest = requestConfig.url?.includes(
-        ApiRoutes.SESSION_REFRESH
+        ApiRoutes.User.Session.Refresh
       )
 
       if (

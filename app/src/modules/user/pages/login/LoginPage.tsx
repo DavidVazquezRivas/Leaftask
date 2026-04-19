@@ -30,9 +30,6 @@ export function LoginPage() {
         </p>
 
         <div className="mt-6 rounded-xl border border-dashed bg-muted/50 p-5">
-          <p className="mb-4 text-sm text-muted-foreground">
-            {t('login.oauthDescription')}
-          </p>
           <GoogleOAuthLoginButton />
         </div>
       </section>

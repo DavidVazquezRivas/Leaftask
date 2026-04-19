@@ -1,0 +1,100 @@
+{
+  "management": {
+    "title": "Organizations",
+    "workspace": {
+      "subtitle": "Organization workspace",
+      "placeholder": "Organization projects will appear here soon.",
+      "settings": "Organization settings",
+      "projectsTitle": "Organization Projects"
+    },
+    "sidebar": {
+      "label": "Organizations",
+      "empty": "No organizations yet"
+    },
+    "create": {
+      "trigger": "Create organization",
+      "validation": {
+        "required": "This field is required"
+      },
+      "modal": {
+        "title": "Create organization",
+        "description": "Add a new organization and fill in its basic information.",
+        "cancel": "Cancel",
+        "submit": "Create organization",
+        "submitting": "Creating..."
+      },
+      "fields": {
+        "name": {
+          "label": "Name",
+          "placeholder": "Organization name"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "What is this organization about?"
+        },
+        "website": {
+          "label": "Website",
+          "placeholder": "https://example.com"
+        }
+      }
+    },
+    "settings": {
+      "tabs": {
+        "general": "General",
+        "rolesPermissions": "Roles & Permissions",
+        "members": "Members"
+      },
+      "general": {
+        "title": "Organization Settings",
+        "subtitle": "Configure organization details, roles, permissions, and member access.",
+        "validation": {
+          "required": "This field is required"
+        },
+        "permissions": {
+          "noConfigure": "You don't have permission to configure this organization.",
+          "supervisedHint": "Your actions are supervised and may require approval.",
+          "noDelete": "You don't have permission to delete this organization.",
+          "forbiddenAction": "This action requires approval and can't be completed right now."
+        },
+        "fields": {
+          "name": {
+            "label": "Organization Name",
+            "placeholder": "Acme Corp",
+            "hint": "The public name of your organization"
+          },
+          "description": {
+            "label": "Description",
+            "placeholder": "Enterprise software solutions and consulting",
+            "hint": "A short description visible to all members"
+          },
+          "website": {
+            "label": "Website",
+            "placeholder": "https://acme.com",
+            "hint": "Your organization's website URL"
+          }
+        },
+        "metrics": {
+          "totalMembers": "Total Members",
+          "activeProjects": "Active Projects",
+          "customRoles": "Custom Roles"
+        },
+        "actions": {
+          "save": "Save Changes",
+          "saving": "Saving...",
+          "cancel": "Cancel"
+        },
+        "dangerZone": {
+          "title": "Danger Zone",
+          "description": "Deleting this organization will permanently remove all projects, members, and data. This action cannot be undone.",
+          "deleteAction": "Delete Organization",
+          "deleting": "Deleting..."
+        },
+        "feedback": {
+          "updated": "Organization settings saved successfully.",
+          "deleted": "Organization deleted successfully.",
+          "created": "Organization created successfully."
+        }
+      }
+    }
+  }
+}
