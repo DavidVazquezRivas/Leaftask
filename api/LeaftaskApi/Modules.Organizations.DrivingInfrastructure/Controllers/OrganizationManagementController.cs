@@ -9,6 +9,7 @@ using Modules.Organizations.Application.Management.Delete;
 using Modules.Organizations.Application.Management.GetDetails;
 using Modules.Organizations.Application.Management.GetMyOrganizations;
 using Modules.Organizations.Application.Management.Patch;
+using Modules.Organizations.Application.Roles.GetMyPermissions;
 using Modules.Organizations.DrivingInfrastructure.Models.Requests;
 
 namespace Modules.Organizations.DrivingInfrastructure.Controllers;
@@ -61,6 +62,18 @@ public class OrganizationManagementController : ApiBaseController
         GetOrganizationDetailsQuery query = new(id);
 
         Result<BasicOrganizationResponse> result = await Sender.Send(query, cancellationToken);
+
+        return HandleResult(result);
+    }
+
+    [HttpGet("{id:guid}/permissions/me")]
+    public async Task<IActionResult> GetMyPermissions(
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        GetMyOrganizationPermissionsQuery query = new(id);
+
+        Result<IReadOnlyList<MyOrganizationPermissionDto>> result = await Sender.Send(query, cancellationToken);
 
         return HandleResult(result);
     }

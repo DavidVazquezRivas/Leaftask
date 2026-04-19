@@ -14,6 +14,7 @@ using Modules.Organizations.Application.Members.GetDistribution;
 using Modules.Organizations.Application.Members.GetMembers;
 using Modules.Organizations.Application.Members.UpdateRole;
 using Modules.Organizations.Application.Roles.Create;
+using Modules.Organizations.Application.Roles.GetMyPermissions;
 using Modules.Organizations.Application.Roles.GetPermissions;
 using Modules.Organizations.Application.Roles.GetRoles;
 using Modules.Organizations.Application.Roles.Patch;
@@ -105,6 +106,7 @@ public static class DependencyInjection
         services.AddScoped<IGetOrganizationDetailsQueryService, GetOrganizationDetailsQueryService>();
         services.AddScoped<IGetMyOrganizationsQueryService, GetMyOrganizationsQueryService>();
         services.AddScoped<IGetOrganizationPermissionsQueryService, GetOrganizationPermissionsQueryService>();
+        services.AddScoped<IGetMyOrganizationPermissionsQueryService, GetMyOrganizationPermissionsQueryService>();
         services.AddScoped<IGetOrganizationRoleDetailsQueryService, GetOrganizationRoleDetailsQueryService>();
         services.AddScoped<IGetOrganizationRolesQueryService, GetOrganizationRolesQueryService>();
         services.AddScoped<IGetOrganizationMembersDistributionQueryService, GetOrganizationMembersDistributionQueryService>();
