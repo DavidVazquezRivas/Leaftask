@@ -1,6 +1,6 @@
 using BuildingBlocks.Integration;
 
-namespace Modules.Organizations.Application.Events;
+namespace Modules.Organizations.Integration;
 
 public sealed record OrganizationInvitationCreatedIntegrationEvent(
     Guid OrganizationInvitationId,

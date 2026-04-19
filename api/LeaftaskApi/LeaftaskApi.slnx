@@ -23,6 +23,7 @@
     <Project Path="Modules.Organizations.Domain/Modules.Organizations.Domain.csproj" Id="53000f7a-4bc8-4141-8ef8-65dff4a6407f" />
     <Project Path="Modules.Organizations.DrivenInfrastructure/Modules.Organizations.DrivenInfrastructure.csproj" Id="59a998f9-73e6-4f05-a908-4050fb02e8e8" />
     <Project Path="Modules.Organizations.DrivingInfrastructure/Modules.Organizations.DrivingInfrastructure.csproj" />
+    <Project Path="Modules.Organizations.Integration/Modules.Organizations.Integration.csproj" Id="50af49a8-06d2-453b-9e89-bd1ec5abbb9f" />
   </Folder>
   <Folder Name="/src/Modules/Users/">
     <Project Path="Modules.User.Application/Modules.Users.Application.csproj" />

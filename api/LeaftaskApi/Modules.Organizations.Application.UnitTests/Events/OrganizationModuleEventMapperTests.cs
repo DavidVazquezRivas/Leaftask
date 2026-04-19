@@ -2,8 +2,8 @@ using BuildingBlocks.Domain.Events;
 using BuildingBlocks.Integration;
 using FluentAssertions;
 using Modules.Organizations.Application.Events;
-using Modules.Organizations.Domain.Entities;
 using Modules.Organizations.Domain.Events;
+using Modules.Organizations.Integration;
 
 namespace Modules.Organizations.Application.UnitTests.Events;
 

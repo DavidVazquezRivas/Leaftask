@@ -2,6 +2,7 @@
 using BuildingBlocks.Domain.Events;
 using BuildingBlocks.Integration;
 using Modules.Organizations.Domain.Events;
+using Modules.Organizations.Integration;
 
 namespace Modules.Organizations.Application.Events;
 
