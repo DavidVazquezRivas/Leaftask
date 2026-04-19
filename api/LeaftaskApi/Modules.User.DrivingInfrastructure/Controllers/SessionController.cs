@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Modules.Users.Application.Session;
+using Modules.Users.Application.Session.GetActive;
 using Modules.Users.Application.Session.Logout;
 using Modules.Users.Application.Session.OAuth.Google;
 using Modules.Users.Application.Session.Refresh;
@@ -65,6 +66,14 @@ public sealed class SessionController : ApiBaseController
         ApiResponse<AccessTokenResponse> response =
             BuildSuccessResponse(new AccessTokenResponse(sessionResponse.AccessToken));
         return Ok(response);
+    }
+
+    [HttpGet("me")]
+    public async Task<IActionResult> GetActiveUser(CancellationToken cancellationToken)
+    {
+        Result<ActiveUserResponse> result = await Sender.Send(new GetActiveUserQuery(), cancellationToken);
+
+        return HandleResult(result);
     }
 
     [HttpDelete("logout")]

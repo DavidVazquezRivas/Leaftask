@@ -18,6 +18,7 @@ builder.Host.UseSerilog((context, services, configuration) =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerConfiguration();
+builder.Services.AddCorsConfiguration(builder.Configuration);
 
 // --- Error handling configuration ---
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -52,6 +53,8 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
 }
+
+app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 

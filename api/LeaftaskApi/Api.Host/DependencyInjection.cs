@@ -29,6 +29,36 @@ internal static class DependencyInjection
         return services;
     }
 
+    public static IServiceCollection AddCorsConfiguration(this IServiceCollection services, IConfiguration configuration)
+    {
+        string[] allowedOrigins = configuration.GetSection("Cors:AllowedOrigins")
+            .GetChildren()
+            .Select(section => section.Value)
+            .OfType<string>()
+            .ToArray();
+        bool allowCredentials = configuration.GetValue<bool>("Cors:AllowCredentials");
+
+        services.AddCors(options =>
+            options.AddPolicy("CorsPolicy", policy =>
+            {
+                if (allowedOrigins.Length == 0)
+                {
+                    return;
+                }
+
+                policy.WithOrigins(allowedOrigins)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+
+                if (allowCredentials)
+                {
+                    policy.AllowCredentials();
+                }
+            }));
+
+        return services;
+    }
+
     public static IServiceCollection AddSwaggerConfiguration(this IServiceCollection services)
     {
         services.AddSwaggerGen(c =>

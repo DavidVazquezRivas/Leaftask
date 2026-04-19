@@ -6,6 +6,7 @@ namespace Modules.Users.Domain.Repositories;
 public interface IUserRepository
 {
     Task<User?> GetBySpecAsync(ISpecification<User> spec, CancellationToken cancellationToken = default);
+    Task<User?> GetByIdAsync(Guid userId, CancellationToken cancellationToken = default);
     Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
     Task<User?> GetByRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default);
 
