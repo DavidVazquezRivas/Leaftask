@@ -1,0 +1,42 @@
+{
+  "errors": {
+    "unknown": "An unexpected error occurred.",
+    "network": "Could not connect to the server.",
+    "unauthorized": "Your session has expired. Please sign in again."
+  },
+  "notFound": {
+    "code": "ERROR 404",
+    "title": "Page not found",
+    "description": "The page you are trying to open does not exist or may have changed.",
+    "back": "Go back",
+    "home": "Go home"
+  },
+  "publicLayout": {
+    "brand": "Leaftask",
+    "subtitle": "Collaborative workspaces",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "language": "Language",
+    "footer": "Build with focus and clarity."
+  },
+  "privateLayout": {
+    "user": "User",
+    "language": "Language",
+    "theme": "Toggle theme",
+    "notifications": "Notifications",
+    "chat": "Chat"
+  },
+  "privatePanel": {
+    "title": "Personal Projects",
+    "collapse": "Collapse panel",
+    "placeholder": "Your personal projects will appear here soon.",
+    "newPersonalProject": "New Personal Project",
+    "settings": "User settings",
+    "userUnknown": "User",
+    "userRolePlaceholder": "Role will be shown here"
+  },
+  "common": {
+    "retry": "Retry",
+    "dismiss": "Dismiss"
+  }
+}

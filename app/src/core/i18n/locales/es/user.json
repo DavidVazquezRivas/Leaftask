@@ -1,0 +1,21 @@
+{
+  "login": {
+    "title": "Iniciar sesion",
+    "subtitle": "Accede a Leaftask usando tu proveedor de identidad.",
+    "oauthDescription": "Selecciona un proveedor para iniciar sesion de forma segura.",
+    "googleClientIdMissing": "Falta configurar VITE_GOOGLE_CLIENT_ID para habilitar Google OAuth.",
+    "cardTitle": "Bienvenido de nuevo",
+    "cardDescription": "Elige un proveedor para continuar.",
+    "oauthBadge": "Inicio de sesion seguro"
+  },
+  "session": {
+    "refreshFailed": "No se ha podido renovar la sesión.",
+    "invalidToken": "El token de sesión no es válido."
+  },
+  "profile": {
+    "title": "Perfil",
+    "subtitle": "Gestiona los ajustes de tu cuenta personal.",
+    "logoutDescription": "Puedes cerrar sesion en este dispositivo desde aqui.",
+    "logout": "Cerrar sesion"
+  }
+}

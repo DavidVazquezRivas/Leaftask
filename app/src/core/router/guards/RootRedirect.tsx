@@ -1,0 +1,14 @@
+import { Navigate } from 'react-router-dom'
+
+import { AppPaths } from '@/core/router/paths'
+import { useAuthStore } from '@/core/zustand/auth/authStore'
+
+export function RootRedirect() {
+  const accessToken = useAuthStore((state) => state.accessToken)
+
+  if (accessToken) {
+    return <Navigate to={AppPaths.APP_HOME} replace />
+  }
+
+  return <Navigate to={AppPaths.LOGIN} replace />
+}

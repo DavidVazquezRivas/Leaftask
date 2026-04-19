@@ -1,0 +1,42 @@
+{
+  "errors": {
+    "unknown": "Ha ocurrido un error inesperado.",
+    "network": "No se ha podido conectar con el servidor.",
+    "unauthorized": "Tu sesión ha expirado. Vuelve a iniciar sesión."
+  },
+  "notFound": {
+    "code": "ERROR 404",
+    "title": "Pagina no encontrada",
+    "description": "La ruta que intentas abrir no existe o puede haber cambiado.",
+    "back": "Volver a la pagina anterior",
+    "home": "Ir al inicio"
+  },
+  "publicLayout": {
+    "brand": "Leaftask",
+    "subtitle": "Espacios de trabajo colaborativos",
+    "themeLight": "Claro",
+    "themeDark": "Oscuro",
+    "language": "Idioma",
+    "footer": "Construye con foco y claridad."
+  },
+  "privateLayout": {
+    "user": "Usuario",
+    "language": "Idioma",
+    "theme": "Cambiar tema",
+    "notifications": "Notificaciones",
+    "chat": "Chat"
+  },
+  "privatePanel": {
+    "title": "Proyectos personales",
+    "collapse": "Colapsar panel",
+    "placeholder": "Tus proyectos personales apareceran aqui pronto.",
+    "newPersonalProject": "Nuevo proyecto personal",
+    "settings": "Ajustes de usuario",
+    "userUnknown": "Usuario",
+    "userRolePlaceholder": "Aqui ira el rol"
+  },
+  "common": {
+    "retry": "Reintentar",
+    "dismiss": "Cerrar"
+  }
+}
