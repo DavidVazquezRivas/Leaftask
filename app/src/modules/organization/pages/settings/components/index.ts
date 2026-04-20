@@ -1,3 +1,6 @@
 export { OrganizationSettingsDangerZone } from '@/modules/organization/pages/settings/components/OrganizationSettingsDangerZone'
 export { OrganizationSettingsGeneralForm } from '@/modules/organization/pages/settings/components/OrganizationSettingsGeneralForm'
+export { OrganizationSettingsMembers } from '@/modules/organization/pages/settings/components/OrganizationSettingsMembers'
+export { OrganizationSettingsRolesPermissions } from '@/modules/organization/pages/settings/components/OrganizationSettingsRolesPermissions'
 export { OrganizationSettingsTabs } from '@/modules/organization/pages/settings/components/OrganizationSettingsTabs'
+export type { OrganizationSettingsTab } from '@/modules/organization/pages/settings/components/OrganizationSettingsTabs'

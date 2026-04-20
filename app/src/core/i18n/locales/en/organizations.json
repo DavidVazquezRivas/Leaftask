@@ -94,6 +94,126 @@
           "deleted": "Organization deleted successfully.",
           "created": "Organization created successfully."
         }
+      },
+      "rolesPermissions": {
+        "title": "Organization Roles",
+        "subtitle": "Define roles with specific permissions for organization-level actions",
+        "createRole": "Create Role",
+        "membersCount_one": "{{count}} member",
+        "membersCount_other": "{{count}} members",
+        "actions": {
+          "editRole": "Edit role",
+          "deleteRole": "Delete role"
+        },
+        "levels": {
+          "full": "Full",
+          "supervised": "Supervised",
+          "none": "None"
+        },
+        "permissionLevels": {
+          "title": "Permission Levels",
+          "full": {
+            "label": "Full:",
+            "description": "Can perform action independently"
+          },
+          "supervised": {
+            "label": "Supervised:",
+            "description": "Requires approval from Full holder"
+          },
+          "none": {
+            "label": "None:",
+            "description": "No access to this action"
+          }
+        },
+        "permissionsList": {
+          "title": "Organization Permissions"
+        },
+        "states": {
+          "loading": "Loading permissions...",
+          "error": "Could not load permissions.",
+          "empty": "No permissions available.",
+          "emptyRoles": "No roles available."
+        },
+        "feedback": {
+          "roleCreated": "Role created successfully.",
+          "roleUpdated": "Role updated successfully.",
+          "roleDeleted": "Role deleted successfully.",
+          "supervisedAction": "This role action was sent for approval."
+        },
+        "editor": {
+          "createTitle": "Create role",
+          "editTitle": "Edit role",
+          "description": "Define the role name and permission levels.",
+          "roleNameLabel": "Role name",
+          "roleNamePlaceholder": "Project Manager",
+          "permissionsTitle": "Permissions",
+          "cancel": "Cancel",
+          "createSubmit": "Create",
+          "updateSubmit": "Save changes",
+          "submitting": "Saving..."
+        },
+        "deleteDialog": {
+          "title": "Delete role",
+          "description": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+          "cancel": "Cancel",
+          "confirm": "Delete role",
+          "deleting": "Deleting..."
+        }
+      },
+      "members": {
+        "title": "Organization Members",
+        "subtitle": "Manage member access and roles at the organization level",
+        "roleFallback": "Unknown role",
+        "permissions": {
+          "noInvite": "You don't have permission to invite members.",
+          "noRemove": "You don't have permission to remove members.",
+          "noCancelInvitation": "You don't have permission to cancel invitations."
+        },
+        "states": {
+          "loading": "Loading organization members...",
+          "error": "Could not load members data.",
+          "emptyMembers": "No members found.",
+          "emptyDistribution": "No role distribution available."
+        },
+        "actions": {
+          "inviteMember": "Invite Member",
+          "inviteSoon": "Invite member will be available soon.",
+          "removeSoon": "Member removal will be available soon.",
+          "removeMember": "Remove member"
+        },
+        "feedback": {
+          "invitationSent": "Invitation sent successfully.",
+          "roleUpdated": "Member role updated successfully.",
+          "memberDeleted": "Member removed successfully.",
+          "ownerCannotBeRemoved": "Owner members cannot be removed.",
+          "atLeastOneOwner": "At least one owner is required in the organization."
+        },
+        "pendingInvitations": {
+          "title": "Pending Invitations",
+          "pending": "Pending",
+          "invitedAt": "Invited at {{date}}",
+          "cancel": "Cancel invitation",
+          "canceled": "Invitation canceled successfully."
+        },
+        "inviteDialog": {
+          "title": "Invite member",
+          "description": "Search and select a user, then assign an organization role.",
+          "searchLabel": "Search users",
+          "searchPlaceholder": "Search by name or email",
+          "userIdLabel": "User",
+          "userPlaceholder": "Search and select a user",
+          "loadingUsers": "Loading users...",
+          "emptyUsers": "No users found.",
+          "userIdPlaceholder": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "roleLabel": "Role",
+          "rolePlaceholder": "Select a role",
+          "cancel": "Cancel",
+          "submit": "Send invitation",
+          "submitting": "Sending..."
+        },
+        "distribution": {
+          "title": "Member Distribution by Role"
+        }
       }
     }
   }

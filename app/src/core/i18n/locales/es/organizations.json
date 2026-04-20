@@ -94,6 +94,126 @@
           "deleted": "La organizacion se elimino correctamente.",
           "created": "La organizacion se creo correctamente."
         }
+      },
+      "rolesPermissions": {
+        "title": "Roles de organizacion",
+        "subtitle": "Define roles con permisos especificos para acciones a nivel de organizacion",
+        "createRole": "Crear rol",
+        "membersCount_one": "{{count}} miembro",
+        "membersCount_other": "{{count}} miembros",
+        "actions": {
+          "editRole": "Editar rol",
+          "deleteRole": "Eliminar rol"
+        },
+        "levels": {
+          "full": "Completo",
+          "supervised": "Supervisado",
+          "none": "Ninguno"
+        },
+        "permissionLevels": {
+          "title": "Niveles de permiso",
+          "full": {
+            "label": "Completo:",
+            "description": "Puede realizar la accion de forma independiente"
+          },
+          "supervised": {
+            "label": "Supervisado:",
+            "description": "Requiere aprobacion de un usuario con nivel Completo"
+          },
+          "none": {
+            "label": "Ninguno:",
+            "description": "Sin acceso a esta accion"
+          }
+        },
+        "permissionsList": {
+          "title": "Permisos de organizacion"
+        },
+        "states": {
+          "loading": "Cargando permisos...",
+          "error": "No se pudieron cargar los permisos.",
+          "empty": "No hay permisos disponibles.",
+          "emptyRoles": "No hay roles disponibles."
+        },
+        "feedback": {
+          "roleCreated": "El rol se creo correctamente.",
+          "roleUpdated": "El rol se actualizo correctamente.",
+          "roleDeleted": "El rol se elimino correctamente.",
+          "supervisedAction": "Esta accion sobre el rol se envio para aprobacion."
+        },
+        "editor": {
+          "createTitle": "Crear rol",
+          "editTitle": "Editar rol",
+          "description": "Define el nombre del rol y los niveles de permiso.",
+          "roleNameLabel": "Nombre del rol",
+          "roleNamePlaceholder": "Project Manager",
+          "permissionsTitle": "Permisos",
+          "cancel": "Cancelar",
+          "createSubmit": "Crear",
+          "updateSubmit": "Guardar cambios",
+          "submitting": "Guardando..."
+        },
+        "deleteDialog": {
+          "title": "Eliminar rol",
+          "description": "Estas seguro de que quieres eliminar {{name}}? Esta accion no se puede deshacer.",
+          "cancel": "Cancelar",
+          "confirm": "Eliminar rol",
+          "deleting": "Eliminando..."
+        }
+      },
+      "members": {
+        "title": "Miembros de la organizacion",
+        "subtitle": "Gestiona el acceso y los roles de los miembros a nivel de organizacion",
+        "roleFallback": "Rol desconocido",
+        "permissions": {
+          "noInvite": "No tienes permiso para invitar miembros.",
+          "noRemove": "No tienes permiso para eliminar miembros.",
+          "noCancelInvitation": "No tienes permiso para cancelar invitaciones."
+        },
+        "states": {
+          "loading": "Cargando miembros de la organizacion...",
+          "error": "No se pudieron cargar los datos de miembros.",
+          "emptyMembers": "No se encontraron miembros.",
+          "emptyDistribution": "No hay distribucion de roles disponible."
+        },
+        "actions": {
+          "inviteMember": "Invitar miembro",
+          "inviteSoon": "Invitar miembros estara disponible pronto.",
+          "removeSoon": "Eliminar miembros estara disponible pronto.",
+          "removeMember": "Eliminar miembro"
+        },
+        "feedback": {
+          "invitationSent": "La invitacion se envio correctamente.",
+          "roleUpdated": "El rol del miembro se actualizo correctamente.",
+          "memberDeleted": "El miembro se elimino correctamente.",
+          "ownerCannotBeRemoved": "No se puede expulsar a un miembro owner.",
+          "atLeastOneOwner": "Debe existir al menos un owner en la organizacion."
+        },
+        "pendingInvitations": {
+          "title": "Invitaciones pendientes",
+          "pending": "Pendiente",
+          "invitedAt": "Invitado el {{date}}",
+          "cancel": "Cancelar invitacion",
+          "canceled": "La invitacion se cancelo correctamente."
+        },
+        "inviteDialog": {
+          "title": "Invitar miembro",
+          "description": "Busca y selecciona un usuario, y asigna un rol de organizacion.",
+          "searchLabel": "Buscar usuarios",
+          "searchPlaceholder": "Busca por nombre o email",
+          "userIdLabel": "Usuario",
+          "userPlaceholder": "Busca y selecciona un usuario",
+          "loadingUsers": "Cargando usuarios...",
+          "emptyUsers": "No se encontraron usuarios.",
+          "userIdPlaceholder": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "roleLabel": "Rol",
+          "rolePlaceholder": "Selecciona un rol",
+          "cancel": "Cancelar",
+          "submit": "Enviar invitacion",
+          "submitting": "Enviando..."
+        },
+        "distribution": {
+          "title": "Distribucion de miembros por rol"
+        }
       }
     }
   }

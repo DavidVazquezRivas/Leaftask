@@ -30,6 +30,14 @@ const CONFIGURE_ORGANIZATION_PERMISSION = {
   name: 'Configure Organization',
 } as const
 
+const INVITE_MEMBERS_PERMISSION = {
+  name: 'Invite Members',
+} as const
+
+const REMOVE_MEMBERS_PERMISSION = {
+  name: 'Remove members',
+} as const
+
 export const useOrganizationSettingsPage = () => {
   const { organizationId } = useParams<{ organizationId: string }>()
   const navigate = useNavigate()
@@ -95,6 +103,26 @@ export const useOrganizationSettingsPage = () => {
     )
   }, [permissionsQuery.data?.data])
 
+  const hasInviteMembersPermission = useMemo(() => {
+    const permissions = permissionsQuery.data?.data ?? []
+
+    return hasOrganizationPermissionAtLevel(
+      permissions,
+      INVITE_MEMBERS_PERMISSION,
+      1
+    )
+  }, [permissionsQuery.data?.data])
+
+  const hasRemoveMembersPermission = useMemo(() => {
+    const permissions = permissionsQuery.data?.data ?? []
+
+    return hasOrganizationPermissionAtLevel(
+      permissions,
+      REMOVE_MEMBERS_PERMISSION,
+      1
+    )
+  }, [permissionsQuery.data?.data])
+
   const isConfigureOrganizationSupervised =
     configureOrganizationPermissionLevel === 1
 
@@ -130,6 +158,8 @@ export const useOrganizationSettingsPage = () => {
     isDeleting: deleteMutation.isPending,
     isSubmitting: updateMutation.isPending,
     hasConfigureOrganizationPermission,
+    hasInviteMembersPermission,
+    hasRemoveMembersPermission,
     isConfigureOrganizationSupervised,
     metrics,
     organizationId: organizationId ?? null,

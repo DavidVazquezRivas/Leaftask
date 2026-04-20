@@ -2,12 +2,17 @@ import { useAppTranslation } from '@/core/i18n'
 import {
   OrganizationSettingsDangerZone,
   OrganizationSettingsGeneralForm,
+  OrganizationSettingsMembers,
+  OrganizationSettingsRolesPermissions,
+  type OrganizationSettingsTab,
   OrganizationSettingsTabs,
 } from '@/modules/organization/pages/settings/components'
 import { useOrganizationSettingsPage } from '@/modules/organization/pages/settings/hooks/useOrganizationSettingsPage'
+import { useState } from 'react'
 
 export function OrganizationSettingsPage() {
   const { t } = useAppTranslation('organizations')
+  const [activeTab, setActiveTab] = useState<OrganizationSettingsTab>('general')
   const {
     detail,
     handleDelete,
@@ -15,6 +20,8 @@ export function OrganizationSettingsPage() {
     isBusy,
     isDeleting,
     hasConfigureOrganizationPermission,
+    hasInviteMembersPermission,
+    hasRemoveMembersPermission,
     isConfigureOrganizationSupervised,
     isSubmitting,
     metrics,
@@ -36,23 +43,48 @@ export function OrganizationSettingsPage() {
         </p>
       </header>
 
-      <OrganizationSettingsTabs />
-
-      <OrganizationSettingsGeneralForm
-        detail={detail}
-        hasConfigureOrganizationPermission={hasConfigureOrganizationPermission}
-        isConfigureOrganizationSupervised={isConfigureOrganizationSupervised}
-        isSubmitting={isSubmitting}
-        isBusy={isBusy}
-        metrics={metrics}
-        onSubmit={handleSubmit}
+      <OrganizationSettingsTabs
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
       />
 
-      <OrganizationSettingsDangerZone
-        hasConfigureOrganizationPermission={hasConfigureOrganizationPermission}
-        isDeleting={isDeleting}
-        onDelete={handleDelete}
-      />
+      {activeTab === 'general' ? (
+        <>
+          <OrganizationSettingsGeneralForm
+            detail={detail}
+            hasConfigureOrganizationPermission={
+              hasConfigureOrganizationPermission
+            }
+            isConfigureOrganizationSupervised={
+              isConfigureOrganizationSupervised
+            }
+            isSubmitting={isSubmitting}
+            isBusy={isBusy}
+            metrics={metrics}
+            onSubmit={handleSubmit}
+          />
+
+          <OrganizationSettingsDangerZone
+            hasConfigureOrganizationPermission={
+              hasConfigureOrganizationPermission
+            }
+            isDeleting={isDeleting}
+            onDelete={handleDelete}
+          />
+        </>
+      ) : activeTab === 'roles-permissions' ? (
+        <OrganizationSettingsRolesPermissions
+          organizationId={organizationId}
+          canManageRoles={hasConfigureOrganizationPermission}
+        />
+      ) : (
+        <OrganizationSettingsMembers
+          organizationId={organizationId}
+          canManageMemberRoles={hasConfigureOrganizationPermission}
+          canInviteMembers={hasInviteMembersPermission}
+          canRemoveMembers={hasRemoveMembersPermission}
+        />
+      )}
     </main>
   )
 }

@@ -21,8 +21,51 @@ export const QueryKeys = {
           ] as const,
       },
     },
+    roles: {
+      all: [...organizationAll, 'roles'] as const,
+      list: (organizationId: string) =>
+        [...organizationAll, 'roles', 'list', organizationId] as const,
+      permissions: {
+        all: [...organizationAll, 'roles', 'permissions'] as const,
+        list: () =>
+          [...organizationAll, 'roles', 'permissions', 'list'] as const,
+      },
+    },
+    members: {
+      all: [...organizationAll, 'members'] as const,
+      list: (organizationId: string, params: { limit?: number } = {}) =>
+        [
+          ...organizationAll,
+          'members',
+          'list',
+          organizationId,
+          params,
+        ] as const,
+      distribution: {
+        all: [...organizationAll, 'members', 'distribution'] as const,
+        byOrganization: (organizationId: string) =>
+          [
+            ...organizationAll,
+            'members',
+            'distribution',
+            organizationId,
+          ] as const,
+      },
+    },
+    invitations: {
+      all: [...organizationAll, 'invitations'] as const,
+      create: (organizationId: string) =>
+        [...organizationAll, 'invitations', 'create', organizationId] as const,
+      pending: (organizationId: string) =>
+        [...organizationAll, 'invitations', 'pending', organizationId] as const,
+    },
   },
   user: {
+    users: {
+      all: ['user', 'users'] as const,
+      list: (params: { limit?: number; search?: string } = {}) =>
+        [...QueryKeys.user.users.all, 'list', params] as const,
+    },
     session: {
       all: ['user', 'session'] as const,
       refresh: () => [...QueryKeys.user.session.all, 'refresh'] as const,
