@@ -3,6 +3,7 @@ using BuildingBlocks.DrivingInfrastructure.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Modules.Organizations.Application.Invitations;
 using Modules.Organizations.Application.Invitations.Create;
+using Modules.Organizations.Application.Invitations.GetPending;
 using Modules.Organizations.Application.Invitations.Respond;
 using Modules.Organizations.DrivingInfrastructure.Models.Requests;
 
@@ -36,5 +37,17 @@ public class OrganizationInvitationController : ApiBaseController
         Result<OrganizationInvitationResponse> result = await Sender.Send(command, cancellationToken);
 
         return HandleResult(result, 201);
+    }
+
+    [HttpGet("{orgId:guid}/invitations/pending")]
+    public async Task<IActionResult> GetPendingInvitations(
+        [FromRoute] Guid orgId,
+        CancellationToken cancellationToken = default)
+    {
+        GetPendingOrganizationInvitationsQuery query = new(orgId);
+
+        Result<IReadOnlyList<OrganizationInvitationResponse>> result = await Sender.Send(query, cancellationToken);
+
+        return HandleResult(result);
     }
 }

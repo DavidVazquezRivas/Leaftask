@@ -27,7 +27,11 @@ public sealed class CreateOrganizationInvitationCommandHandler(
             return Result.Failure<OrganizationInvitationResponse>(OrganizationErrors.OrganizationRoleNotFound);
         }
 
-        if (organization.Invitations.Any(invitation => invitation.UserId == request.UserId && invitation.Status != InvitationStatus.Abandoned))
+        bool hasActiveInvitation = organization.Invitations.Any(invitation =>
+            invitation.UserId == request.UserId
+            && invitation.Status is InvitationStatus.Pending or InvitationStatus.Accepted);
+
+        if (hasActiveInvitation)
         {
             return Result.Failure<OrganizationInvitationResponse>(OrganizationErrors.InvalidInvitationStatus);
         }

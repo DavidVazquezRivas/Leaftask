@@ -12,10 +12,6 @@ public sealed class GetOrganizationRolesQueryService(OrganizationDbContext dbCon
         Guid organizationId,
         CancellationToken cancellationToken = default)
     {
-        int totalMembers = await dbContext.OrganizationInvitations
-            .AsNoTracking()
-            .CountAsync(invitation => invitation.OrganizationId == organizationId && invitation.Status == InvitationStatus.Accepted, cancellationToken);
-
         List<OrganizationRoleDto> roles = await dbContext.OrganizationRoles
             .AsNoTracking()
             .Where(role => role.OrganizationId == organizationId)
@@ -23,7 +19,7 @@ public sealed class GetOrganizationRolesQueryService(OrganizationDbContext dbCon
             .Select(role => new OrganizationRoleDto(
                 role.Id,
                 role.Name,
-                totalMembers,
+                0,
                 Array.Empty<OrganizationRolePermissionDto>()))
             .ToListAsync(cancellationToken);
 
@@ -33,6 +29,15 @@ public sealed class GetOrganizationRolesQueryService(OrganizationDbContext dbCon
         }
 
         Guid[] roleIds = roles.Select(role => role.Id).ToArray();
+
+        Dictionary<Guid, int> membersByRole = await dbContext.OrganizationInvitations
+            .AsNoTracking()
+            .Where(invitation => invitation.OrganizationId == organizationId
+                                 && invitation.Status == InvitationStatus.Accepted
+                                 && roleIds.Contains(invitation.OrganizationRoleId))
+            .GroupBy(invitation => invitation.OrganizationRoleId)
+            .Select(group => new { RoleId = group.Key, TotalMembers = group.Count() })
+            .ToDictionaryAsync(item => item.RoleId, item => item.TotalMembers, cancellationToken);
 
         List<(Guid RoleId, OrganizationRolePermissionDto Permission)> permissions = await dbContext.OrganizationRolePermissions
             .AsNoTracking()
@@ -53,6 +58,9 @@ public sealed class GetOrganizationRolesQueryService(OrganizationDbContext dbCon
         return roles
             .Select(role => role with
             {
+                TotalMembers = membersByRole.TryGetValue(role.Id, out int totalMembers)
+                    ? totalMembers
+                    : 0,
                 Permissions = permissionMap.TryGetValue(role.Id, out List<OrganizationRolePermissionDto>? rolePermissions)
                     ? rolePermissions
                     : []

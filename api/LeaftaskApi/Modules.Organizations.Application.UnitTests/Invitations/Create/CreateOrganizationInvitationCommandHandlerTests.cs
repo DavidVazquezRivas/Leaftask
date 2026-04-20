@@ -152,4 +152,57 @@ public class CreateOrganizationInvitationCommandHandlerTests
             .AddInvitationAsync(Arg.Any<OrganizationInvitation>(), Arg.Any<CancellationToken>());
         await _repositoryMock.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
+
+    [Theory]
+    [InlineData(InvitationStatus.Rejected)]
+    [InlineData(InvitationStatus.Canceled)]
+    [InlineData(InvitationStatus.Abandoned)]
+    public async Task Handle_Should_AllowReinvite_When_PreviousInvitationIsClosed(InvitationStatus previousStatus)
+    {
+        // Arrange
+        Guid creatorUserId = Guid.NewGuid();
+
+        OrganizationPermission invitePermission =
+            new("Invite Members", "Send invitations to new members to join the organization");
+        OrganizationPermission[] permissions = [invitePermission];
+
+        Organization organization = Organization.Create(
+            "Leaftask",
+            "Organization description",
+            "https://leaftask.com",
+            creatorUserId,
+            permissions);
+
+        OrganizationRole inviteRole = organization.AddRole("Inviter", permissions);
+        inviteRole.SetPermissionLevel(invitePermission.Id, PermissionLevel.Full);
+
+        Guid targetUserId = Guid.NewGuid();
+        OrganizationInvitation previousInvitation = organization.AddInvitation(targetUserId, inviteRole.Id);
+
+        switch (previousStatus)
+        {
+            case InvitationStatus.Rejected:
+                previousInvitation.Reject();
+                break;
+            case InvitationStatus.Canceled:
+                previousInvitation.Cancel();
+                break;
+            case InvitationStatus.Abandoned:
+                previousInvitation.Accept();
+                previousInvitation.Abandon();
+                break;
+        }
+
+        CreateOrganizationInvitationCommand command = new(organization.Id, targetUserId, inviteRole.Id);
+
+        _repositoryMock.GetByIdAsync(organization.Id, Arg.Any<CancellationToken>()).Returns(organization);
+
+        // Act
+        Result<OrganizationInvitationResponse> result = await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        await _repositoryMock.Received(1).AddInvitationAsync(Arg.Any<OrganizationInvitation>(), Arg.Any<CancellationToken>());
+        await _repositoryMock.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
 }

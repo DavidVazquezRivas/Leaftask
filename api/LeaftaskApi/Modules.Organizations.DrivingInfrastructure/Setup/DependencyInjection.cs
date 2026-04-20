@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Modules.Organizations.Application.Authorization;
 using Modules.Organizations.Application.Events;
+using Modules.Organizations.Application.Invitations.GetPending;
 using Modules.Organizations.Application.Management;
 using Modules.Organizations.Application.Management.Create;
 using Modules.Organizations.Application.Management.GetMyOrganizations;
@@ -107,6 +108,7 @@ public static class DependencyInjection
     {
         services.AddScoped<IGetOrganizationDetailsQueryService, GetOrganizationDetailsQueryService>();
         services.AddScoped<IGetMyOrganizationsQueryService, GetMyOrganizationsQueryService>();
+        services.AddScoped<IGetPendingOrganizationInvitationsQueryService, GetPendingOrganizationInvitationsQueryService>();
         services.AddScoped<IGetOrganizationPermissionsQueryService, GetOrganizationPermissionsQueryService>();
         services.AddScoped<IGetMyOrganizationPermissionsQueryService, GetMyOrganizationPermissionsQueryService>();
         services.AddScoped<IGetOrganizationRoleDetailsQueryService, GetOrganizationRoleDetailsQueryService>();
