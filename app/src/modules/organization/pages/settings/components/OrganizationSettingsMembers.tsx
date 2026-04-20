@@ -1,4 +1,4 @@
-import { Check, ChevronsUpDown, Plus, Trash2 } from 'lucide-react'
+import { Check, ChevronDown, ChevronsUpDown, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -87,6 +87,8 @@ export function OrganizationSettingsMembers({
   const [inviteSelectedUser, setInviteSelectedUser] =
     useState<InviteUserSelection | null>(null)
   const [inviteRoleId, setInviteRoleId] = useState('')
+  const [isPendingInvitationsCollapsed, setIsPendingInvitationsCollapsed] =
+    useState(false)
 
   const membersQuery = useOrganizationMembersInfiniteQuery(organizationId, {
     limit: 50,
@@ -315,75 +317,106 @@ export function OrganizationSettingsMembers({
 
       {!isLoading && !isError && pendingInvitationRows.length > 0 ? (
         <section className="space-y-4 rounded-lg border bg-card p-6">
-          <h3 className="text-sm font-semibold">
-            {t('management.settings.members.pendingInvitations.title')}
-          </h3>
-
-          <div className="space-y-3">
-            {pendingInvitationRows.map((invitation) => (
-              <article
-                key={invitation.id}
-                className="flex flex-col gap-3 rounded-md border bg-muted/20 p-3 sm:flex-row sm:items-center sm:justify-between"
-              >
-                <div className="space-y-1">
-                  <p className="text-sm font-semibold">
-                    {invitation.userLabel}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {invitation.roleLabel}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {t(
-                      'management.settings.members.pendingInvitations.invitedAt',
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold">
+              {t('management.settings.members.pendingInvitations.title')}
+            </h3>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() =>
+                setIsPendingInvitationsCollapsed(!isPendingInvitationsCollapsed)
+              }
+              title={
+                isPendingInvitationsCollapsed
+                  ? t('management.settings.members.pendingInvitations.expand', {
+                      defaultValue: 'Expand',
+                    })
+                  : t(
+                      'management.settings.members.pendingInvitations.collapse',
                       {
-                        defaultValue: 'Invited at {{date}}',
-                        date: new Date(invitation.invitedAt).toLocaleString(),
+                        defaultValue: 'Collapse',
                       }
-                    )}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex w-fit rounded-full bg-amber-500/15 px-2 py-1 text-xs font-medium text-amber-600">
-                    {t(
-                      'management.settings.members.pendingInvitations.pending',
-                      {
-                        defaultValue: 'Pending',
-                      }
-                    )}
-                  </span>
-
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    disabled={isCancellingInvitation}
-                    onClick={() => {
-                      cancelInvitationMutation.mutate({
-                        invitationId: invitation.id,
-                        data: {
-                          status: 'canceled',
-                        },
-                      })
-                    }}
-                    title={t(
-                      'management.settings.members.pendingInvitations.cancel',
-                      {
-                        defaultValue: 'Cancel invitation',
-                      }
-                    )}
-                  >
-                    {t(
-                      'management.settings.members.pendingInvitations.cancel',
-                      {
-                        defaultValue: 'Cancel invitation',
-                      }
-                    )}
-                  </Button>
-                </div>
-              </article>
-            ))}
+                    )
+              }
+            >
+              <ChevronDown
+                className={cn(
+                  'h-4 w-4 transition-transform',
+                  isPendingInvitationsCollapsed && 'rotate-180'
+                )}
+              />
+            </Button>
           </div>
+
+          {!isPendingInvitationsCollapsed && (
+            <div className="space-y-3">
+              {pendingInvitationRows.map((invitation) => (
+                <article
+                  key={invitation.id}
+                  className="flex flex-col gap-3 rounded-md border bg-muted/20 p-3 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="space-y-1">
+                    <p className="text-sm font-semibold">
+                      {invitation.userLabel}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {invitation.roleLabel}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {t(
+                        'management.settings.members.pendingInvitations.invitedAt',
+                        {
+                          defaultValue: 'Invited at {{date}}',
+                          date: new Date(invitation.invitedAt).toLocaleString(),
+                        }
+                      )}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex w-fit rounded-full bg-amber-500/15 px-2 py-1 text-xs font-medium text-amber-600">
+                      {t(
+                        'management.settings.members.pendingInvitations.pending',
+                        {
+                          defaultValue: 'Pending',
+                        }
+                      )}
+                    </span>
+
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      disabled={isCancellingInvitation}
+                      onClick={() => {
+                        cancelInvitationMutation.mutate({
+                          invitationId: invitation.id,
+                          data: {
+                            status: 'canceled',
+                          },
+                        })
+                      }}
+                      title={t(
+                        'management.settings.members.pendingInvitations.cancel',
+                        {
+                          defaultValue: 'Cancel invitation',
+                        }
+                      )}
+                    >
+                      {t(
+                        'management.settings.members.pendingInvitations.cancel',
+                        {
+                          defaultValue: 'Cancel invitation',
+                        }
+                      )}
+                    </Button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
         </section>
       ) : null}
 
