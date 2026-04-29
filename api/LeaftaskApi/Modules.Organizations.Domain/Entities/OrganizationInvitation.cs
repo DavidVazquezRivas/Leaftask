@@ -25,15 +25,19 @@ public sealed class OrganizationInvitation : Entity
 
     public Guid Id { get; }
     public InvitationStatus Status { get; private set; }
-    public DateTime InvitedAt { get; }
+    public DateTime InvitedAt { get; private set; }
     public DateTime? RespondedAt { get; private set; }
     public DateTime? AbandonedAt { get; private set; }
     public Guid OrganizationId { get; }
     public Guid UserId { get; }
     public Guid OrganizationRoleId { get; private set; }
 
-    public static OrganizationInvitation Create(Guid organizationId, Guid userId, Guid organizationRoleId) =>
-        new(Guid.NewGuid(), InvitationStatus.Pending, DateTime.UtcNow, null, null, organizationId, userId, organizationRoleId);
+    public static OrganizationInvitation Create(Guid organizationId, Guid userId, Guid organizationRoleId)
+    {
+        OrganizationInvitation created = new(Guid.NewGuid(), InvitationStatus.Pending, DateTime.UtcNow, null, null, organizationId, userId, organizationRoleId);
+        created.Raise(new OrganizationInvitationCreatedDomainEvent(created.Id, created.OrganizationId, created.UserId, created.OrganizationRoleId));
+        return created;
+    }
 
     public Result UpdateRole(Guid organizationRoleId)
     {
@@ -75,6 +79,19 @@ public sealed class OrganizationInvitation : Entity
         Status = status;
         RespondedAt = DateTime.UtcNow;
         Raise(new OrganizationInvitationRespondedDomainEvent(Id, OrganizationId, UserId, OrganizationRoleId, status));
+        return Result.Success();
+    }
+
+    public Result Reactivate(Guid newRoleId)
+    {
+        Status = InvitationStatus.Pending;
+        OrganizationRoleId = newRoleId;
+        RespondedAt = null;
+        AbandonedAt = null;
+        InvitedAt = DateTime.UtcNow;
+
+        Raise(new OrganizationInvitationCreatedDomainEvent(Id, OrganizationId, UserId, OrganizationRoleId));
+
         return Result.Success();
     }
 }

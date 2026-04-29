@@ -27,17 +27,21 @@ public sealed class CreateOrganizationInvitationCommandHandler(
             return Result.Failure<OrganizationInvitationResponse>(OrganizationErrors.OrganizationRoleNotFound);
         }
 
-        bool hasActiveInvitation = organization.Invitations.Any(invitation =>
-            invitation.UserId == request.UserId
-            && invitation.Status is InvitationStatus.Pending or InvitationStatus.Accepted);
-
-        if (hasActiveInvitation)
+        // TODO separate reactivation and creation into different commands
+        OrganizationInvitation? existingInvitation = organization.Invitations.FirstOrDefault(inv => inv.UserId == request.UserId);
+        if (existingInvitation is not null)
         {
-            return Result.Failure<OrganizationInvitationResponse>(OrganizationErrors.InvalidInvitationStatus);
+            if (existingInvitation.Status is InvitationStatus.Pending or InvitationStatus.Accepted)
+            {
+                return Result.Failure<OrganizationInvitationResponse>(OrganizationErrors.InvalidInvitationStatus);
+            }
+
+            existingInvitation.Reactivate(request.RoleId);
+            await organizationRepository.SaveChangesAsync(cancellationToken);
+            return Result.Success(ToResponse(existingInvitation));
         }
 
         OrganizationInvitation invitation = OrganizationInvitation.Create(request.OrganizationId, request.UserId, request.RoleId);
-        invitation.Raise(new OrganizationInvitationCreatedDomainEvent(invitation.Id, invitation.OrganizationId, invitation.UserId, invitation.OrganizationRoleId));
 
         await organizationRepository.AddInvitationAsync(invitation, cancellationToken);
         await organizationRepository.SaveChangesAsync(cancellationToken);

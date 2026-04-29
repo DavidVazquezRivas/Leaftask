@@ -216,5 +216,10 @@
         }
       }
     }
+  },
+  "errors": {
+    "invitation": {
+      "invalidStatus": "Ya existe una invitación para este usuario. Para modificarla, cancela la invitación y vuelve a invitar."
+    }
   }
 }

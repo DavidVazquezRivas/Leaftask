@@ -62,6 +62,27 @@ export const useCreateOrganizationInvitationMutation = (
         return
       }
 
+      if (error instanceof ApiError && error.status === 409) {
+        const parts = error.code.split('.')
+        if (parts[0] === 'Organization' && parts[1] === 'Invitation') {
+          const last = parts.slice(2).join('.')
+          const key = `errors.invitation.${last.charAt(0).toLowerCase()}${last.slice(1)}`
+
+          const translated = i18n.t(key, {
+            ns: 'organizations',
+            defaultValue:
+              error.message ??
+              i18n.t('management.settings.members.feedback.invitationSent', {
+                ns: 'organizations',
+              }),
+            keySeparator: '.',
+          })
+
+          toast.error(translated)
+          return
+        }
+      }
+
       handleApiError(error)
     },
   })

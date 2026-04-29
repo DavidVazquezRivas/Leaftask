@@ -1,6 +1,7 @@
 import { ApiRoutes } from '@/core/api/global/constants/routes'
 import { ApiError } from '@/core/api/global/errors'
 import { apiClient } from '@/core/api/global/httpClient'
+import { isAxiosError } from 'axios'
 import {
   isApiErrorResponse,
   isApiSuccessResponse,
@@ -78,28 +79,45 @@ export class OrganizationInvitationsGateway {
     organizationId: string,
     payload: CreateOrganizationInvitationRequest
   ): Promise<CreateOrganizationInvitationSuccessResponse> {
-    const response =
-      await apiClient.post<CreateOrganizationInvitationApiResponse>(
-        ApiRoutes.Organization.Invitations.Create(organizationId),
-        payload
-      )
+    try {
+      const response =
+        await apiClient.post<CreateOrganizationInvitationApiResponse>(
+          ApiRoutes.Organization.Invitations.Create(organizationId),
+          payload
+        )
 
-    const payloadResponse = response.data
+      const payloadResponse = response.data
 
-    if (isApiErrorResponse(payloadResponse)) {
-      throw new ApiError(payloadResponse.error.code, {
-        message: payloadResponse.error.message,
-        status: response.status,
-        meta: payloadResponse.meta,
-      })
+      if (isApiErrorResponse(payloadResponse)) {
+        throw new ApiError(payloadResponse.error.code, {
+          message: payloadResponse.error.message,
+          status: response.status,
+          meta: payloadResponse.meta,
+        })
+      }
+
+      if (!isApiSuccessResponse(payloadResponse)) {
+        throw new ApiError('OrganizationInvitations.Create.InvalidResponse', {
+          message: 'Organization invitation create response is invalid',
+        })
+      }
+
+      return payloadResponse
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        const payloadResponse = error.response.data
+
+        if (isApiErrorResponse(payloadResponse)) {
+          throw new ApiError(payloadResponse.error.code, {
+            message: payloadResponse.error.message,
+            status: error.response.status,
+            meta: payloadResponse.meta,
+            cause: error,
+          })
+        }
+      }
+
+      throw error
     }
-
-    if (!isApiSuccessResponse(payloadResponse)) {
-      throw new ApiError('OrganizationInvitations.Create.InvalidResponse', {
-        message: 'Organization invitation create response is invalid',
-      })
-    }
-
-    return payloadResponse
   }
 }

@@ -216,5 +216,10 @@
         }
       }
     }
+  },
+  "errors": {
+    "invitation": {
+      "invalidStatus": "An invitation for this user already exists. To modify it, cancel the invitation and invite again."
+    }
   }
 }
