@@ -39,6 +39,9 @@ export const useCreateOrganizationInvitationMutation = (
         queryClient.invalidateQueries({
           queryKey: QueryKeys.organization.members.distribution.all,
         }),
+        queryClient.invalidateQueries({
+          queryKey: QueryKeys.organization.invitations.pending(organizationId),
+        }),
       ])
 
       toast.success(
