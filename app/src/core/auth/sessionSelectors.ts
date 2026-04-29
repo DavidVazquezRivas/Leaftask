@@ -1,4 +1,5 @@
 import { useAuthStore } from '@/core/zustand/auth/authStore'
+import { queryClient } from '@/core/query'
 
 export const getAccessToken = (): string | null => {
   return useAuthStore.getState().accessToken
@@ -14,4 +15,5 @@ export const setAccessToken = (token: string): void => {
 
 export const clearSession = (): void => {
   useAuthStore.getState().clearSession()
+  queryClient.clear()
 }
