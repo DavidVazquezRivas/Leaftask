@@ -7,6 +7,7 @@
     <ProjectReference Include="..\BuildingBlocks.Application\BuildingBlocks.Application.csproj" />
     <ProjectReference Include="..\BuildingBlocks.DrivingInfrastructure\BuildingBlocks.DrivingInfrastructure.csproj" />
     <ProjectReference Include="..\Modules.Organizations.DrivenInfrastructure\Modules.Organizations.DrivenInfrastructure.csproj" />
+    <ProjectReference Include="..\Modules.Organizations.Integration\Modules.Organizations.Integration.csproj" />
     <ProjectReference Include="..\Modules.User.Integration\Modules.Users.Integration.csproj" />
   </ItemGroup>
   <ItemGroup>

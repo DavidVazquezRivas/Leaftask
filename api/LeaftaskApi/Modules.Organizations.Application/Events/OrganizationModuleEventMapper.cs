@@ -15,6 +15,8 @@ public sealed class OrganizationModuleEventMapper : IIntegrationEventMapper
             OrganizationCreatedDomainEvent created => new OrganizationCreatedIntegrationEvent(
                 created.OrganizationId,
                 created.CreatorUserId),
+            OrganizationDeletedDomainEvent deleted => new OrganizationDeletedIntegrationEvent(
+                deleted.OrganizationId),
             OrganizationInvitationCreatedDomainEvent created => new OrganizationInvitationCreatedIntegrationEvent(
                 created.OrganizationInvitationId,
                 created.OrganizationId,

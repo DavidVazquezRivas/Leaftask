@@ -11,11 +11,11 @@
     <Project Path="Api.Host/Api.Host.csproj" />
   </Folder>
   <Folder Name="/src/BuildingBlocks/">
-    <Project Path="BuildingBlocks.Integration/BuildingBlocks.Integration.csproj" Id="0eb1c7d0-2867-4fbb-8b11-0adc73f9864a" />
     <Project Path="BuildingBlocks.Application/BuildingBlocks.Application.csproj" />
     <Project Path="BuildingBlocks.Domain/BuildingBlocks.Domain.csproj" />
     <Project Path="BuildingBlocks.DrivenInfrastructure/BuildingBlocks.DrivenInfrastructure.csproj" />
     <Project Path="BuildingBlocks.DrivingInfrastructure/BuildingBlocks.DrivingInfrastructure.csproj" Id="635d0488-f31f-4e82-81df-79406876c397" />
+    <Project Path="BuildingBlocks.Integration/BuildingBlocks.Integration.csproj" Id="0eb1c7d0-2867-4fbb-8b11-0adc73f9864a" />
   </Folder>
   <Folder Name="/src/Modules/" />
   <Folder Name="/src/Modules/Organizations/">
@@ -24,6 +24,13 @@
     <Project Path="Modules.Organizations.DrivenInfrastructure/Modules.Organizations.DrivenInfrastructure.csproj" Id="59a998f9-73e6-4f05-a908-4050fb02e8e8" />
     <Project Path="Modules.Organizations.DrivingInfrastructure/Modules.Organizations.DrivingInfrastructure.csproj" />
     <Project Path="Modules.Organizations.Integration/Modules.Organizations.Integration.csproj" Id="50af49a8-06d2-453b-9e89-bd1ec5abbb9f" />
+  </Folder>
+  <Folder Name="/src/Modules/Projects/">
+    <Project Path="Modules.Projects.Application/Modules.Projects.Application.csproj" Id="1f6db04f-02d0-4f02-baa7-941cecf94848" />
+    <Project Path="Modules.Projects.Domain/Modules.Projects.Domain.csproj" Id="b6023af3-c214-4183-8600-51721824b84f" />
+    <Project Path="Modules.Projects.DrivenInfrastructure/Modules.Projects.DrivenInfrastructure.csproj" Id="f025e88e-8bab-4b17-a544-b9310c825513" />
+    <Project Path="Modules.Projects.DrivingInfrastructure/Modules.Projects.DrivingInfrastructure.csproj" Id="ca3e5707-fb12-439b-935c-37512559680b" />
+    <Project Path="Modules.Projects.Integration/Modules.Projects.Integration.csproj" Id="bb949f4d-74e3-49be-b2e0-590c396bf0d9" />
   </Folder>
   <Folder Name="/src/Modules/Users/">
     <Project Path="Modules.User.Application/Modules.Users.Application.csproj" />

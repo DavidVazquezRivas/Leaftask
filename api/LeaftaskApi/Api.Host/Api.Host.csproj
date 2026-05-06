@@ -24,6 +24,7 @@
 	  <ProjectReference Include="..\BuildingBlocks.DrivingInfrastructure\BuildingBlocks.DrivingInfrastructure.csproj" />
 	  <ProjectReference Include="..\Modules.User.DrivingInfrastructure\Modules.Users.DrivingInfrastructure.csproj" />
 	  <ProjectReference Include="..\Modules.Organizations.DrivingInfrastructure\Modules.Organizations.DrivingInfrastructure.csproj" />
+	  <ProjectReference Include="..\Modules.Projects.DrivingInfrastructure\Modules.Projects.DrivingInfrastructure.csproj" />
 	</ItemGroup>
 
 </Project>

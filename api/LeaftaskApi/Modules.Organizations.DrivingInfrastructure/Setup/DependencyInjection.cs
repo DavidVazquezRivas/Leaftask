@@ -26,7 +26,9 @@ using Modules.Organizations.DrivenInfrastructure.Persistence.Seeding;
 using Modules.Organizations.DrivenInfrastructure.Queries;
 using Modules.Organizations.DrivenInfrastructure.Repositories;
 using Modules.Organizations.DrivingInfrastructure.Jobs;
+using Modules.Organizations.DrivingInfrastructure.Services;
 using Modules.Organizations.DrivingInfrastructure.Subscribers;
+using Modules.Organizations.Integration;
 using Modules.Users.DrivingInfrastructure.Jobs.Outbox;
 using Quartz;
 
@@ -100,6 +102,7 @@ public static class DependencyInjection
         services.AddScoped<IOrganizationRepository, OrganizationRepository>();
         services.AddScoped<IOrganizationPermissionRepository, OrganizationPermissionRepository>();
         services.AddScoped<IUserReadModelRepository, UserReadModelRepository>();
+        services.AddScoped<IOrganizationPermissionService, OrganizationPermissionService>();
 
         return services;
     }

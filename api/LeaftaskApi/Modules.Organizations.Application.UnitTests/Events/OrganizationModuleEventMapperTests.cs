@@ -27,6 +27,19 @@ public class OrganizationModuleEventMapperTests
     }
 
     [Fact]
+    public void Map_Should_MapOrganizationDeletedDomainEvent()
+    {
+        // Arrange
+        OrganizationDeletedDomainEvent domainEvent = new(Guid.NewGuid());
+
+        // Act
+        IIntegrationEvent? result = _mapper.Map(domainEvent);
+
+        // Assert
+        result.Should().BeOfType<OrganizationDeletedIntegrationEvent>();
+    }
+
+    [Fact]
     public void Map_Should_ReturnNull_When_DomainEventIsUnknown()
     {
         // Arrange

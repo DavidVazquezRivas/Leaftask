@@ -8,6 +8,8 @@
 - Cuando el cursor sea un Guid, se tipa como `Guid?` desde la request para evitar parseos manuales.
 - En consultas EF, se debe usar `ToListAsync()` en lugar de `ToList()`.
 - El usuario prefiere un enfoque genérico para validación de permisos de organización para no ensuciar los command handlers, incluyendo manejo diferenciado por nivel de permiso.
+- El usuario no quiere consultas directas a la base de datos de Organizations desde Projects; deben tratarse como servicios separados. Para permisos en Projects, usar CQRS con datos replicados en Projects o contratos/métodos públicos expuestos por Modules.Organizations.Integration.
+- En el módulo Projects, el usuario prefiere que el modelo de dominio de `Project` no almacene `OwnerId` como propiedad del dominio; debe mantener la interfaz (`IProjectOwner`) y resolver el mapeo de `id` y `type` en `ProjectEntityTypeConfiguration`.
 
 ## Controller Guidelines
 - Los controladores deben mantenerse delgados: deben crear una consulta/comando, enviarlo a través de MediatR y permitir que un QueryHandler/CommandHandler delegue a un servicio. 
