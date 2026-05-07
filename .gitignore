@@ -12,6 +12,7 @@ docker-compose.override.yml
 # IDE files
 .vscode/
 .vs/
+.history/
 
 # Environment files
 .env

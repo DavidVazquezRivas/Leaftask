@@ -30,4 +30,7 @@ public static class ProjectErrors
 
     public static readonly Error OrganizationMembershipRequired =
         new("Project.Organization.Membership.Required", "You must be a member of the organization to perform this operation.", 403);
+
+    public static readonly Error AccessDenied =
+        new("Project.AccessDenied", "You do not have access to this project.", 403);
 }

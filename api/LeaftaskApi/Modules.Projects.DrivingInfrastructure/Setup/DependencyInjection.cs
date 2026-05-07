@@ -7,6 +7,7 @@ using Modules.Projects.Application.Authorization;
 using Modules.Projects.Application.Events;
 using Modules.Projects.Application.Management.Create;
 using Modules.Projects.Application.Management.GetMyProjects;
+using Modules.Projects.Application.Management.GetOrganizationProjects;
 using Modules.Projects.Application.Organizations.Create;
 using Modules.Projects.Application.Organizations.Delete;
 using Modules.Projects.Application.Users.Create;
@@ -85,6 +86,7 @@ public static class DependencyInjection
     private static IServiceCollection AddQueryServices(this IServiceCollection services)
     {
         services.AddScoped<IGetMyProjectsQueryService, GetMyProjectsQueryService>();
+        services.AddScoped<IGetOrganizationProjectQueryService, GetOrganizationProjectsQueryService>();
 
         return services;
     }

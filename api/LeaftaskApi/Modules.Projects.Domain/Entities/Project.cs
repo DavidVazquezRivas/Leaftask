@@ -12,7 +12,7 @@ public sealed class Project : Entity
         string name,
         string abbreviation,
         ProjectPrivacy privacy,
-        IProjectOwner owner,
+        Guid ownerId,
         OwnerType type,
         DateTime createdAt)
     {
@@ -21,17 +21,25 @@ public sealed class Project : Entity
         Abbreviation = abbreviation;
         Privacy = privacy;
         CreatedAt = createdAt;
-        Owner = owner;
+        OwnerId = ownerId;
         OwnerType = type;
     }
 
     public Guid Id { get; }
-    public string Name { get; }
-    public string Abbreviation { get; }
-    public ProjectPrivacy Privacy { get; }
+    public string Name { get; private set; } = string.Empty;
+    public string Abbreviation { get; private set; } = string.Empty;
+    public ProjectPrivacy Privacy { get; private set; }
     public DateTime CreatedAt { get; }
-    public IProjectOwner Owner { get; }
+    public Guid OwnerId { get; private set; }
     public OwnerType OwnerType { get; }
+    public IProjectOwner Owner => new ProjectOwnerReference(OwnerId);
+
+    public void Update(string? name, string? abbreviation, ProjectPrivacy? privacy)
+    {
+        if (name is not null) Name = name;
+        if (abbreviation is not null) Abbreviation = abbreviation;
+        if (privacy.HasValue) Privacy = privacy.Value;
+    }
 
     public static Project Create(
         string name,
@@ -39,5 +47,5 @@ public sealed class Project : Entity
         ProjectPrivacy privacy,
         IProjectOwner owner,
         OwnerType type) =>
-        new(Guid.NewGuid(), name, abbreviation, privacy, owner, type, DateTime.UtcNow);
+        new(Guid.NewGuid(), name, abbreviation, privacy, owner.Id, type, DateTime.UtcNow);
 }

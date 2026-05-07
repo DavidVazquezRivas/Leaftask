@@ -14,9 +14,7 @@ public sealed class CreateProjectCommandValidator : AbstractValidator<CreateProj
             .NotEmpty()
             .MaximumLength(3);
 
-        RuleFor(command => command.PrivacyLevelId)
-            .NotEmpty()
-            .Must(id => ProjectPrivacyLevels.TryMap(id, out _))
-            .WithMessage("The specified privacy level is invalid.");
+        RuleFor(command => command.PrivacyLevel)
+            .IsInEnum();
     }
 }

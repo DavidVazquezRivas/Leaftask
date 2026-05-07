@@ -17,27 +17,22 @@ public sealed class CreateProjectCommandHandler(
 {
     public async Task<Result<ProjectResponse>> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
     {
-        if (!ProjectPrivacyLevels.TryMap(request.PrivacyLevelId, out ProjectPrivacy privacy))
-        {
-            return Result.Failure<ProjectResponse>(ProjectErrors.InvalidPrivacyLevel);
-        }
-
-        bool abbreviationExists = await projectRepository.ExistsByAbbreviationAsync(request.Abbreviation, cancellationToken);
-        if (abbreviationExists)
-        {
-            return Result.Failure<ProjectResponse>(ProjectErrors.DuplicatedAbbreviation);
-        }
-
         (IProjectOwner owner, OwnerType ownerType, Guid? organizationId) = await ResolveOwnerAsync(request, cancellationToken);
         if (owner is null)
         {
             return Result.Failure<ProjectResponse>(ProjectErrors.OwnerNotFound);
         }
 
+        bool abbreviationExists = await projectRepository.ExistsByAbbreviationAsync(request.Abbreviation, owner.Id, cancellationToken: cancellationToken);
+        if (abbreviationExists)
+        {
+            return Result.Failure<ProjectResponse>(ProjectErrors.DuplicatedAbbreviation);
+        }
+
         Project project = Project.Create(
             request.Name,
             request.Abbreviation,
-            privacy,
+            request.PrivacyLevel,
             owner,
             ownerType);
 
@@ -76,7 +71,7 @@ public sealed class CreateProjectCommandHandler(
             project.Id,
             project.Name,
             project.Abbreviation,
-            ProjectPrivacyLevels.ToDto(project.Privacy),
+            project.Privacy,
             organizationId,
             project.CreatedAt);
 }

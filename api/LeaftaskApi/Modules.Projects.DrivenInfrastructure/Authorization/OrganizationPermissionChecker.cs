@@ -12,6 +12,12 @@ namespace Modules.Projects.DrivenInfrastructure.Authorization;
 public sealed class OrganizationPermissionChecker(
     IOrganizationPermissionService organizationPermissionService) : IOrganizationPermissionChecker
 {
+    public Task<bool> IsMemberAsync(
+        Guid organizationId,
+        Guid userId,
+        CancellationToken cancellationToken = default) =>
+        organizationPermissionService.IsOrganizationMemberAsync(organizationId, userId, cancellationToken);
+
     public async Task<ProjectPermissionCheckStatus> CheckAsync(
         Guid organizationId,
         Guid userId,

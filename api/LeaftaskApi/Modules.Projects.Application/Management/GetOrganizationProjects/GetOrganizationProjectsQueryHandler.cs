@@ -12,7 +12,7 @@ public sealed class GetOrganizationProjectsQueryHandler(
         GetOrganizationProjectsQuery request,
         CancellationToken cancellationToken)
     {
-        PaginatedResult<SimpleProjectDto> projects = await service.GetOrganizationProjects(
+        PaginatedResult<SimpleProjectDto> projects = await service.GetOrganizationProjectsAsync(
             request.OrganizationId,
             request.Limit,
             request.Cursor,

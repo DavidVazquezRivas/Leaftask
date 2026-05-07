@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Application.Commands;
 using BuildingBlocks.Domain.Result;
 using Modules.Projects.Application.Authorization;
+using Modules.Projects.Domain.Entities;
 
 namespace Modules.Projects.Application.Management.Create;
 
@@ -8,6 +9,6 @@ namespace Modules.Projects.Application.Management.Create;
 public sealed record CreateProjectCommand(
     string Name,
     string Abbreviation,
-    Guid PrivacyLevelId,
+    ProjectPrivacy PrivacyLevel,
     Guid? OrganizationId)
     : ICommand<Result<ProjectResponse>>, IOrganizationPermissionRequest;

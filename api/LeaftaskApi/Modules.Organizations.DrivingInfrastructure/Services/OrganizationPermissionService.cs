@@ -8,6 +8,21 @@ public sealed class OrganizationPermissionService(
     IOrganizationRepository organizationRepository,
     IOrganizationPermissionRepository organizationPermissionRepository) : IOrganizationPermissionService
 {
+    public async Task<bool> IsOrganizationMemberAsync(
+        Guid organizationId,
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        Organization? organization = await organizationRepository.GetByIdAsync(organizationId, cancellationToken);
+        if (organization is null)
+        {
+            return false;
+        }
+
+        return organization.Invitations.Any(inv =>
+            inv.UserId == userId && inv.Status == InvitationStatus.Accepted);
+    }
+
     public async Task<OrganizationPermissionCheckStatus> CheckPermissionAsync(
         Guid organizationId,
         Guid userId,

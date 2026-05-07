@@ -7,4 +7,9 @@ public interface IOrganizationPermissionChecker
         Guid userId,
         string permissionName,
         CancellationToken cancellationToken = default);
+
+    Task<bool> IsMemberAsync(
+        Guid organizationId,
+        Guid userId,
+        CancellationToken cancellationToken = default);
 }

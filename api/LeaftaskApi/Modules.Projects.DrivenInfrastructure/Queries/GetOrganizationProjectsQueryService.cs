@@ -26,7 +26,7 @@ public sealed class GetOrganizationProjectsQueryService(ProjectsDbContext dbCont
 
     private static readonly IReadOnlyList<string> DefaultSort = ["createdAt:asc", "id:asc"];
 
-    public async Task<PaginatedResult<SimpleProjectDto>> GetOrganizationProjects(
+    public async Task<PaginatedResult<SimpleProjectDto>> GetOrganizationProjectsAsync(
         Guid organizationId,
         int limit,
         string? cursor,
@@ -35,7 +35,7 @@ public sealed class GetOrganizationProjectsQueryService(ProjectsDbContext dbCont
     {
         List<ProjectRow> projects = await dbContext.Projects
             .AsNoTracking()
-            .Where(project => project.OwnerType == OwnerType.Organization && project.Owner.Id == organizationId)
+            .Where(project => project.OwnerType == OwnerType.Organization && project.OwnerId == organizationId)
             .Select(project => new ProjectRow(project.Id, project.Name, project.Abbreviation, project.CreatedAt))
             .ToListAsync(cancellationToken);
 

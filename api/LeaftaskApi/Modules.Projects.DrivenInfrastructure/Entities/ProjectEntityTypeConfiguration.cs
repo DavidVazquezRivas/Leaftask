@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Modules.Projects.Domain.Entities;
-using Modules.Projects.Domain.Entities.Owner;
 
 namespace Modules.Projects.DrivenInfrastructure.Entities;
 
@@ -32,21 +30,17 @@ internal sealed class ProjectEntityTypeConfiguration : IEntityTypeConfiguration<
             .HasColumnName("owner_type")
             .IsRequired();
 
-        builder.Property(project => project.Owner)
+        builder.Property(project => project.OwnerId)
             .HasColumnName("owner_id")
-            .HasConversion(
-                owner => owner.Id,
-                id => new ProjectOwnerReference(id))
-            .Metadata.SetValueComparer(new ValueComparer<IProjectOwner>(
-                (left, right) => left != null && right != null && left.Id == right.Id,
-                owner => owner.Id.GetHashCode(),
-                owner => new ProjectOwnerReference(owner.Id)));
+            .IsRequired();
+
+        builder.Ignore(project => project.Owner);
 
         builder.Property(project => project.CreatedAt)
             .HasColumnName("created_at")
             .IsRequired();
 
-        builder.HasIndex("owner_id", "owner_type");
-        builder.HasIndex(project => project.Abbreviation).IsUnique();
+        builder.HasIndex(nameof(Project.OwnerId), nameof(Project.OwnerType));
+        builder.HasIndex(nameof(Project.OwnerId), nameof(Project.Abbreviation)).IsUnique();
     }
 }

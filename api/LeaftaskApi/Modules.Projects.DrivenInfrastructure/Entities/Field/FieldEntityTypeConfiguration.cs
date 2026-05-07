@@ -1,12 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Modules.Projects.Domain.Entities.Field;
+using FieldEntity = Modules.Projects.Domain.Entities.Field.Field;
 
 namespace Modules.Projects.DrivenInfrastructure.Entities.Field;
 
-internal sealed class FieldEntityTypeConfiguration : IEntityTypeConfiguration<Field>
+internal sealed class FieldEntityTypeConfiguration : IEntityTypeConfiguration<FieldEntity>
 {
-    public void Configure(EntityTypeBuilder<Field> builder)
+    public void Configure(EntityTypeBuilder<FieldEntity> builder)
     {
         builder.ToTable("fields");
 
@@ -21,7 +22,7 @@ internal sealed class FieldEntityTypeConfiguration : IEntityTypeConfiguration<Fi
             .HasColumnName("is_optional")
             .IsRequired();
 
-        builder.HasOne(field => field.FieldType)
+        builder.HasOne<FieldType>(field => field.FieldType)
             .WithMany()
             .HasForeignKey("field_type_id")
             .OnDelete(DeleteBehavior.Restrict);

@@ -33,7 +33,7 @@ public sealed class GetMyProjectsQueryService(ProjectsDbContext dbContext) : IGe
     {
         List<ProjectRow> projects = await dbContext.Projects
             .AsNoTracking()
-            .Where(project => project.OwnerType == OwnerType.User && project.Owner.Id == userId)
+            .Where(project => project.OwnerType == OwnerType.User && project.OwnerId == userId)
             .Select(project => new ProjectRow(project.Id, project.Name, project.Abbreviation, project.CreatedAt))
             .ToListAsync(cancellationToken);
 
