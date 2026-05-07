@@ -13,6 +13,7 @@ docker-compose.override.yml
 .vscode/
 .vs/
 .history/
+.claude/
 
 # Environment files
 .env

@@ -12,7 +12,9 @@
       "Bash(Get-Content \"C:\\\\Users\\\\vazqu\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\d--Workspace-Leaftask-api-LeaftaskApi\\\\3d88a0d3-202b-4c7a-81c0-a05c720fb309\\\\tasks\\\\bb4m71lyi.output\" -Wait)",
       "Bash(Select-String --line-buffered \"api\\\\.host|error|Error|ERROR|Application started|Now listening|exited|migrations|FINISHED|exception|Exception\")",
       "Bash(curl -s -w \"\\\\n%{http_code}\" http://localhost:8080/swagger/index.html)",
-      "Bash(dotnet ef *)"
+      "Bash(dotnet ef *)",
+      "Bash(Get-ChildItem -Directory)",
+      "Bash(Select-Object Name)"
     ]
   }
 }
