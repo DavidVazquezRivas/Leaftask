@@ -182,6 +182,88 @@ namespace Modules.Projects.DrivenInfrastructure.Persistence.Migrations
                     b.ToTable("project_fields", "project");
                 });
 
+            modelBuilder.Entity("Modules.Projects.Domain.Entities.Invitation.ProjectInvitation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("CancelledAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("cancelled_at");
+
+                    b.Property<DateTime>("InvitedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("invited_at");
+
+                    b.Property<Guid>("InviteeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("invitee_id");
+
+                    b.Property<int>("InviteeType")
+                        .HasColumnType("integer")
+                        .HasColumnName("invitee_type");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<DateTime?>("RespondedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("responded_at");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_role_id");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("ProjectId", "InviteeId")
+                        .IsUnique();
+
+                    b.ToTable("project_invitations", "project");
+                });
+
+            modelBuilder.Entity("Modules.Projects.Domain.Entities.Member.ProjectMember", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("joined_at");
+
+                    b.Property<Guid>("MemberId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("member_id");
+
+                    b.Property<int>("MemberType")
+                        .HasColumnType("integer")
+                        .HasColumnName("member_type");
+
+                    b.Property<Guid>("project_id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("project_role_id")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("project_role_id");
+
+                    b.HasIndex("project_id", "MemberId")
+                        .IsUnique();
+
+                    b.ToTable("project_members", "project");
+                });
+
             modelBuilder.Entity("Modules.Projects.Domain.Entities.Owner.OrganizationReadModel", b =>
                 {
                     b.Property<Guid>("Id")
@@ -326,6 +408,12 @@ namespace Modules.Projects.DrivenInfrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("IsOwnerRole")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_owner_role");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -408,6 +496,40 @@ namespace Modules.Projects.DrivenInfrastructure.Persistence.Migrations
                     b.Navigation("Field");
 
                     b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("Modules.Projects.Domain.Entities.Invitation.ProjectInvitation", b =>
+                {
+                    b.HasOne("Modules.Projects.Domain.Entities.Project", null)
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Modules.Projects.Domain.Entities.Role.ProjectRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Modules.Projects.Domain.Entities.Member.ProjectMember", b =>
+                {
+                    b.HasOne("Modules.Projects.Domain.Entities.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("project_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Modules.Projects.Domain.Entities.Role.ProjectRole", "Role")
+                        .WithMany()
+                        .HasForeignKey("project_role_id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("Modules.Projects.Domain.Entities.Role.ProjectPermission", b =>

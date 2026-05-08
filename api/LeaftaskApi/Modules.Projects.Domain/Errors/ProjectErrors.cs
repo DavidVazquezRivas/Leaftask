@@ -33,4 +33,46 @@ public static class ProjectErrors
 
     public static readonly Error AccessDenied =
         new("Project.AccessDenied", "You do not have access to this project.", 403);
+
+    public static readonly Error RoleNotFound =
+        new("Project.Role.NotFound", "The specified role was not found in this project.", 404);
+
+    public static readonly Error DuplicatedRoleName =
+        new("Project.Role.Name.Duplicated", "A role with the same name already exists in this project.", 409);
+
+    public static readonly Error PermissionNotFound =
+        new("Project.Permission.NotFound", "The specified permission was not found.", 404);
+
+    public static readonly Error InvitationNotFound =
+        new("Project.Invitation.NotFound", "The specified invitation was not found.", 404);
+
+    public static readonly Error InvalidInvitationStatus =
+        new("Project.Invitation.InvalidStatus", "The invitation is not in the expected status.", 409);
+
+    public static readonly Error InvitationAccessDenied =
+        new("Project.Invitation.AccessDenied", "You cannot act on this invitation.", 403);
+
+    public static readonly Error MemberNotFound =
+        new("Project.Member.NotFound", "The specified member was not found in this project.", 404);
+
+    public static readonly Error UserAlreadyMember =
+        new("Project.Member.AlreadyMember", "The user is already a member of this project.", 400);
+
+    public static readonly Error UserAlreadyInvited =
+        new("Project.Invitation.AlreadyPending", "The user already has a pending invitation for this project.", 400);
+
+    public static readonly Error OwnerRoleCannotBeDeleted =
+        new("Project.Role.Owner.CannotBeDeleted", "The owner role cannot be deleted.", 403);
+
+    public static readonly Error OwnerRoleCannotBeModified =
+        new("Project.Role.Owner.CannotBeModified", "The owner role permissions cannot be modified.", 403);
+
+    public static readonly Error FieldTypeNotFound =
+        new("Project.Field.TypeNotFound", "The specified field type was not found.", 404);
+
+    public static readonly Error OptionsRequired =
+        new("Project.Field.OptionsRequired", "Options are required for selection field types.", 400);
+
+    public static readonly Error CustomFieldNotFound =
+        new("Project.Field.NotFound", "The specified custom field was not found in this project.", 404);
 }

@@ -5,6 +5,8 @@ using Modules.Projects.Application.Management.Create;
 using Modules.Projects.Application.UnitTests.TestBuilders;
 using Modules.Projects.Domain.Entities;
 using Modules.Projects.Domain.Entities.Owner;
+using Modules.Projects.Domain.Entities.Member;
+using Modules.Projects.Domain.Entities.Role;
 using Modules.Projects.Domain.Errors;
 using Modules.Projects.Domain.Repositories;
 using NSubstitute;
@@ -15,6 +17,8 @@ public class CreateProjectCommandHandlerTests
 {
     private readonly CreateProjectCommandHandler _handler;
     private readonly IProjectRepository _projectRepositoryMock;
+    private readonly IProjectRoleRepository _projectRoleRepositoryMock;
+    private readonly IProjectMemberRepository _projectMemberRepositoryMock;
     private readonly IUserReadModelRepository _userReadModelRepositoryMock;
     private readonly IOrganizationReadModelRepository _organizationReadModelRepositoryMock;
     private readonly IUserContext _userContextMock;
@@ -22,12 +26,19 @@ public class CreateProjectCommandHandlerTests
     public CreateProjectCommandHandlerTests()
     {
         _projectRepositoryMock = Substitute.For<IProjectRepository>();
+        _projectRoleRepositoryMock = Substitute.For<IProjectRoleRepository>();
+        _projectMemberRepositoryMock = Substitute.For<IProjectMemberRepository>();
         _userReadModelRepositoryMock = Substitute.For<IUserReadModelRepository>();
         _organizationReadModelRepositoryMock = Substitute.For<IOrganizationReadModelRepository>();
         _userContextMock = Substitute.For<IUserContext>();
 
+        _projectRoleRepositoryMock.GetAllPermissionsAsync(Arg.Any<CancellationToken>())
+            .Returns(new List<ProjectPermission>());
+
         _handler = new CreateProjectCommandHandler(
             _projectRepositoryMock,
+            _projectRoleRepositoryMock,
+            _projectMemberRepositoryMock,
             _userReadModelRepositoryMock,
             _organizationReadModelRepositoryMock,
             _userContextMock);

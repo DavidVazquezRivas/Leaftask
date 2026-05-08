@@ -23,10 +23,10 @@ public sealed class DeleteProjectCommandHandler(
             return Result.Failure(ProjectErrors.ProjectNotFound);
         }
 
-        bool canAccess = await CanAccessAsync(project, userContext.UserId, cancellationToken);
-        if (!canAccess)
+        Result accessResult = await CheckDeleteAccessAsync(project, userContext.UserId, cancellationToken);
+        if (accessResult.IsFailure)
         {
-            return Result.Failure(ProjectErrors.AccessDenied);
+            return accessResult;
         }
 
         await projectRepository.RemoveAsync(project, cancellationToken);
@@ -35,13 +35,30 @@ public sealed class DeleteProjectCommandHandler(
         return Result.Success();
     }
 
-    private async Task<bool> CanAccessAsync(Project project, Guid userId, CancellationToken cancellationToken)
+    private async Task<Result> CheckDeleteAccessAsync(Project project, Guid userId, CancellationToken cancellationToken)
     {
         if (project.OwnerType == OwnerType.Organization)
         {
-            return await organizationPermissionChecker.IsMemberAsync(project.Owner.Id, userId, cancellationToken);
+            OrganizationPermissionCheckStatus status = await organizationPermissionChecker.CheckAsync(
+                project.OwnerId,
+                userId,
+                "Delete Projects",
+                cancellationToken);
+
+            return status switch
+            {
+                OrganizationPermissionCheckStatus.Full => Result.Success(),
+                OrganizationPermissionCheckStatus.Supervised => Result.Failure(ProjectErrors.OrganizationPermissionApprovalRequired),
+                OrganizationPermissionCheckStatus.Denied => Result.Failure(ProjectErrors.OrganizationPermissionDenied),
+                OrganizationPermissionCheckStatus.MembershipRequired => Result.Failure(ProjectErrors.OrganizationMembershipRequired),
+                OrganizationPermissionCheckStatus.PermissionNotFound => Result.Failure(ProjectErrors.OrganizationPermissionNotFound),
+                OrganizationPermissionCheckStatus.OrganizationNotFound => Result.Failure(ProjectErrors.OrganizationNotFound),
+                _ => Result.Failure(ProjectErrors.OrganizationPermissionDenied)
+            };
         }
 
-        return project.Owner.Id == userId;
+        return project.OwnerId == userId
+            ? Result.Success()
+            : Result.Failure(ProjectErrors.AccessDenied);
     }
 }

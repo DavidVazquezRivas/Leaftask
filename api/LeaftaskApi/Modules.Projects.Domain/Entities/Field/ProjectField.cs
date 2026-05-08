@@ -17,9 +17,15 @@ public sealed class ProjectField : Entity
     }
 
     public Guid Id { get; }
-    public string Name { get; }
+    public string Name { get; private set; }
     public bool Default { get; }
-    public bool Optional { get; }
+    public bool Optional { get; private set; }
     public Field Field { get; }
     public Project Project { get; }
+
+    public void Update(string name, bool optional)
+    {
+        Name = name;
+        Optional = optional;
+    }
 }

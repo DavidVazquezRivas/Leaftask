@@ -63,6 +63,8 @@ internal static class DependencyInjection
     {
         services.AddSwaggerGen(c =>
         {
+            c.CustomSchemaIds(type => type.FullName?.Replace("+", ".", StringComparison.Ordinal) ?? type.Name);
+
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 Name = "Authorization",

@@ -11,6 +11,7 @@ services:
       - Modules__Users__Session__OAuth__Google__ClientId=${GOOGLE_CLIENT_ID}
       - Modules__Users__Session__Jwt__SecretKey=${JWT_SECRET_KEY}
       - ConnectionStrings__Database=Host=postgres;Port=5432;Database=leaftask;Username=postgres;Password=${POSTGRES_PASSWORD}
+      - Cors__AllowedOrigins__1=http://localhost:8080
       - Serilog__WriteTo__0__Name=Seq
       - Serilog__WriteTo__0__Args__serverUrl=http://seq:80
     ports:

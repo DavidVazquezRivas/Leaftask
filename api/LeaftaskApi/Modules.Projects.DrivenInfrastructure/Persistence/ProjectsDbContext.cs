@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Modules.Projects.Application.Events;
 using Modules.Projects.Domain.Entities;
 using Modules.Projects.Domain.Entities.Field;
+using Modules.Projects.Domain.Entities.Invitation;
+using Modules.Projects.Domain.Entities.Member;
 using Modules.Projects.Domain.Entities.Owner;
 using Modules.Projects.Domain.Entities.Role;
 
@@ -16,6 +18,8 @@ public sealed class ProjectsDbContext(
     ProjectModuleEventMapper eventMapper) : AppDbContext(options, domainEventsDispatcher, eventMapper)
 {
     public DbSet<Project> Projects { get; set; }
+    public DbSet<ProjectMember> ProjectMembers { get; set; }
+    public DbSet<ProjectInvitation> ProjectInvitations { get; set; }
     public DbSet<ProjectRole> ProjectRoles { get; set; }
     public DbSet<ProjectPermissionGroup> ProjectPermissionGroups { get; set; }
     public DbSet<ProjectPermission> ProjectPermissions { get; set; }

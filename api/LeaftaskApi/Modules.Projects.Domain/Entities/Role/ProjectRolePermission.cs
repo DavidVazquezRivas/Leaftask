@@ -16,7 +16,7 @@ public sealed class ProjectRolePermission : Entity
     }
 
     public Guid Id { get; }
-    public PermissionLevel PermissionLevel { get; }
+    public PermissionLevel PermissionLevel { get; private set; }
     public ProjectPermission Permission { get; }
     public ProjectRole Role { get; }
 }

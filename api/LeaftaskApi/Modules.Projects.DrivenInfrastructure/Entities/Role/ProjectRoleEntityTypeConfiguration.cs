@@ -17,6 +17,11 @@ internal sealed class ProjectRoleEntityTypeConfiguration : IEntityTypeConfigurat
             .IsRequired()
             .HasMaxLength(100);
 
+        builder.Property(role => role.IsOwnerRole)
+            .HasColumnName("is_owner_role")
+            .IsRequired()
+            .HasDefaultValue(false);
+
         builder.HasOne(role => role.Project)
             .WithMany()
             .HasForeignKey("project_id")

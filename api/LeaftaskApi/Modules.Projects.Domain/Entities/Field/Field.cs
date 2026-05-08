@@ -15,7 +15,10 @@ public sealed class Field : Entity
     }
 
     public Guid Id { get; }
-    public bool IsOptional { get; }
+    public bool IsOptional { get; private set; }
     public string Name { get; }
-    public FieldType FieldType { get; }
+    public FieldType FieldType { get; private set; }
+
+    public void UpdateType(FieldType fieldType) => FieldType = fieldType;
+    public void UpdateIsOptional(bool isOptional) => IsOptional = isOptional;
 }

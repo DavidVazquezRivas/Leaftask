@@ -8,6 +8,12 @@ using Modules.Projects.Application.Events;
 using Modules.Projects.Application.Management.Create;
 using Modules.Projects.Application.Management.GetMyProjects;
 using Modules.Projects.Application.Management.GetOrganizationProjects;
+using Modules.Projects.Application.Fields.GetFieldTypes;
+using Modules.Projects.Application.Fields.GetProjectCustomFields;
+using Modules.Projects.Application.Invitations.GetPending;
+using Modules.Projects.Application.Members.GetMembers;
+using Modules.Projects.Application.Permissions.GetPermissions;
+using Modules.Projects.Application.Permissions.GetRoles;
 using Modules.Projects.Application.Organizations.Create;
 using Modules.Projects.Application.Organizations.Delete;
 using Modules.Projects.Application.Users.Create;
@@ -60,6 +66,7 @@ public static class DependencyInjection
             config.AddOpenBehavior(typeof(LoggingBehavior<,>));
             config.AddOpenBehavior(typeof(ValidationBehavior<,>));
             config.AddOpenBehavior(typeof(OrganizationPermissionBehavior<,>));
+            config.AddOpenBehavior(typeof(ProjectPermissionBehavior<,>));
         });
 
         services.AddSingleton<ProjectModuleEventMapper>();
@@ -76,9 +83,14 @@ public static class DependencyInjection
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<IProjectRepository, ProjectRepository>();
+        services.AddScoped<IProjectMemberRepository, ProjectMemberRepository>();
+        services.AddScoped<IProjectInvitationRepository, ProjectInvitationRepository>();
         services.AddScoped<IUserReadModelRepository, UserReadModelRepository>();
         services.AddScoped<IOrganizationReadModelRepository, OrganizationReadModelRepository>();
         services.AddScoped<IOrganizationPermissionChecker, OrganizationPermissionChecker>();
+        services.AddScoped<IProjectPermissionChecker, ProjectPermissionChecker>();
+        services.AddScoped<IProjectRoleRepository, ProjectRoleRepository>();
+        services.AddScoped<IProjectFieldRepository, ProjectFieldRepository>();
 
         return services;
     }
@@ -87,6 +99,12 @@ public static class DependencyInjection
     {
         services.AddScoped<IGetMyProjectsQueryService, GetMyProjectsQueryService>();
         services.AddScoped<IGetOrganizationProjectQueryService, GetOrganizationProjectsQueryService>();
+        services.AddScoped<IGetProjectPermissionsQueryService, GetProjectPermissionsQueryService>();
+        services.AddScoped<IGetProjectRolesQueryService, GetProjectRolesQueryService>();
+        services.AddScoped<IGetProjectMembersQueryService, GetProjectMembersQueryService>();
+        services.AddScoped<IGetPendingProjectInvitationsQueryService, GetPendingProjectInvitationsQueryService>();
+        services.AddScoped<IGetFieldTypesQueryService, GetFieldTypesQueryService>();
+        services.AddScoped<IGetProjectCustomFieldsQueryService, GetProjectCustomFieldsQueryService>();
 
         return services;
     }
