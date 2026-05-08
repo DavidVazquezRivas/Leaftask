@@ -1,8 +1,11 @@
-import { FolderKanban, Plus, Settings } from 'lucide-react'
+import { FolderKanban, Settings } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
+import type { SimpleProjectData } from '@/core/api/project/management'
 import { AppPaths } from '@/core/router'
-import { SecondaryPanel } from '@/shared/components/layouts/components'
+import { CreateProjectButton } from '@/shared/components/layouts/components/project-creation'
+import { ProjectsList } from '@/shared/components/layouts/components/ProjectsList'
+import { SecondaryPanel } from '@/shared/components/layouts/components/SecondaryPanel'
 import { Button } from '@/shared/components/ui/button'
 
 interface PrivateContextPanelProps {
@@ -10,9 +13,11 @@ interface PrivateContextPanelProps {
   subtitle: string
   isOrganizationContext: boolean
   organizationSettingsPath: string | null
-  personalPlaceholderLabel: string
-  organizationPlaceholderLabel: string
-  personalActionLabel: string
+  organizationId: string | null
+  projects: SimpleProjectData[]
+  isProjectsLoading: boolean
+  projectsEmptyLabel: string
+  canCreateProject: boolean
   personalSettingsLabel: string
   organizationSettingsLabel: string
   displayName: string
@@ -24,9 +29,11 @@ export function PrivateContextPanel({
   subtitle,
   isOrganizationContext,
   organizationSettingsPath,
-  personalPlaceholderLabel,
-  organizationPlaceholderLabel,
-  personalActionLabel,
+  organizationId,
+  projects,
+  isProjectsLoading,
+  projectsEmptyLabel,
+  canCreateProject,
   personalSettingsLabel,
   organizationSettingsLabel,
   displayName,
@@ -60,21 +67,16 @@ export function PrivateContextPanel({
       subtitle={subtitle}
       titleIcon={<FolderKanban className="size-4" />}
       content={
-        <div className="space-y-5">
-          <p className="text-sm text-muted-foreground">
-            {isOrganizationContext
-              ? organizationPlaceholderLabel
-              : personalPlaceholderLabel}
-          </p>
-        </div>
+        <ProjectsList
+          projects={projects}
+          isLoading={isProjectsLoading}
+          emptyLabel={projectsEmptyLabel}
+        />
       }
       primaryAction={
-        isOrganizationContext ? null : (
-          <Button className="w-full" variant="outline" data-icon="inline-start">
-            <Plus />
-            {personalActionLabel}
-          </Button>
-        )
+        canCreateProject ? (
+          <CreateProjectButton organizationId={organizationId} />
+        ) : null
       }
       footer={
         isOrganizationContext ? (

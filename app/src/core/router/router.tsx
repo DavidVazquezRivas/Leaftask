@@ -10,6 +10,8 @@ import { PrivateLayout, PublicLayout } from '@/shared/components/layouts'
 import { LoginPage } from '@/modules/user/pages/login'
 import { OrganizationPage } from '@/modules/organization/pages/organization'
 import { OrganizationSettingsPage } from '@/modules/organization/pages/settings'
+import { ProjectPage } from '@/modules/project/pages/project'
+import { ProjectSettingsPage } from '@/modules/project/pages/settings'
 import { ProfilePage } from '@/modules/user/pages/profile'
 import { NotFoundPage } from '@/shared/pages/not-found'
 
@@ -57,6 +59,14 @@ const router = createBrowserRouter([
       {
         path: AppPaths.APP_ORGANIZATION_SETTINGS,
         element: <OrganizationSettingsPage />,
+      },
+      {
+        path: AppPaths.APP_PROJECT,
+        element: <ProjectPage />,
+      },
+      {
+        path: AppPaths.APP_PROJECT_SETTINGS,
+        element: <ProjectSettingsPage />,
       },
     ],
   },

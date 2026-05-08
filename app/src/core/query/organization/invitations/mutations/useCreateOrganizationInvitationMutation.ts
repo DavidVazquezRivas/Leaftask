@@ -1,4 +1,3 @@
-import { isAxiosError } from 'axios'
 import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
@@ -7,16 +6,8 @@ import { ApiError } from '@/core/api/global/errors/ApiError'
 import type { CreateOrganizationInvitationRequest } from '@/core/api/organization/invitations'
 import { i18n } from '@/core/i18n'
 import { QueryKeys } from '@/core/query/QueryKeys'
-import { useApiErrorHandler } from '@/core/query/hooks'
+import { isForbiddenError, useApiErrorHandler } from '@/core/query/hooks'
 import { queryClient } from '@/core/query/queryClient'
-
-const isForbiddenError = (error: unknown): boolean => {
-  if (error instanceof ApiError) {
-    return error.status === 403
-  }
-
-  return isAxiosError(error) && error.response?.status === 403
-}
 
 export const useCreateOrganizationInvitationMutation = (
   organizationId: string

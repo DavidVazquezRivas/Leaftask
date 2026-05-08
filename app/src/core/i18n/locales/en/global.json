@@ -31,6 +31,7 @@
     "title": "Personal Projects",
     "subtitle": "Personal workspace",
     "placeholder": "Your personal projects will appear here soon.",
+    "projectsEmpty": "You have no personal projects yet.",
     "newPersonalProject": "New Personal Project",
     "settings": "User settings",
     "userUnknown": "User",
@@ -40,7 +41,12 @@
     "title": "Organization Projects",
     "subtitle": "Organization workspace",
     "placeholder": "Organization projects will appear here soon.",
+    "projectsEmpty": "This organization has no projects yet.",
     "settings": "Organization settings"
+  },
+  "projectsPanel": {
+    "treeView": "Tree View",
+    "settings": "Settings"
   },
   "common": {
     "retry": "Retry",

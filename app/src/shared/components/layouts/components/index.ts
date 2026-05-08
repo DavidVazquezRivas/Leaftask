@@ -5,6 +5,10 @@ export {
   CreateOrganizationButton,
   CreateOrganizationModal,
 } from '@/shared/components/layouts/components/organization-creation'
+export {
+  CreateProjectButton,
+  CreateProjectModal,
+} from '@/shared/components/layouts/components/project-creation'
 export { LanguageSwitcher } from '@/shared/components/layouts/components/LanguageSwitcher'
 export { PrivateLanguageSwitcher } from '@/shared/components/layouts/components/PrivateLanguageSwitcher'
 export {

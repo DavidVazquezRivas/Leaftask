@@ -42,6 +42,43 @@ export const ApiRoutes = {
         `api/v1/organizations/${organizationId}/invitations/${invitationId}`,
     },
   },
+  Project: {
+    Management: {
+      Me: 'api/v1/projects/me',
+      Organization: (organizationId: string) =>
+        `api/v1/projects/organization/${organizationId}`,
+      Create: 'api/v1/projects',
+      Detail: (projectId: string) => `api/v1/projects/${projectId}`,
+      Update: (projectId: string) => `api/v1/projects/${projectId}`,
+      Delete: (projectId: string) => `api/v1/projects/${projectId}`,
+    },
+    Roles: {
+      PermissionsList: (projectId: string) =>
+        `api/v1/projects/${projectId}/permissions`,
+      List: (projectId: string) => `api/v1/projects/${projectId}/roles`,
+      Create: (projectId: string) => `api/v1/projects/${projectId}/roles`,
+      Update: (projectId: string, roleId: string) =>
+        `api/v1/projects/${projectId}/roles/${roleId}`,
+      Delete: (projectId: string, roleId: string) =>
+        `api/v1/projects/${projectId}/roles/${roleId}`,
+    },
+    Members: {
+      List: (projectId: string) =>
+        `api/v1/projects/${projectId}/members`,
+      Update: (projectId: string, memberId: string) =>
+        `api/v1/projects/${projectId}/members/${memberId}`,
+      Delete: (projectId: string, memberId: string) =>
+        `api/v1/projects/${projectId}/members/${memberId}`,
+    },
+    Invitations: {
+      Pending: (projectId: string) =>
+        `api/v1/projects/${projectId}/invitations`,
+      Create: (projectId: string) =>
+        `api/v1/projects/${projectId}/invitations`,
+      Update: (projectId: string, invitationId: string) =>
+        `api/v1/projects/${projectId}/invitations/${invitationId}`,
+    },
+  },
   User: {
     Users: {
       List: 'api/v1/users',

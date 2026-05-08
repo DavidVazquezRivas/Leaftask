@@ -1,0 +1,213 @@
+{
+  "management": {
+    "settings": {
+      "title": "Configuración del proyecto",
+      "subtitle": "Configura los detalles del proyecto y gestiona el acceso.",
+      "tabs": {
+        "general": "General",
+        "rolesPermissions": "Roles y permisos",
+        "members": "Miembros"
+      },
+      "general": {
+        "validation": {
+          "required": "Este campo es obligatorio",
+          "abbreviationMaxLength": "La abreviatura debe tener 3 caracteres o menos"
+        },
+        "permissions": {
+          "noConfigure": "No tienes permisos para configurar este proyecto.",
+          "noDelete": "No tienes permisos para eliminar este proyecto."
+        },
+        "fields": {
+          "name": {
+            "label": "Nombre del proyecto",
+            "placeholder": "Mi proyecto",
+            "hint": "El nombre visible del proyecto"
+          },
+          "abbreviation": {
+            "label": "Abreviatura",
+            "placeholder": "ABC",
+            "hint": "Identificador corto, máximo 3 caracteres"
+          },
+          "privacyLevel": {
+            "label": "Privacidad",
+            "hint": "Controla quién puede ver este proyecto"
+          }
+        },
+        "privacyOptions": {
+          "public": "Público",
+          "restricted": "Restringido",
+          "private": "Privado"
+        },
+        "actions": {
+          "save": "Guardar cambios",
+          "saving": "Guardando...",
+          "cancel": "Cancelar"
+        },
+        "dangerZone": {
+          "title": "Zona de peligro",
+          "description": "Eliminar este proyecto es irreversible. Todos los datos se perderán permanentemente.",
+          "deleteAction": "Eliminar proyecto",
+          "deleting": "Eliminando..."
+        },
+        "feedback": {
+          "updated": "Proyecto actualizado correctamente",
+          "deleted": "Proyecto eliminado"
+        }
+      }
+    },
+    "members": {
+      "title": "Miembros del proyecto",
+      "subtitle": "Gestiona los miembros con acceso a este proyecto.",
+      "roleFallback": "Rol desconocido",
+      "actions": {
+        "inviteMember": "Invitar miembro",
+        "createAgent": "Crear agente",
+        "removeMember": "Eliminar miembro"
+      },
+      "permissions": {
+        "noInvite": "No tienes permisos para invitar miembros.",
+        "noCancelInvitation": "No tienes permisos para cancelar invitaciones.",
+        "noRemove": "No tienes permisos para eliminar miembros.",
+        "forbidden": "Esta acción requiere aprobación y no se puede completar ahora."
+      },
+      "pendingInvitations": {
+        "title": "Invitaciones pendientes",
+        "pending": "Pendiente",
+        "cancel": "Cancelar invitación",
+        "canceled": "Invitación cancelada correctamente.",
+        "expand": "Expandir",
+        "collapse": "Colapsar"
+      },
+      "inviteDialog": {
+        "title": "Invitar miembro",
+        "description": "Invita a un usuario y asígnale un rol en el proyecto.",
+        "userLabel": "Usuario",
+        "userPlaceholder": "Busca y selecciona un usuario",
+        "searchPlaceholder": "Buscar por nombre o email...",
+        "loadingUsers": "Cargando usuarios...",
+        "emptyUsers": "No se encontraron usuarios.",
+        "roleLabel": "Rol",
+        "rolePlaceholder": "Selecciona un rol",
+        "cancel": "Cancelar",
+        "submit": "Enviar invitación",
+        "submitting": "Enviando..."
+      },
+      "states": {
+        "loading": "Cargando miembros...",
+        "error": "No se pudieron cargar los miembros.",
+        "emptyMembers": "Sin miembros todavía."
+      },
+      "stats": {
+        "people": "Personas",
+        "agents": "Agentes",
+        "total": "Miembros totales"
+      },
+      "feedback": {
+        "roleUpdated": "Rol del miembro actualizado correctamente.",
+        "memberDeleted": "Miembro eliminado correctamente.",
+        "ownerCannotBeRemoved": "Los miembros propietarios no se pueden eliminar.",
+        "atLeastOneOwner": "Se requiere al menos un propietario en el proyecto.",
+        "invitationSent": "Invitación enviada correctamente.",
+        "alreadyInvited": "Este usuario ya tiene una invitación pendiente."
+      }
+    },
+    "rolesPermissions": {
+      "title": "Roles del proyecto",
+      "subtitle": "Define roles y configura los niveles de permiso para cada acción",
+      "createRole": "Crear rol",
+      "membersCount_one": "{{count}} miembro",
+      "membersCount_other": "{{count}} miembros",
+      "actions": {
+        "editRole": "Editar rol",
+        "deleteRole": "Eliminar rol"
+      },
+      "levels": {
+        "full": "Completo",
+        "supervised": "Supervisado",
+        "none": "Ninguno"
+      },
+      "permissionLevels": {
+        "title": "Niveles de permiso",
+        "full": {
+          "label": "Completo:",
+          "description": "Puede realizar la acción de forma independiente"
+        },
+        "supervised": {
+          "label": "Supervisado:",
+          "description": "Requiere aprobación de un usuario con nivel Completo"
+        },
+        "none": {
+          "label": "Ninguno:",
+          "description": "Sin acceso a esta acción"
+        }
+      },
+      "states": {
+        "loading": "Cargando roles...",
+        "error": "No se pudieron cargar los roles.",
+        "emptyRoles": "No hay roles disponibles."
+      },
+      "feedback": {
+        "roleCreated": "Rol creado correctamente.",
+        "roleUpdated": "Rol actualizado correctamente.",
+        "roleDeleted": "Rol eliminado correctamente.",
+        "supervisedAction": "Esta acción sobre el rol se envió para aprobación."
+      },
+      "editor": {
+        "createTitle": "Crear rol",
+        "editTitle": "Editar rol",
+        "description": "Define el nombre del rol y los niveles de permiso.",
+        "roleNameLabel": "Nombre del rol",
+        "roleNamePlaceholder": "Project Manager",
+        "permissionsTitle": "Permisos",
+        "mixedPlaceholder": "Mixto",
+        "cancel": "Cancelar",
+        "createSubmit": "Crear",
+        "updateSubmit": "Guardar cambios",
+        "submitting": "Guardando..."
+      },
+      "deleteDialog": {
+        "title": "Eliminar rol",
+        "description": "¿Estás seguro de que quieres eliminar {{name}}? Esta acción no se puede deshacer.",
+        "cancel": "Cancelar",
+        "confirm": "Eliminar rol",
+        "deleting": "Eliminando..."
+      }
+    },
+    "create": {
+      "trigger": "Nuevo proyecto",
+      "validation": {
+        "required": "Este campo es obligatorio",
+        "abbreviationMaxLength": "La abreviatura debe tener 3 caracteres o menos"
+      },
+      "modal": {
+        "title": "Crear proyecto",
+        "description": "Añade un nuevo proyecto. Puedes configurar más detalles desde los ajustes del proyecto.",
+        "cancel": "Cancelar",
+        "submit": "Crear proyecto",
+        "submitting": "Creando..."
+      },
+      "fields": {
+        "name": {
+          "label": "Nombre",
+          "placeholder": "Mi proyecto"
+        },
+        "abbreviation": {
+          "label": "Abreviatura",
+          "placeholder": "ABC",
+          "hint": "Máximo 3 caracteres"
+        },
+        "privacyLevel": {
+          "label": "Privacidad"
+        }
+      },
+      "privacyOptions": {
+        "public": "Público",
+        "restricted": "Restringido",
+        "private": "Privado"
+      },
+      "feedback": {
+        "created": "Proyecto creado correctamente"
+      }
+    }
+  }
+}

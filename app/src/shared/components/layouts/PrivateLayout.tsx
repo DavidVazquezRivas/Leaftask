@@ -7,6 +7,7 @@ import {
 } from '@/shared/components/layouts/components'
 import {
   usePrivateLayoutOrganizations,
+  usePrivateLayoutProjects,
   usePrivateLayoutSession,
 } from '@/shared/components/layouts/hooks'
 
@@ -15,7 +16,6 @@ export function PrivateLayout() {
     isOrganizationContext,
     organizations,
     organizationsQuery,
-    organizationPlaceholderLabel,
     organizationSettingsLabel,
     organizationSidebarLabel,
     panelSubtitle,
@@ -26,6 +26,15 @@ export function PrivateLayout() {
     tGlobal,
   } = usePrivateLayoutOrganizations()
   const { displayName } = usePrivateLayoutSession()
+  const {
+    projects,
+    isLoading: isProjectsLoading,
+    canCreateProject,
+  } = usePrivateLayoutProjects(isOrganizationContext, selectedOrganizationId)
+
+  const projectsEmptyLabel = isOrganizationContext
+    ? tGlobal('organizationPanel.projectsEmpty')
+    : tGlobal('privatePanel.projectsEmpty')
 
   return (
     <div className="h-screen bg-background">
@@ -51,9 +60,11 @@ export function PrivateLayout() {
               ? AppPaths.organizationSettings(selectedOrganizationId)
               : null
           }
-          personalPlaceholderLabel={tGlobal('privatePanel.placeholder')}
-          organizationPlaceholderLabel={organizationPlaceholderLabel}
-          personalActionLabel={tGlobal('privatePanel.newPersonalProject')}
+          organizationId={selectedOrganizationId}
+          projects={projects}
+          isProjectsLoading={isProjectsLoading}
+          projectsEmptyLabel={projectsEmptyLabel}
+          canCreateProject={canCreateProject}
           personalSettingsLabel={tGlobal('privatePanel.settings')}
           organizationSettingsLabel={organizationSettingsLabel}
           displayName={displayName}

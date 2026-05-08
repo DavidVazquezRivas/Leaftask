@@ -1,21 +1,11 @@
 import { useMutation } from '@tanstack/react-query'
-import { isAxiosError } from 'axios'
 import { toast } from 'sonner'
 
 import { ApiGateway } from '@/core/api/ApiGateway'
-import { ApiError } from '@/core/api/global/errors/ApiError'
 import { i18n } from '@/core/i18n'
 import { QueryKeys } from '@/core/query/QueryKeys'
-import { useApiErrorHandler } from '@/core/query/hooks'
+import { isForbiddenError, useApiErrorHandler } from '@/core/query/hooks'
 import { queryClient } from '@/core/query/queryClient'
-
-const isForbiddenError = (error: unknown): boolean => {
-  if (error instanceof ApiError) {
-    return error.status === 403
-  }
-
-  return isAxiosError(error) && error.response?.status === 403
-}
 
 export const useDeleteOrganizationManagementMutation = (
   organizationId: string

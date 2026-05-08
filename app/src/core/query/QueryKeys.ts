@@ -1,7 +1,53 @@
+const projectAll = ['project'] as const
+const projectManagementAll = [...projectAll, 'management'] as const
+const projectRolesAll = [...projectAll, 'roles'] as const
+const projectMembersAll = [...projectAll, 'members'] as const
+const projectInvitationsAll = [...projectAll, 'invitations'] as const
+
 const organizationAll = ['organization'] as const
 const organizationManagementAll = [...organizationAll, 'management'] as const
 
 export const QueryKeys = {
+  project: {
+    all: projectAll,
+    management: {
+      all: projectManagementAll,
+      myProjects: (params: { limit?: number; sort?: string[] } = {}) =>
+        [...projectManagementAll, 'my-projects', params] as const,
+      orgProjects: (
+        organizationId: string,
+        params: { limit?: number; sort?: string[] } = {}
+      ) =>
+        [
+          ...projectManagementAll,
+          'org-projects',
+          organizationId,
+          params,
+        ] as const,
+      detail: (projectId: string) =>
+        [...projectManagementAll, 'detail', projectId] as const,
+    },
+    roles: {
+      all: projectRolesAll,
+      list: (projectId: string) =>
+        [...projectRolesAll, 'list', projectId] as const,
+      permissions: {
+        all: [...projectRolesAll, 'permissions'] as const,
+        list: (projectId: string) =>
+          [...projectRolesAll, 'permissions', 'list', projectId] as const,
+      },
+    },
+    members: {
+      all: projectMembersAll,
+      list: (projectId: string, params: { limit?: number } = {}) =>
+        [...projectMembersAll, 'list', projectId, params] as const,
+    },
+    invitations: {
+      all: projectInvitationsAll,
+      pending: (projectId: string) =>
+        [...projectInvitationsAll, 'pending', projectId] as const,
+    },
+  },
   organization: {
     all: organizationAll,
     management: {
