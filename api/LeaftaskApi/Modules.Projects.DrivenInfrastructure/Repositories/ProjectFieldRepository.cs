@@ -9,7 +9,6 @@ public sealed class ProjectFieldRepository(ProjectsDbContext dbContext) : IProje
 {
     public async Task<FieldType?> GetFieldTypeByIdAsync(Guid fieldTypeId, CancellationToken cancellationToken = default) =>
         await dbContext.FieldTypes
-            .AsNoTracking()
             .FirstOrDefaultAsync(ft => ft.Id == fieldTypeId, cancellationToken);
 
     public async Task AddFieldAsync(Field field, CancellationToken cancellationToken = default) =>

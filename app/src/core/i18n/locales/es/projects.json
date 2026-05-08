@@ -6,7 +6,8 @@
       "tabs": {
         "general": "General",
         "rolesPermissions": "Roles y permisos",
-        "members": "Miembros"
+        "members": "Miembros",
+        "customFields": "Campos personalizados"
       },
       "general": {
         "validation": {
@@ -171,6 +172,58 @@
         "cancel": "Cancelar",
         "confirm": "Eliminar rol",
         "deleting": "Eliminando..."
+      }
+    },
+    "customFields": {
+      "title": "Campos personalizados",
+      "subtitle": "Añade campos personalizados a los elementos de trabajo para un mejor seguimiento del proyecto.",
+      "addField": "Añadir campo",
+      "fieldTypesSection": {
+        "title": "Tipos de campo disponibles"
+      },
+      "field": {
+        "typeFallback": "Tipo desconocido",
+        "options": "Opciones"
+      },
+      "actions": {
+        "editField": "Editar campo",
+        "deleteField": "Eliminar campo"
+      },
+      "permissions": {
+        "noManage": "No tienes permisos para gestionar campos personalizados."
+      },
+      "dialog": {
+        "createTitle": "Añadir campo personalizado",
+        "editTitle": "Editar campo personalizado",
+        "description": "Define el nombre, tipo y opciones del campo.",
+        "nameLabel": "Nombre",
+        "namePlaceholder": "Nombre del campo",
+        "typeLabel": "Tipo de campo",
+        "typePlaceholder": "Selecciona un tipo",
+        "requiredLabel": "Campo obligatorio",
+        "requiredHint": "Los elementos de trabajo deben rellenar este campo",
+        "optionsLabel": "Opciones",
+        "optionPlaceholder": "Nombre de la opción",
+        "addOption": "Añadir",
+        "cancel": "Cancelar",
+        "createSubmit": "Añadir campo",
+        "updateSubmit": "Guardar cambios",
+        "submitting": "Guardando..."
+      },
+      "validation": {
+        "nameRequired": "El nombre es obligatorio",
+        "typeRequired": "El tipo de campo es obligatorio",
+        "optionsRequired": "Se requiere al menos una opción para los campos de selección"
+      },
+      "states": {
+        "loading": "Cargando campos personalizados...",
+        "error": "No se pudieron cargar los campos personalizados.",
+        "empty": "Sin campos personalizados. Añade uno para registrar datos adicionales en los elementos de trabajo."
+      },
+      "feedback": {
+        "created": "Campo personalizado creado correctamente.",
+        "updated": "Campo personalizado actualizado correctamente.",
+        "deleted": "Campo personalizado eliminado correctamente."
       }
     },
     "create": {

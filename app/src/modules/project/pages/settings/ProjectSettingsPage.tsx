@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import {
+  ProjectSettingsCustomFields,
   ProjectSettingsDangerZone,
   ProjectSettingsGeneralForm,
   ProjectSettingsMembers,
@@ -73,6 +74,13 @@ export function ProjectSettingsPage() {
         <ProjectSettingsMembers
           projectId={projectId}
           canManageMembers={canUpdate}
+        />
+      )}
+
+      {activeTab === 'custom-fields' && (
+        <ProjectSettingsCustomFields
+          projectId={projectId}
+          canManage={canUpdate}
         />
       )}
     </main>

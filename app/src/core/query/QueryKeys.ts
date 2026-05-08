@@ -3,6 +3,7 @@ const projectManagementAll = [...projectAll, 'management'] as const
 const projectRolesAll = [...projectAll, 'roles'] as const
 const projectMembersAll = [...projectAll, 'members'] as const
 const projectInvitationsAll = [...projectAll, 'invitations'] as const
+const projectCustomFieldsAll = [...projectAll, 'custom-fields'] as const
 
 const organizationAll = ['organization'] as const
 const organizationManagementAll = [...organizationAll, 'management'] as const
@@ -46,6 +47,12 @@ export const QueryKeys = {
       all: projectInvitationsAll,
       pending: (projectId: string) =>
         [...projectInvitationsAll, 'pending', projectId] as const,
+    },
+    customFields: {
+      all: projectCustomFieldsAll,
+      fieldTypes: [...projectCustomFieldsAll, 'field-types'] as const,
+      list: (projectId: string) =>
+        [...projectCustomFieldsAll, 'list', projectId] as const,
     },
   },
   organization: {

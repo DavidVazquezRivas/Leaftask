@@ -1,9 +1,13 @@
-import { Settings, Shield, Users } from 'lucide-react'
+import { Settings, Shield, SlidersHorizontal, Users } from 'lucide-react'
 
 import { useAppTranslation } from '@/core/i18n'
 import { cn } from '@/shared/lib/utils'
 
-export type ProjectSettingsTab = 'general' | 'roles-permissions' | 'members'
+export type ProjectSettingsTab =
+  | 'general'
+  | 'roles-permissions'
+  | 'members'
+  | 'custom-fields'
 
 interface ProjectSettingsTabsProps {
   activeTab: ProjectSettingsTab
@@ -17,7 +21,7 @@ export function ProjectSettingsTabs({
   const { t } = useAppTranslation('projects')
 
   return (
-    <div className="grid grid-cols-1 overflow-hidden rounded-lg border bg-card md:grid-cols-3">
+    <div className="grid grid-cols-1 overflow-hidden rounded-lg border bg-card md:grid-cols-4">
       <button
         type="button"
         className={cn(
@@ -55,7 +59,7 @@ export function ProjectSettingsTabs({
       <button
         type="button"
         className={cn(
-          'flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium',
+          'flex items-center justify-center gap-2 border-b px-4 py-3 text-sm font-medium md:border-b-0 md:border-r',
           activeTab === 'members'
             ? 'bg-muted/50 text-foreground'
             : 'text-muted-foreground'
@@ -67,6 +71,23 @@ export function ProjectSettingsTabs({
       >
         <Users className="size-4" />
         {t('management.settings.tabs.members')}
+      </button>
+
+      <button
+        type="button"
+        className={cn(
+          'flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium',
+          activeTab === 'custom-fields'
+            ? 'bg-muted/50 text-foreground'
+            : 'text-muted-foreground'
+        )}
+        onClick={() => {
+          onTabChange('custom-fields')
+        }}
+        aria-pressed={activeTab === 'custom-fields'}
+      >
+        <SlidersHorizontal className="size-4" />
+        {t('management.settings.tabs.customFields')}
       </button>
     </div>
   )

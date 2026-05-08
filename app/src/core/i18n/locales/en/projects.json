@@ -6,7 +6,8 @@
       "tabs": {
         "general": "General",
         "rolesPermissions": "Roles & Permissions",
-        "members": "Members"
+        "members": "Members",
+        "customFields": "Custom Fields"
       },
       "general": {
         "validation": {
@@ -171,6 +172,58 @@
         "cancel": "Cancel",
         "confirm": "Delete role",
         "deleting": "Deleting..."
+      }
+    },
+    "customFields": {
+      "title": "Custom Fields",
+      "subtitle": "Add custom fields to work items for better project tracking.",
+      "addField": "Add Custom Field",
+      "fieldTypesSection": {
+        "title": "Available Field Types"
+      },
+      "field": {
+        "typeFallback": "Unknown type",
+        "options": "Options"
+      },
+      "actions": {
+        "editField": "Edit field",
+        "deleteField": "Delete field"
+      },
+      "permissions": {
+        "noManage": "You don't have permission to manage custom fields."
+      },
+      "dialog": {
+        "createTitle": "Add Custom Field",
+        "editTitle": "Edit Custom Field",
+        "description": "Define the field name, type, and options.",
+        "nameLabel": "Name",
+        "namePlaceholder": "Field name",
+        "typeLabel": "Field Type",
+        "typePlaceholder": "Select a type",
+        "requiredLabel": "Required field",
+        "requiredHint": "Work items must fill this field",
+        "optionsLabel": "Options",
+        "optionPlaceholder": "Option name",
+        "addOption": "Add",
+        "cancel": "Cancel",
+        "createSubmit": "Add field",
+        "updateSubmit": "Save changes",
+        "submitting": "Saving..."
+      },
+      "validation": {
+        "nameRequired": "Name is required",
+        "typeRequired": "Field type is required",
+        "optionsRequired": "At least one option is required for selection fields"
+      },
+      "states": {
+        "loading": "Loading custom fields...",
+        "error": "Could not load custom fields.",
+        "empty": "No custom fields yet. Add one to track additional data on work items."
+      },
+      "feedback": {
+        "created": "Custom field created successfully.",
+        "updated": "Custom field updated successfully.",
+        "deleted": "Custom field deleted successfully."
       }
     },
     "create": {

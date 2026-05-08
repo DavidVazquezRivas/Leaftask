@@ -78,6 +78,15 @@ export const ApiRoutes = {
       Update: (projectId: string, invitationId: string) =>
         `api/v1/projects/${projectId}/invitations/${invitationId}`,
     },
+    CustomFields: {
+      FieldTypes: 'api/v1/projects/field-types',
+      List: (projectId: string) => `api/v1/projects/${projectId}/fields`,
+      Create: (projectId: string) => `api/v1/projects/${projectId}/fields`,
+      Update: (projectId: string, fieldId: string) =>
+        `api/v1/projects/${projectId}/fields/${fieldId}`,
+      Delete: (projectId: string, fieldId: string) =>
+        `api/v1/projects/${projectId}/fields/${fieldId}`,
+    },
   },
   User: {
     Users: {
