@@ -2,6 +2,7 @@
 using Modules.Organizations.DrivingInfrastructure.Setup;
 using Modules.Projects.DrivingInfrastructure.Setup;
 using Modules.Users.DrivingInfrastructure.Setup;
+using Modules.WorkItems.DrivingInfrastructure.Setup;
 
 namespace Api.Host.Infrastructure.DatabaseExtensions;
 
@@ -20,6 +21,7 @@ internal static class MigrationDatabaseExtensions
                 await UsersModuleInitialization.ApplyMigrationsAsync(app.Services);
                 await OrganizationModuleInitialization.ApplyMigrationsAsync(app.Services);
                 await ProjectsModuleInitialization.ApplyMigrationsAsync(app.Services);
+                await WorkItemsModuleInitialization.ApplyMigrationsAsync(app.Services);
                 return;
             }
             catch (Exception ex) when (attempt < maxAttempts && IsDatabaseUnavailable(ex))

@@ -39,6 +39,13 @@
     <Project Path="Modules.User.DrivingInfrastructure/Modules.Users.DrivingInfrastructure.csproj" />
     <Project Path="Modules.User.Integration/Modules.Users.Integration.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/WorkItems/">
+    <Project Path="Modules.WorkItems.Application/Modules.WorkItems.Application.csproj" Id="c12b6058-d68b-4d5e-8885-44203700508d" />
+    <Project Path="Modules.WorkItems.Domain/Modules.WorkItems.Domain.csproj" Id="881e5d26-6aaf-4223-8f76-17d63a908266" />
+    <Project Path="Modules.WorkItems.DrivenInfrastructure/Modules.WorkItems.DrivenInfrastructure.csproj" Id="7357f19a-e658-4a70-93d9-b8dfa2f87877" />
+    <Project Path="Modules.WorkItems.DrivingInfrastructure/Modules.WorkItems.DrivingInfrastructure.csproj" Id="3424bef6-4333-465f-98b0-ffb70f2f1bde" />
+    <Project Path="Modules.WorkItems.Integration/Modules.WorkItems.Integration.csproj" Id="83b1a76f-10de-49be-973f-cb57beba12a1" />
+  </Folder>
   <Folder Name="/tests/" />
   <Folder Name="/tests/BuildingBlocks/">
     <Project Path="BuildingBlocks.Application.UnitTests/BuildingBlocks.Application.UnitTests.csproj" Id="99bf71a8-22d9-418c-9619-4ffc49ae93d6" />

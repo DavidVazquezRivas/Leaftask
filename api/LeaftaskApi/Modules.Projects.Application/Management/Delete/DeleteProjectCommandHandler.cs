@@ -29,6 +29,7 @@ public sealed class DeleteProjectCommandHandler(
             return accessResult;
         }
 
+        project.Delete();
         await projectRepository.RemoveAsync(project, cancellationToken);
         await projectRepository.SaveChangesAsync(cancellationToken);
 

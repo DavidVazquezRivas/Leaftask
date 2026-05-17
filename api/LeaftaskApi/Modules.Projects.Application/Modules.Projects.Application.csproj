@@ -12,8 +12,4 @@
     <ProjectReference Include="..\Modules.Projects.Integration\Modules.Projects.Integration.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Configuration\" />
-  </ItemGroup>
-
 </Project>

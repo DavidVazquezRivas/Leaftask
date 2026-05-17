@@ -1,5 +1,6 @@
 ﻿using BuildingBlocks.Domain.Entities;
 using Modules.Projects.Domain.Entities.Owner;
+using Modules.Projects.Domain.Events;
 
 namespace Modules.Projects.Domain.Entities;
 
@@ -41,11 +42,17 @@ public sealed class Project : Entity
         if (privacy.HasValue) Privacy = privacy.Value;
     }
 
+    public void Delete() => Raise(new ProjectDeletedDomainEvent(Id));
+
     public static Project Create(
         string name,
         string abbreviation,
         ProjectPrivacy privacy,
         IProjectOwner owner,
-        OwnerType type) =>
-        new(Guid.NewGuid(), name, abbreviation, privacy, owner.Id, type, DateTime.UtcNow);
+        OwnerType type)
+    {
+        Project project = new(Guid.NewGuid(), name, abbreviation, privacy, owner.Id, type, DateTime.UtcNow);
+        project.Raise(new ProjectCreatedDomainEvent(project.Id, project.Abbreviation));
+        return project;
+    }
 }
