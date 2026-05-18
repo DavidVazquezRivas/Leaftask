@@ -6,4 +6,6 @@ public sealed record CustomFieldDto(
     Guid Type,
     IReadOnlyList<CustomFieldOptionDto> Options,
     bool Required,
-    IReadOnlyList<Guid> AppliesTo);
+    IReadOnlyList<CustomFieldWorkItemTypeDto> AppliesTo);
+
+public sealed record CustomFieldWorkItemTypeDto(Guid Id, string Name);

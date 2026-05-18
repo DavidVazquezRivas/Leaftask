@@ -34,12 +34,7 @@ public sealed class ProjectCustomFieldsController : ApiBaseController
                 projectId, request.Name, request.Type, request.Options, request.Required, request.AppliesTo),
             cancellationToken);
 
-        if (result.IsFailure)
-        {
-            return HandleFailure(result.Error);
-        }
-
-        return StatusCode(201, result.Value);
+        return HandleResult(result);
     }
 
     [HttpPatch("{projectId:guid}/fields/{fieldId:guid}")]

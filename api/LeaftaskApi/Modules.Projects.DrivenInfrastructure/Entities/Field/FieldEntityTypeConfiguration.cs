@@ -26,5 +26,9 @@ internal sealed class FieldEntityTypeConfiguration : IEntityTypeConfiguration<Fi
             .WithMany()
             .HasForeignKey("field_type_id")
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(f => f.AppliesTo)
+            .WithMany()
+            .UsingEntity(join => join.ToTable("field_workitem_type_read_models"));
     }
 }

@@ -11,6 +11,13 @@ public sealed class ProjectFieldRepository(ProjectsDbContext dbContext) : IProje
         await dbContext.FieldTypes
             .FirstOrDefaultAsync(ft => ft.Id == fieldTypeId, cancellationToken);
 
+    public async Task<List<WorkItemTypeReadModel>> GetWorkItemTypesByIdsAsync(
+        IReadOnlyList<Guid> ids,
+        CancellationToken cancellationToken = default) =>
+        await dbContext.WorkItemTypeReadModels
+            .Where(wt => ids.Contains(wt.Id))
+            .ToListAsync(cancellationToken);
+
     public async Task AddFieldAsync(Field field, CancellationToken cancellationToken = default) =>
         await dbContext.Fields.AddAsync(field, cancellationToken);
 
@@ -37,6 +44,8 @@ public sealed class ProjectFieldRepository(ProjectsDbContext dbContext) : IProje
         await dbContext.ProjectFields
             .Include(pf => pf.Field)
                 .ThenInclude(f => f.FieldType)
+            .Include(pf => pf.Field)
+                .ThenInclude(f => f.AppliesTo)
             .FirstOrDefaultAsync(
                 pf => pf.Id == fieldId && EF.Property<Guid>(pf, "project_id") == projectId,
                 cancellationToken);

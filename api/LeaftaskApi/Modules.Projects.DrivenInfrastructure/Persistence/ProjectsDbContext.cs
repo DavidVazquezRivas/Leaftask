@@ -28,6 +28,7 @@ public sealed class ProjectsDbContext(
     public DbSet<Field> Fields { get; set; }
     public DbSet<Option> Options { get; set; }
     public DbSet<ProjectField> ProjectFields { get; set; }
+    public DbSet<WorkItemTypeReadModel> WorkItemTypeReadModels { get; set; }
     public DbSet<UserReadModel> UserReadModels { get; set; }
     public DbSet<OrganizationReadModel> OrganizationReadModels { get; set; }
     public DbSet<InboxMessage> InboxMessages { get; set; }

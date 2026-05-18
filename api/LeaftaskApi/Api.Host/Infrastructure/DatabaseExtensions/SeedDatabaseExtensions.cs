@@ -15,6 +15,7 @@ internal static class SeedDatabaseExtensions
             await OrganizationsModuleInitialization.SeedDataAsync(app.Services);
             await ProjectsModuleInitialization.SeedDataAsync(app.Services);
             await WorkItemsModuleInitialization.SeedDataAsync(app.Services);
+            await ProjectsModuleInitialization.SeedWorkItemTypeReadModelsAsync(app.Services);
         }
         catch (Exception ex)
         {

@@ -25,4 +25,13 @@ public static class ProjectsModuleInitialization
         await FieldTypeSeeder.SeedAsync(dbContext);
         await UserReadModelBackfillSeeder.SeedAsync(dbContext);
     }
+
+    public static async Task SeedWorkItemTypeReadModelsAsync(IServiceProvider serviceProvider)
+    {
+        using IServiceScope scope = serviceProvider.CreateScope();
+
+        ProjectsDbContext dbContext = scope.ServiceProvider.GetRequiredService<ProjectsDbContext>();
+
+        await WorkItemTypeReadModelBackfillSeeder.SeedAsync(dbContext);
+    }
 }

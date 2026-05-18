@@ -36,7 +36,14 @@ public sealed class CreateCustomFieldCommandHandler(
             return Result.Failure<CustomFieldDto>(ProjectErrors.ProjectNotFound);
         }
 
+        List<WorkItemTypeReadModel> workItemTypes = [];
+        if (command.AppliesTo.Count > 0)
+        {
+            workItemTypes = await fieldRepository.GetWorkItemTypesByIdsAsync(command.AppliesTo, cancellationToken);
+        }
+
         Field field = new(Guid.NewGuid(), !command.Required, command.Name, fieldType);
+        field.SetAppliesTo(workItemTypes);
         await fieldRepository.AddFieldAsync(field, cancellationToken);
 
         List<Option> options = command.Options
@@ -57,12 +64,16 @@ public sealed class CreateCustomFieldCommandHandler(
             .Select(o => new CustomFieldOptionDto(o.Id, o.Name))
             .ToList();
 
+        List<CustomFieldWorkItemTypeDto> workItemTypeDtos = workItemTypes
+            .Select(wt => new CustomFieldWorkItemTypeDto(wt.Id, wt.Name))
+            .ToList();
+
         return Result.Success(new CustomFieldDto(
             projectField.Id,
             projectField.Name,
             fieldType.Id,
             optionDtos,
             command.Required,
-            []));
+            workItemTypeDtos));
     }
 }

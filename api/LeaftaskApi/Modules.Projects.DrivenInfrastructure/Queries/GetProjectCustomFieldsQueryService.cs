@@ -16,6 +16,8 @@ public sealed class GetProjectCustomFieldsQueryService(ProjectsDbContext dbConte
             .AsNoTracking()
             .Include(pf => pf.Field)
                 .ThenInclude(f => f.FieldType)
+            .Include(pf => pf.Field)
+                .ThenInclude(f => f.AppliesTo)
             .Where(pf => EF.Property<Guid>(pf, "project_id") == projectId)
             .OrderBy(pf => pf.Name)
             .ToListAsync(cancellationToken);
@@ -46,7 +48,9 @@ public sealed class GetProjectCustomFieldsQueryService(ProjectsDbContext dbConte
                 pf.Field.FieldType.Id,
                 optionsByField[pf.Field.Id].ToList(),
                 !pf.Optional,
-                []))
+                pf.Field.AppliesTo
+                    .Select(wt => new CustomFieldWorkItemTypeDto(wt.Id, wt.Name))
+                    .ToList()))
             .ToList();
     }
 

@@ -183,7 +183,8 @@
       },
       "field": {
         "typeFallback": "Tipo desconocido",
-        "options": "Opciones"
+        "options": "Opciones",
+        "appliesTo": "Aplica a"
       },
       "actions": {
         "editField": "Editar campo",
@@ -202,6 +203,9 @@
         "typePlaceholder": "Selecciona un tipo",
         "requiredLabel": "Campo obligatorio",
         "requiredHint": "Los elementos de trabajo deben rellenar este campo",
+        "appliesToLabel": "Aplica a los tipos",
+        "appliesToHint": "Sin selección = aplica a todos los tipos",
+        "appliesToAll": "Todos los tipos",
         "optionsLabel": "Opciones",
         "optionPlaceholder": "Nombre de la opción",
         "addOption": "Añadir",

@@ -44,6 +44,13 @@ public sealed class PatchCustomFieldCommandHandler(IProjectFieldRepository field
         projectField.Update(newName, !newRequired);
         projectField.Field.UpdateIsOptional(!newRequired);
 
+        if (command.AppliesTo is not null)
+        {
+            List<WorkItemTypeReadModel> workItemTypes = await fieldRepository.GetWorkItemTypesByIdsAsync(
+                command.AppliesTo, cancellationToken);
+            projectField.Field.SetAppliesTo(workItemTypes);
+        }
+
         List<CustomFieldOptionDto> optionDtos;
 
         if (command.Options is not null)
@@ -77,12 +84,16 @@ public sealed class PatchCustomFieldCommandHandler(IProjectFieldRepository field
 
         await fieldRepository.SaveChangesAsync(cancellationToken);
 
+        List<CustomFieldWorkItemTypeDto> workItemTypeDtos = projectField.Field.AppliesTo
+            .Select(wt => new CustomFieldWorkItemTypeDto(wt.Id, wt.Name))
+            .ToList();
+
         return Result.Success(new CustomFieldDto(
             projectField.Id,
             projectField.Name,
             fieldType.Id,
             optionDtos,
             !projectField.Optional,
-            []));
+            workItemTypeDtos));
     }
 }

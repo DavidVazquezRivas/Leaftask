@@ -183,7 +183,8 @@
       },
       "field": {
         "typeFallback": "Unknown type",
-        "options": "Options"
+        "options": "Options",
+        "appliesTo": "Applies to"
       },
       "actions": {
         "editField": "Edit field",
@@ -202,6 +203,9 @@
         "typePlaceholder": "Select a type",
         "requiredLabel": "Required field",
         "requiredHint": "Work items must fill this field",
+        "appliesToLabel": "Applies to types",
+        "appliesToHint": "No selection = applies to all types",
+        "appliesToAll": "All types",
         "optionsLabel": "Options",
         "optionPlaceholder": "Option name",
         "addOption": "Add",

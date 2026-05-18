@@ -14,13 +14,18 @@ export interface CustomFieldOptionData {
   name: string
 }
 
+export interface CustomFieldWorkItemTypeData {
+  id: string
+  name: string
+}
+
 export interface CustomFieldData {
   id: string
   name: string
   type: string
   options: CustomFieldOptionData[]
   required: boolean
-  appliesTo: string[]
+  appliesTo: CustomFieldWorkItemTypeData[]
 }
 
 export interface CreateCustomFieldRequest {

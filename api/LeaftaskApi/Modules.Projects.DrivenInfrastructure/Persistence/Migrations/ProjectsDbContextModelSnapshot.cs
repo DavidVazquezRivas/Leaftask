@@ -73,6 +73,21 @@ namespace Modules.Projects.DrivenInfrastructure.Persistence.Migrations
                     b.ToTable("OutboxMessages", "project");
                 });
 
+            modelBuilder.Entity("FieldWorkItemTypeReadModel", b =>
+                {
+                    b.Property<Guid>("AppliesToId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FieldId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("AppliesToId", "FieldId");
+
+                    b.HasIndex("FieldId");
+
+                    b.ToTable("field_workitem_type_read_models", "project");
+                });
+
             modelBuilder.Entity("Modules.Projects.Domain.Entities.Field.Field", b =>
                 {
                     b.Property<Guid>("Id")
@@ -180,6 +195,23 @@ namespace Modules.Projects.DrivenInfrastructure.Persistence.Migrations
                     b.HasIndex("project_id");
 
                     b.ToTable("project_fields", "project");
+                });
+
+            modelBuilder.Entity("Modules.Projects.Domain.Entities.Field.WorkItemTypeReadModel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("workitem_type_read_models", "project");
                 });
 
             modelBuilder.Entity("Modules.Projects.Domain.Entities.Invitation.ProjectInvitation", b =>
@@ -455,6 +487,21 @@ namespace Modules.Projects.DrivenInfrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("project_role_permissions", "project");
+                });
+
+            modelBuilder.Entity("FieldWorkItemTypeReadModel", b =>
+                {
+                    b.HasOne("Modules.Projects.Domain.Entities.Field.WorkItemTypeReadModel", null)
+                        .WithMany()
+                        .HasForeignKey("AppliesToId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Modules.Projects.Domain.Entities.Field.Field", null)
+                        .WithMany()
+                        .HasForeignKey("FieldId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Modules.Projects.Domain.Entities.Field.Field", b =>

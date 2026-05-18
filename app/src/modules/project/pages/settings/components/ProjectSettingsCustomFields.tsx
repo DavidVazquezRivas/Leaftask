@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 
 import { useAppTranslation } from '@/core/i18n'
+import { cn } from '@/shared/lib/utils'
 import type { CustomFieldData } from '@/core/api/project/customFields'
 import {
   useCreateProjectCustomFieldMutation,
@@ -11,6 +12,7 @@ import {
   useProjectCustomFieldsQuery,
   useProjectFieldTypesQuery,
 } from '@/core/query/project'
+import { useWorkItemTypesQuery } from '@/core/query/workitems'
 import { Button } from '@/shared/components/ui/button'
 import {
   Dialog,
@@ -55,16 +57,19 @@ export function ProjectSettingsCustomFields({
   const [formTypeId, setFormTypeId] = useState('')
   const [formRequired, setFormRequired] = useState(false)
   const [formOptions, setFormOptions] = useState<string[]>([])
+  const [formAppliesTo, setFormAppliesTo] = useState<string[]>([])
   const [newOption, setNewOption] = useState('')
 
   const fieldsQuery = useProjectCustomFieldsQuery(projectId)
   const fieldTypesQuery = useProjectFieldTypesQuery()
+  const workItemTypesQuery = useWorkItemTypesQuery()
   const createMutation = useCreateProjectCustomFieldMutation(projectId)
   const patchMutation = usePatchProjectCustomFieldMutation(projectId)
   const deleteMutation = useDeleteProjectCustomFieldMutation(projectId)
 
   const fields = fieldsQuery.data?.data ?? []
   const fieldTypes = fieldTypesQuery.data?.data ?? []
+  const workItemTypes = workItemTypesQuery.data?.data ?? []
 
   const fieldTypeById = useMemo(
     () => new Map(fieldTypes.map((ft) => [ft.id, ft])),
@@ -90,6 +95,7 @@ export function ProjectSettingsCustomFields({
     setFormTypeId(firstTypeId)
     setFormRequired(false)
     setFormOptions([])
+    setFormAppliesTo([])
     setNewOption('')
     setDialogMode({ mode: 'create' })
   }
@@ -99,8 +105,15 @@ export function ProjectSettingsCustomFields({
     setFormTypeId(field.type)
     setFormRequired(field.required)
     setFormOptions(field.options.map((o) => o.name))
+    setFormAppliesTo(field.appliesTo.map((t) => t.id))
     setNewOption('')
     setDialogMode({ mode: 'edit', field })
+  }
+
+  const toggleAppliesTo = (typeId: string) => {
+    setFormAppliesTo((prev) =>
+      prev.includes(typeId) ? prev.filter((id) => id !== typeId) : [...prev, typeId]
+    )
   }
 
   const closeDialog = () => {
@@ -161,28 +174,32 @@ export function ProjectSettingsCustomFields({
 
     const options = showOptions ? formOptions : []
 
-    if (dialogMode?.mode === 'create') {
-      await createMutation.mutateAsync({
-        name: formName.trim(),
-        type: formTypeId,
-        options,
-        required: formRequired,
-        appliesTo: [],
-      })
-    } else if (dialogMode?.mode === 'edit') {
-      await patchMutation.mutateAsync({
-        fieldId: dialogMode.field.id,
-        data: {
+    try {
+      if (dialogMode?.mode === 'create') {
+        await createMutation.mutateAsync({
           name: formName.trim(),
           type: formTypeId,
           options,
           required: formRequired,
-          appliesTo: dialogMode.field.appliesTo,
-        },
-      })
-    }
+          appliesTo: formAppliesTo,
+        })
+      } else if (dialogMode?.mode === 'edit') {
+        await patchMutation.mutateAsync({
+          fieldId: dialogMode.field.id,
+          data: {
+            name: formName.trim(),
+            type: formTypeId,
+            options,
+            required: formRequired,
+            appliesTo: formAppliesTo,
+          },
+        })
+      }
 
-    setDialogMode(null)
+      setDialogMode(null)
+    } catch {
+      // Error already handled in mutation's onError
+    }
   }
 
   const isLoading = fieldsQuery.isLoading || fieldTypesQuery.isLoading
@@ -307,6 +324,28 @@ export function ProjectSettingsCustomFields({
                     </div>
                   </div>
                 ) : null}
+
+                <div className="mt-3 space-y-1.5">
+                  <p className="text-xs font-medium text-muted-foreground">
+                    {t('management.customFields.field.appliesTo')}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {field.appliesTo.length === 0 ? (
+                      <span className="inline-flex rounded-full border bg-muted/50 px-2.5 py-0.5 text-xs text-muted-foreground">
+                        {tr('management.customFields.dialog.appliesToAll', 'All types')}
+                      </span>
+                    ) : (
+                      field.appliesTo.map((wt) => (
+                        <span
+                          key={wt.id}
+                          className="inline-flex rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"
+                        >
+                          {wt.name}
+                        </span>
+                      ))
+                    )}
+                  </div>
+                </div>
               </article>
             )
           })}
@@ -419,6 +458,38 @@ export function ProjectSettingsCustomFields({
                 </p>
               </div>
             </div>
+
+            {workItemTypes.length > 0 ? (
+              <div className="space-y-2">
+                <div>
+                  <Label>{t('management.customFields.dialog.appliesToLabel')}</Label>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {t('management.customFields.dialog.appliesToHint')}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {workItemTypes.map((wt) => {
+                    const selected = formAppliesTo.includes(wt.id)
+                    return (
+                      <button
+                        key={wt.id}
+                        type="button"
+                        disabled={isMutating}
+                        onClick={() => { toggleAppliesTo(wt.id) }}
+                        className={cn(
+                          'inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium transition-colors',
+                          selected
+                            ? 'border-primary bg-primary text-primary-foreground'
+                            : 'border-border bg-muted/40 text-muted-foreground hover:border-primary/50 hover:text-foreground'
+                        )}
+                      >
+                        {wt.name}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            ) : null}
 
             {showOptions ? (
               <div className="space-y-2">
