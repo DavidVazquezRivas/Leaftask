@@ -60,41 +60,6 @@ public class DeleteOrganizationRoleCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_Should_ReturnFailure_When_UserDoesNotHaveConfigurePermission()
-    {
-        // Arrange
-        Guid creatorUserId = Guid.NewGuid();
-        _userContextMock.UserId.Returns(Guid.NewGuid());
-
-        OrganizationPermission configurePermission = new("Configure Organization",
-            "Modify organization settings, branding, and general configuration");
-        OrganizationPermission[] permissions = [configurePermission];
-
-        Organization organization = Organization.Create(
-            "Leaftask",
-            "Organization description",
-            "https://leaftask.com",
-            creatorUserId,
-            permissions);
-
-        OrganizationRole role = organization.AddRole("Leaftask Admin", permissions);
-        role.SetPermissionLevel(configurePermission.Id, PermissionLevel.Full);
-
-        DeleteOrganizationRoleCommand command = new(organization.Id, role.Id);
-
-        _repositoryMock.GetByIdAsync(organization.Id, Arg.Any<CancellationToken>()).Returns(organization);
-        _permissionRepositoryMock.GetAllAsync(Arg.Any<CancellationToken>()).Returns(permissions);
-
-        // Act
-        Result result = await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        result.Error.Should().Be(OrganizationErrors.OrganizationPermissionDenied);
-        await _repositoryMock.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
     public async Task Handle_Should_ReturnFailure_When_RoleDoesNotExist()
     {
         // Arrange

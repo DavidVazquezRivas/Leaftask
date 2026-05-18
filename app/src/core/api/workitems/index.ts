@@ -1,0 +1,21 @@
+export { WorkItemsGateway } from './WorkItemsGateway'
+export type {
+  WorkItemData,
+  WorkItemAssigneeData,
+  WorkItemTypeData,
+  WorkItemStatusData,
+  WorkItemDetailData,
+  WorkItemDedicationDetailData,
+  WorkItemCommentData,
+  WorkItemLogEntryData,
+  WorkItemCustomFieldValueData,
+  GetWorkItemsParams,
+  CreateWorkItemRequest,
+  UpdateWorkItemRequest,
+  GetWorkItemsSuccessResponse,
+  GetWorkItemDetailSuccessResponse,
+  GetWorkItemTypesSuccessResponse,
+  GetWorkItemStatusesSuccessResponse,
+  CreateWorkItemSuccessResponse,
+  UpdateWorkItemSuccessResponse,
+} from './workitems.types'

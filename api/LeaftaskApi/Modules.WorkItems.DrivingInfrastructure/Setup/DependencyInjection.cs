@@ -1,11 +1,19 @@
 using BuildingBlocks.Application.Behaviors;
+using BuildingBlocks.DrivingInfrastructure.Jobs.Quartz;
+using BuildingBlocks.DrivingInfrastructure.Jobs.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Modules.WorkItems.DrivingInfrastructure.Jobs;
+using Quartz;
+using Modules.Projects.Integration;
+using Modules.WorkItems.Application.Authorization;
 using Modules.WorkItems.Application.Events;
 using Modules.WorkItems.Application.Projects.Create;
 using Modules.WorkItems.Application.Configuration.GetWorkItemStatuses;
 using Modules.WorkItems.Application.Configuration.GetWorkItemTypes;
+using Modules.WorkItems.Application.WorkItems.GetProjectWorkItems;
+using Modules.WorkItems.Application.WorkItems.GetWorkItemDetails;
 using Modules.WorkItems.Domain.Repositories;
 using Modules.WorkItems.DrivenInfrastructure.Persistence;
 using Modules.WorkItems.DrivenInfrastructure.Queries;
@@ -22,10 +30,20 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         services.AddDatabase(configuration);
+        services.AddJobs(configuration);
         services.AddMessaging();
         services.AddRepositories();
         services.AddQueryServices();
 
+        return services;
+    }
+
+    private static IServiceCollection AddJobs(this IServiceCollection services, IConfiguration configuration)
+    {
+        OutboxOptions outboxOptions = configuration.GetSection("Modules:WorkItems:Outbox").Get<OutboxOptions>() ??
+                                      new OutboxOptions();
+
+        services.AddQuartz(q => q.AddOutboxJob<WorkItemsOutboxJob>(outboxOptions));
         return services;
     }
 
@@ -48,6 +66,7 @@ public static class DependencyInjection
 
             config.AddOpenBehavior(typeof(LoggingBehavior<,>));
             config.AddOpenBehavior(typeof(ValidationBehavior<,>));
+            config.AddOpenBehavior(typeof(ProjectPermissionBehavior<,>));
         });
 
         services.AddSingleton<WorkItemsModuleEventMapper>();
@@ -60,6 +79,8 @@ public static class DependencyInjection
         services.AddScoped<IWorkItemRepository, WorkItemRepository>();
         services.AddScoped<IProjectReadModelRepository, ProjectReadModelRepository>();
         services.AddScoped<IUserReadModelRepository, UserReadModelRepository>();
+        services.AddScoped<IWorkItemConfigurationRepository, WorkItemConfigurationRepository>();
+        services.AddScoped<IFieldRepository, FieldRepository>();
 
         return services;
     }
@@ -68,6 +89,8 @@ public static class DependencyInjection
     {
         services.AddScoped<IGetWorkItemTypesQueryService, GetWorkItemTypesQueryService>();
         services.AddScoped<IGetWorkItemStatusesQueryService, GetWorkItemStatusesQueryService>();
+        services.AddScoped<IGetProjectWorkItemsQueryService, GetProjectWorkItemsQueryService>();
+        services.AddScoped<IGetWorkItemDetailsQueryService, GetWorkItemDetailsQueryService>();
 
         return services;
     }

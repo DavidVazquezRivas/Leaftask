@@ -4,14 +4,16 @@ import { useMemo } from 'react'
 import {
   ORBITAL_BASE_RADIUS,
   ORBITAL_NODE_SIZE_H,
-  ORBITAL_NODE_SIZE_V,
   ORBITAL_PADDING,
   ORBITAL_VIRTUAL_ROOT_ID,
 } from '../constants'
 import type { EdgeData, PositionedNode, RawNode } from '../types'
 
+const NODE_GAP = 30
+
 export function useOrbitalLayout<T extends RawNode>(
-  data: T[]
+  data: T[],
+  getNodeRadius: (id: string) => number
 ): { nodes: PositionedNode<T>[]; edges: EdgeData[] } {
   return useMemo(() => {
     if (data.length === 0) return { nodes: [], edges: [] }
@@ -40,10 +42,13 @@ export function useOrbitalLayout<T extends RawNode>(
         .id((d) => d.id)
         .parentId((d) => d.parentId as string | null | undefined)
       const root = s(prepared)
-      const treeLayout = tree<T>().nodeSize([
-        ORBITAL_NODE_SIZE_V,
-        ORBITAL_NODE_SIZE_H,
-      ])
+      const treeLayout = tree<T>()
+        .nodeSize([1, ORBITAL_NODE_SIZE_H])
+        .separation((a, b) => {
+          const ra = getNodeRadius(a.data.id)
+          const rb = getNodeRadius(b.data.id)
+          return ra + rb + NODE_GAP
+        })
       pointRoot = treeLayout(root)
     } catch {
       return { nodes: [], edges: [] }
@@ -83,5 +88,5 @@ export function useOrbitalLayout<T extends RawNode>(
       }))
 
     return { nodes, edges }
-  }, [data])
+  }, [data, getNodeRadius])
 }

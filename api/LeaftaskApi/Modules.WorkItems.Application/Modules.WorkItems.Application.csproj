@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BuildingBlocks.Application\BuildingBlocks.Application.csproj" />
+    <ProjectReference Include="..\Modules.Projects.Integration\Modules.Projects.Integration.csproj" />
     <ProjectReference Include="..\Modules.WorkItems.Domain\Modules.WorkItems.Domain.csproj" />
     <ProjectReference Include="..\Modules.WorkItems.Integration\Modules.WorkItems.Integration.csproj" />
   </ItemGroup>

@@ -1,11 +1,12 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { useCollapse } from './hooks/useCollapse'
 import { useOrbitalBounds } from './hooks/useOrbitalBounds'
 import { useOrbitalLayout } from './hooks/useOrbitalLayout'
 import { usePan } from './hooks/usePan'
 import { OrbitalEdge } from './components/OrbitalEdge'
-import { OrbitalNode } from './components/OrbitalNode'
+import { OrbitalNode, computeBaseRadius, computeTotalRadius } from './components/OrbitalNode'
+import { ORBITAL_BASE_RADIUS } from './constants'
 import type { OrbitalTreeProps, RawNode } from './types'
 
 function getDescendantIds(data: RawNode[], parentId: string): string[] {
@@ -17,16 +18,26 @@ export function OrbitalTree<T extends RawNode>({
   data,
   nodeAdapter,
   onClickNode,
+  onAddChild,
 }: OrbitalTreeProps<T>) {
   const { collapsed, toggle } = useCollapse()
-  const { nodes, edges } = useOrbitalLayout(data)
   const { transform, isDragging, isMoving, handlers } = usePan()
 
+  // Pre-compute visuals from raw data so the layout can use node sizes
   const visualsMap = useMemo(
-    () => new Map(nodes.map((n) => [n.id, nodeAdapter(n.raw)])),
-    [nodes, nodeAdapter]
+    () => new Map(data.map((d) => [d.id, nodeAdapter(d)])),
+    [data, nodeAdapter]
   )
 
+  const getNodeRadius = useCallback(
+    (id: string) => {
+      const v = visualsMap.get(id)
+      return v ? computeTotalRadius(v.orbits, v.size) : ORBITAL_BASE_RADIUS
+    },
+    [visualsMap]
+  )
+
+  const { nodes, edges } = useOrbitalLayout(data, getNodeRadius)
   const { width, height } = useOrbitalBounds(nodes, visualsMap)
 
   const hiddenIds = useMemo(() => {
@@ -45,6 +56,18 @@ export function OrbitalTree<T extends RawNode>({
   const visibleEdges = useMemo(
     () => edges.filter((e) => !hiddenIds.has(e.targetId)),
     [edges, hiddenIds]
+  )
+
+  const adjustedEdges = useMemo(
+    () =>
+      visibleEdges.map((edge) => {
+        const srcSize = visualsMap.get(edge.sourceId)?.size ?? 0
+        const tgtSize = visualsMap.get(edge.targetId)?.size ?? 0
+        const dx1 = computeBaseRadius(srcSize) - ORBITAL_BASE_RADIUS
+        const dx2 = computeBaseRadius(tgtSize) - ORBITAL_BASE_RADIUS
+        return { ...edge, x1: edge.x1 + dx1, x2: edge.x2 - dx2 }
+      }),
+    [visibleEdges, visualsMap]
   )
 
   return (
@@ -79,7 +102,7 @@ export function OrbitalTree<T extends RawNode>({
             overflow: 'visible',
           }}
         >
-          {visibleEdges.map((edge) => (
+          {adjustedEdges.map((edge) => (
             <OrbitalEdge
               key={edge.id}
               {...edge}
@@ -106,6 +129,13 @@ export function OrbitalTree<T extends RawNode>({
                 onClickNode
                   ? () => {
                       if (!isMoving()) onClickNode(node.raw)
+                    }
+                  : undefined
+              }
+              onAddChild={
+                onAddChild
+                  ? () => {
+                      if (!isMoving()) onAddChild(node.raw)
                     }
                   : undefined
               }

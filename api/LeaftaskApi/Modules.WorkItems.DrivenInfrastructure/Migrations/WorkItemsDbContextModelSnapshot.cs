@@ -314,9 +314,20 @@ namespace Modules.WorkItems.DrivenInfrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("description");
 
+                    b.Property<decimal>("Estimation")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)")
+                        .HasDefaultValue(0m)
+                        .HasColumnName("estimation");
+
                     b.Property<DateTime>("LimitDate")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("limit_date");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("parent_id");
 
                     b.Property<int>("Progress")
                         .HasColumnType("integer")
@@ -341,6 +352,8 @@ namespace Modules.WorkItems.DrivenInfrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
 
                     b.HasIndex("assignee_id");
 
@@ -495,6 +508,11 @@ namespace Modules.WorkItems.DrivenInfrastructure.Migrations
 
             modelBuilder.Entity("Modules.WorkItems.Domain.Entities.WorkItem", b =>
                 {
+                    b.HasOne("Modules.WorkItems.Domain.Entities.WorkItem", null)
+                        .WithMany()
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Modules.WorkItems.Domain.Entities.UserReadModel", "Asignee")
                         .WithMany()
                         .HasForeignKey("assignee_id")

@@ -17,5 +17,7 @@ public sealed class FieldValue : Entity
     public Guid Id { get; }
     public FieldReadModel Field { get; }
     public WorkItem WorkItem { get; }
-    public string Value { get; } = string.Empty;
+    public string Value { get; private set; } = string.Empty;
+
+    public void UpdateValue(string newValue) => Value = newValue;
 }

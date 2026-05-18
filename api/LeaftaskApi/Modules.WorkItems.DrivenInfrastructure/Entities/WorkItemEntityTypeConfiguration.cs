@@ -25,6 +25,12 @@ internal sealed class WorkItemEntityTypeConfiguration : IEntityTypeConfiguration
             .HasColumnName("description")
             .IsRequired();
 
+        builder.Property(wi => wi.Estimation)
+            .HasColumnName("estimation")
+            .HasPrecision(10, 2)
+            .HasDefaultValue(0m)
+            .IsRequired();
+
         builder.Property(wi => wi.Progress)
             .HasColumnName("progress")
             .IsRequired();
@@ -51,6 +57,16 @@ internal sealed class WorkItemEntityTypeConfiguration : IEntityTypeConfiguration
         builder.HasOne(wi => wi.Asignee)
             .WithMany()
             .HasForeignKey("assignee_id")
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.Property(wi => wi.ParentId)
+            .HasColumnName("parent_id")
+            .IsRequired(false);
+
+        builder.HasOne<WorkItem>()
+            .WithMany()
+            .HasForeignKey(wi => wi.ParentId)
             .IsRequired(false)
             .OnDelete(DeleteBehavior.SetNull);
     }

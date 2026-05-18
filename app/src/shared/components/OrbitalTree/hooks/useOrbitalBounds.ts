@@ -17,8 +17,10 @@ export function useOrbitalBounds<T extends RawNode>(
     let maxY = 0
 
     for (const n of nodes) {
-      const orbits = visualsMap.get(n.id)?.orbits ?? 0
-      const totalRadius = computeTotalRadius(orbits)
+      const visual = visualsMap.get(n.id)
+      const orbits = visual?.orbits ?? 0
+      const size = visual?.size ?? 0
+      const totalRadius = computeTotalRadius(orbits, size)
       maxX = Math.max(maxX, n.screenX + totalRadius)
       maxY = Math.max(maxY, n.screenY + totalRadius)
     }

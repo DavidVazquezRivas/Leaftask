@@ -13,7 +13,6 @@ public sealed class ProjectReadModelRepository(WorkItemsDbContext dbContext) : I
 
     public async Task<ProjectReadModel?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
         await dbContext.ProjectReadModels
-            .AsNoTracking()
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
 
     public async Task AddAsync(ProjectReadModel projectReadModel, CancellationToken cancellationToken = default) =>

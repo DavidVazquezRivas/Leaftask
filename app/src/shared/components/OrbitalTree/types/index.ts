@@ -7,8 +7,9 @@ export interface NodeVisual {
   subtitle: string
   color: string
   shape: NodeShape
-  filled: number
-  orbits: number
+  filled: number    // 0–100 progress %
+  size: number      // 0–1 circle scale (driven by estimation)
+  orbits: number    // ring count (driven by registered work)
   avatar: string
   over: ReactNode | null
 }
@@ -24,6 +25,7 @@ export interface OrbitalTreeProps<T extends RawNode> {
   data: T[]
   nodeAdapter: NodeAdapter<T>
   onClickNode?: (raw: T) => void
+  onAddChild?: (raw: T) => void
 }
 
 export interface PositionedNode<T extends RawNode> {

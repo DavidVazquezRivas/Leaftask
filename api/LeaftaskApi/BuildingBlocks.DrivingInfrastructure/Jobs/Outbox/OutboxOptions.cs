@@ -1,4 +1,4 @@
-﻿namespace Modules.Users.DrivingInfrastructure.Jobs.Outbox;
+﻿namespace BuildingBlocks.DrivingInfrastructure.Jobs.Outbox;
 
 public class OutboxOptions
 {

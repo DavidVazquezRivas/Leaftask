@@ -1,8 +1,12 @@
 using BuildingBlocks.Application.Behaviors;
+using BuildingBlocks.DrivingInfrastructure.Jobs.Quartz;
+using BuildingBlocks.DrivingInfrastructure.Jobs.Outbox;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Modules.Projects.DrivingInfrastructure.Jobs;
+using Quartz;
 using Modules.Projects.Application.Authorization;
 using Modules.Projects.Application.Events;
 using Modules.Projects.Application.Management.Create;
@@ -22,8 +26,10 @@ using Modules.Projects.DrivenInfrastructure.Authorization;
 using Modules.Projects.DrivenInfrastructure.Persistence;
 using Modules.Projects.DrivenInfrastructure.Queries;
 using Modules.Projects.DrivenInfrastructure.Repositories;
+using Modules.Projects.DrivingInfrastructure.Services;
 using Modules.Projects.DrivingInfrastructure.Subscribers.Organizations;
 using Modules.Projects.DrivingInfrastructure.Subscribers.Users;
+using Modules.Projects.Integration;
 
 namespace Modules.Projects.DrivingInfrastructure.Setup;
 
@@ -32,11 +38,21 @@ public static class DependencyInjection
     public static IServiceCollection AddProjectsModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDatabase(configuration);
+        services.AddJobs(configuration);
         services.AddMessaging();
         services.AddValidators();
         services.AddRepositories();
         services.AddQueryServices();
 
+        return services;
+    }
+
+    private static IServiceCollection AddJobs(this IServiceCollection services, IConfiguration configuration)
+    {
+        OutboxOptions outboxOptions = configuration.GetSection("Modules:Projects:Outbox").Get<OutboxOptions>() ??
+                                      new OutboxOptions();
+
+        services.AddQuartz(q => q.AddOutboxJob<ProjectsOutboxJob>(outboxOptions));
         return services;
     }
 
@@ -89,6 +105,7 @@ public static class DependencyInjection
         services.AddScoped<IOrganizationReadModelRepository, OrganizationReadModelRepository>();
         services.AddScoped<IOrganizationPermissionChecker, OrganizationPermissionChecker>();
         services.AddScoped<IProjectPermissionChecker, ProjectPermissionChecker>();
+        services.AddScoped<IProjectPermissionService, ProjectPermissionService>();
         services.AddScoped<IProjectRoleRepository, ProjectRoleRepository>();
         services.AddScoped<IProjectFieldRepository, ProjectFieldRepository>();
 

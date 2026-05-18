@@ -11,7 +11,7 @@ public sealed class GetWorkItemStatusesQueryService(WorkItemsDbContext dbContext
         CancellationToken cancellationToken = default) =>
         await dbContext.WorkItemStatuses
             .AsNoTracking()
-            .OrderBy(s => s.Name)
+            .OrderBy(s => s.Id)
             .Select(s => new WorkItemStatusDto(s.Id, s.Name))
             .ToListAsync(cancellationToken);
 }

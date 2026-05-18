@@ -88,6 +88,22 @@ export const ApiRoutes = {
         `api/v1/projects/${projectId}/fields/${fieldId}`,
     },
   },
+  WorkItem: {
+    Management: {
+      List: (projectId: string) => `api/v1/workitems/${projectId}`,
+      Create: (projectId: string) => `api/v1/workitems/${projectId}`,
+      Detail: (projectId: string, itemId: string) =>
+        `api/v1/workitems/${projectId}/${itemId}`,
+      Update: (projectId: string, itemId: string) =>
+        `api/v1/workitems/${projectId}/${itemId}`,
+      Delete: (projectId: string, itemId: string) =>
+        `api/v1/workitems/${projectId}/${itemId}`,
+    },
+    Configuration: {
+      Types: 'api/v1/workitems/types',
+      Statuses: 'api/v1/workitems/statuses',
+    },
+  },
   User: {
     Users: {
       List: 'api/v1/users',

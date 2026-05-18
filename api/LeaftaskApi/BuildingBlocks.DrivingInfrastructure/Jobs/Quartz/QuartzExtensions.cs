@@ -1,6 +1,6 @@
 ﻿using BuildingBlocks.DrivingInfrastructure.Jobs.Listeners;
 using Microsoft.Extensions.DependencyInjection;
-using Modules.Users.DrivingInfrastructure.Jobs.Outbox;
+using BuildingBlocks.DrivingInfrastructure.Jobs.Outbox;
 using Quartz;
 using Quartz.Impl.Matchers;
 

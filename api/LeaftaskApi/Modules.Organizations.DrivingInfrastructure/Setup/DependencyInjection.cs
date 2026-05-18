@@ -29,7 +29,7 @@ using Modules.Organizations.DrivingInfrastructure.Jobs;
 using Modules.Organizations.DrivingInfrastructure.Services;
 using Modules.Organizations.DrivingInfrastructure.Subscribers;
 using Modules.Organizations.Integration;
-using Modules.Users.DrivingInfrastructure.Jobs.Outbox;
+using BuildingBlocks.DrivingInfrastructure.Jobs.Outbox;
 using Quartz;
 
 namespace Modules.Organizations.DrivingInfrastructure.Setup;

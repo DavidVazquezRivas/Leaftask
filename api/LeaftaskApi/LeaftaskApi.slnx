@@ -64,6 +64,10 @@
     <Project Path="Modules.Users.Application.UnitTests/Modules.Users.Application.UnitTests.csproj" Id="0abaccd0-4173-41bf-8095-9a89f89c2e49" />
     <Project Path="Modules.Users.Domain.UnitTests/Modules.Users.Domain.UnitTests.csproj" Id="d40887fc-f4f1-4c78-af31-85340b41552f" />
   </Folder>
+  <Folder Name="/tests/Modules/WorkItems/">
+    <Project Path="Modules.WorkItems.Application.UnitTests/Modules.WorkItems.Application.UnitTests.csproj" Id="9bca9409-2492-474f-ab09-c6a59df0fc34" />
+    <Project Path="Modules.WorkItems.Domains.UnitTests/Modules.WorkItems.Domains.UnitTests.csproj" Id="245f0075-f047-46b5-8b16-2fbc3f988175" />
+  </Folder>
   <Project Path="docker-compose.dcproj">
     <Build />
   </Project>

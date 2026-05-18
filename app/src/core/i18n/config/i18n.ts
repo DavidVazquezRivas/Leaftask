@@ -19,6 +19,13 @@ if (!i18n.isInitialized) {
     },
     returnNull: false,
   })
+} else {
+  // HMR: push updated resource bundles into the existing i18n instance
+  for (const [lng, nss] of Object.entries(resources as Record<string, Record<string, object>>)) {
+    for (const [ns, bundle] of Object.entries(nss)) {
+      i18n.addResourceBundle(lng, ns, bundle, true, true)
+    }
+  }
 }
 
 export { i18n }

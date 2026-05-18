@@ -17,6 +17,7 @@ interface OrbitalNodeProps {
   isCollapsed: boolean
   onToggle: () => void
   onClick?: () => void
+  onAddChild?: () => void
 }
 
 interface RingConfig {
@@ -27,17 +28,26 @@ interface RingConfig {
   opacity: number
 }
 
-const diameter = ORBITAL_BASE_RADIUS * 2
+const BASE_RADIUS_MIN = 31
 
-export function computeTotalRadius(orbits: number): number {
+// size ∈ [0,1]: linear, 31px (0h) → 150px (80h+)
+export function computeBaseRadius(size: number): number {
+  return Math.round(
+    BASE_RADIUS_MIN +
+      Math.min(size, 1) * (ORBITAL_BASE_RADIUS - BASE_RADIUS_MIN)
+  )
+}
+
+// orbits = ring count (work logged); size = circle scale (estimation)
+export function computeTotalRadius(orbits: number, size: number): number {
   return (
-    ORBITAL_BASE_RADIUS +
+    computeBaseRadius(size) +
     Math.ceil(orbits) * ORBITAL_ORBIT_GAP +
     ORBITAL_RING_PADDING
   )
 }
 
-function buildRings(orbits: number): RingConfig[] {
+function buildRings(orbits: number, baseRadius: number): RingConfig[] {
   const rings: RingConfig[] = []
   const fullOrbits = Math.floor(orbits)
   const fractional = orbits - fullOrbits
@@ -45,7 +55,7 @@ function buildRings(orbits: number): RingConfig[] {
   for (let i = 0; i < fullOrbits; i++) {
     rings.push({
       key: i,
-      r: ORBITAL_BASE_RADIUS + (i + 1) * ORBITAL_ORBIT_GAP,
+      r: baseRadius + (i + 1) * ORBITAL_ORBIT_GAP,
       dasharray: undefined,
       dashoffset: undefined,
       opacity: Math.max(0.2, 0.85 - i * 0.12),
@@ -53,7 +63,7 @@ function buildRings(orbits: number): RingConfig[] {
   }
 
   if (fractional > 0.001) {
-    const r = ORBITAL_BASE_RADIUS + (fullOrbits + 1) * ORBITAL_ORBIT_GAP
+    const r = baseRadius + (fullOrbits + 1) * ORBITAL_ORBIT_GAP
     const circ = 2 * Math.PI * r
     rings.push({
       key: fullOrbits,
@@ -75,16 +85,20 @@ export function OrbitalNode({
   isCollapsed,
   onToggle,
   onClick,
+  onAddChild,
 }: OrbitalNodeProps) {
-  const { title, subtitle, color, shape, filled, orbits, avatar, over } = visual
+  const { title, subtitle, color, shape, filled, size, orbits, avatar, over } =
+    visual
 
-  const rings = buildRings(orbits)
-  const totalRadius = computeTotalRadius(orbits)
+  const baseRadius = computeBaseRadius(size)
+  const diameter = baseRadius * 2
+  const rings = buildRings(orbits, baseRadius)
+  const totalRadius = computeTotalRadius(orbits, size)
   const totalSize = totalRadius * 2
   const bgColor = nodeBackground(color)
   const isComplete = filled >= 100
 
-  const shapeOffset = totalRadius - ORBITAL_BASE_RADIUS
+  const shapeOffset = totalRadius - baseRadius
 
   const shapeRadius =
     shape === 'circle' ? '50%' : shape === 'square' ? '8px' : '0'
@@ -115,10 +129,10 @@ export function OrbitalNode({
     avatar.startsWith('data:')
 
   const starPath = createStarPath(
-    ORBITAL_BASE_RADIUS,
-    ORBITAL_BASE_RADIUS,
-    ORBITAL_BASE_RADIUS - 2,
-    (ORBITAL_BASE_RADIUS - 2) * 0.65,
+    baseRadius,
+    baseRadius,
+    baseRadius - 2,
+    (baseRadius - 2) * 0.65,
     8
   )
 
@@ -339,14 +353,14 @@ export function OrbitalNode({
           </span>
         </div>
 
-        {/* Avatar badge */}
+        {/* Avatar badge — scales with node size */}
         <div
           style={{
             position: 'absolute',
-            bottom: -8,
-            right: -8,
-            width: 28,
-            height: 28,
+            bottom: -6,
+            right: -6,
+            width: Math.round(Math.max(18, Math.min(44, baseRadius * 0.5))),
+            height: Math.round(Math.max(18, Math.min(44, baseRadius * 0.5))),
             borderRadius: '50%',
             background: `radial-gradient(circle at 40% 35%, ${color}dd, ${color})`,
             border: '1.5px solid rgba(255,255,255,0.2)',
@@ -354,7 +368,7 @@ export function OrbitalNode({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 9,
+            fontSize: Math.round(Math.max(7, Math.min(16, baseRadius * 0.18))),
             fontWeight: 700,
             color: 'white',
             zIndex: 10,
@@ -392,39 +406,78 @@ export function OrbitalNode({
         ) : null}
       </div>
 
-      {/* Collapse/expand button */}
-      {hasChildren ? (
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation()
-            onToggle()
-          }}
+      {/* Right-side action buttons (collapse + add child) */}
+      {hasChildren || onAddChild ? (
+        <div
           style={{
             position: 'absolute',
-            left: totalRadius + ORBITAL_BASE_RADIUS - 9,
-            top: totalRadius - 9,
-            width: 18,
-            height: 18,
-            borderRadius: '50%',
-            background: '#0a0f1e',
-            border: `1.5px solid ${color}`,
-            color: color,
-            boxShadow: `0 0 6px ${color}66`,
+            left: totalRadius + baseRadius - 9,
+            top: totalRadius - (hasChildren && onAddChild ? 20 : 9),
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 12,
-            fontWeight: 700,
-            cursor: 'pointer',
+            flexDirection: 'column',
+            gap: 4,
             zIndex: 30,
-            padding: 0,
-            lineHeight: 1,
           }}
-          aria-label={isCollapsed ? 'Expand' : 'Collapse'}
         >
-          {isCollapsed ? '+' : '−'}
-        </button>
+          {hasChildren && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                onToggle()
+              }}
+              style={{
+                width: 18,
+                height: 18,
+                borderRadius: '50%',
+                background: '#0a0f1e',
+                border: `1.5px solid ${color}`,
+                color: color,
+                boxShadow: `0 0 6px ${color}66`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: 'pointer',
+                padding: 0,
+                lineHeight: 1,
+              }}
+              aria-label={isCollapsed ? 'Expand' : 'Collapse'}
+            >
+              {isCollapsed ? '+' : '−'}
+            </button>
+          )}
+          {onAddChild && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                onAddChild()
+              }}
+              style={{
+                width: 18,
+                height: 18,
+                borderRadius: '50%',
+                background: '#0a0f1e',
+                border: `1.5px solid ${color}88`,
+                color: `${color}cc`,
+                boxShadow: `0 0 4px ${color}44`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 14,
+                fontWeight: 400,
+                cursor: 'pointer',
+                padding: 0,
+                lineHeight: 1,
+              }}
+              aria-label="Add child"
+            >
+              +
+            </button>
+          )}
+        </div>
       ) : null}
     </div>
   )

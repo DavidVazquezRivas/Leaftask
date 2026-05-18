@@ -7,7 +7,7 @@ public static class WorkItemTypeSeeder
 {
     private static readonly WorkItemType[] Types =
     [
-        new(new Guid("b1000000-0001-0000-0000-000000000001"), "Task"),
+        new(new Guid("b1000000-0001-0000-0000-000000000001"), "Tarea"),
         new(new Guid("b1000000-0002-0000-0000-000000000001"), "Bug")
     ];
 

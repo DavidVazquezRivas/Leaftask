@@ -1,0 +1,69 @@
+{
+  "create": {
+    "title": "Nuevo elemento de trabajo",
+    "description": "Rellena los datos del nuevo elemento de trabajo.",
+    "fields": {
+      "titleLabel": "Título",
+      "titlePlaceholder": "Título del elemento",
+      "descriptionLabel": "Descripción",
+      "descriptionOptional": "(opcional)",
+      "descriptionPlaceholder": "Describe el elemento de trabajo...",
+      "type": "Tipo",
+      "typePlaceholder": "Seleccionar tipo",
+      "status": "Estado",
+      "statusPlaceholder": "Seleccionar estado",
+      "assignee": "Responsable",
+      "assigneeOptional": "(opcional)",
+      "assigneeUnassigned": "Sin asignar",
+      "estimationLabel": "Estimación",
+      "estimationPlaceholder": "Horas (ej. 8)"
+    },
+    "actions": {
+      "submit": "Crear",
+      "cancel": "Cancelar"
+    },
+    "feedback": {
+      "created": "Elemento de trabajo creado correctamente."
+    }
+  },
+  "detail": {
+    "status": "Estado",
+    "type": "Tipo",
+    "description": "Descripción",
+    "noDescription": "Sin descripción.",
+    "assignee": "Responsable",
+    "unassigned": "Sin asignar",
+    "limitDate": "Fecha Límite",
+    "noLimitDate": "No definida",
+    "parent": "Dependencia / Padre",
+    "noParent": "Ninguno",
+    "estimation": "Estimación",
+    "dedication": "Dedicación",
+    "registers_one": "{{count}} registro",
+    "registers_other": "{{count}} registros",
+    "progress": "Avance",
+    "workProgress": "Progreso del trabajo",
+    "hours": "{{count}}h",
+    "editProgress": "Editar avance",
+    "saveProgress": "Guardar",
+    "cancelProgress": "Cancelar",
+    "comments": "Comentarios",
+    "activityLog": "Registro de actividad",
+    "noComments": "Sin comentarios aún.",
+    "noActivity": "Sin actividad registrada aún.",
+    "customFields": "Campos personalizados",
+    "changed": "cambió",
+    "from": "de",
+    "to": "a",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar elemento",
+    "deleteConfirm": "Esta acción no se puede deshacer.",
+    "deleteConfirmYes": "Eliminar"
+  },
+  "empty": {
+    "description": "Aún no hay elementos de trabajo. Crea uno para empezar a construir el árbol.",
+    "action": "Nuevo elemento"
+  },
+  "addRoot": "Nuevo elemento"
+}

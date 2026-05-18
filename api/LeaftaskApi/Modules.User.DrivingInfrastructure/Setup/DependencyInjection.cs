@@ -17,7 +17,7 @@ using Modules.Users.DrivenInfrastructure.Repositories;
 using Modules.Users.DrivenInfrastructure.Session.Jwt;
 using Modules.Users.DrivenInfrastructure.Session.OAuth;
 using Modules.Users.DrivingInfrastructure.Jobs;
-using Modules.Users.DrivingInfrastructure.Jobs.Outbox;
+using BuildingBlocks.DrivingInfrastructure.Jobs.Outbox;
 using Quartz;
 
 namespace Modules.Users.DrivingInfrastructure.Setup;
