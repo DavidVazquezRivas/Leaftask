@@ -16,11 +16,14 @@ import { useTranslation } from 'react-i18next'
 import type { WorkItemTypeData, WorkItemStatusData, WorkItemData } from '@/core/api/workitems'
 import type { UpdateWorkItemRequest } from '@/core/api/workitems'
 import type { ProjectMemberData } from '@/core/api/project/members'
+import type { CustomFieldData } from '@/core/api/project/customFields'
+import { CustomFieldInput } from './custom-fields'
 import { useWorkItemDetailQuery } from '@/core/query/workitems'
 import { useUpdateWorkItemMutation, useDeleteWorkItemMutation } from '@/core/query/workitems'
 import { Button } from '@/shared/components/ui/button'
 import { Calendar } from '@/shared/components/ui/calendar'
 import { Input } from '@/shared/components/ui/input'
+import { NumberInput } from '@/shared/components/ui/number-input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/components/ui/popover'
 import { Textarea } from '@/shared/components/ui/textarea'
 import {
@@ -54,6 +57,8 @@ interface WorkItemDetailPanelProps {
   statuses: WorkItemStatusData[]
   workItems: WorkItemData[]
   members: ProjectMemberData[]
+  customFields: CustomFieldData[]
+  fieldTypeNameById: Map<string, string>
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -110,6 +115,8 @@ export function WorkItemDetailPanel({
   statuses,
   workItems,
   members,
+  customFields,
+  fieldTypeNameById,
 }: WorkItemDetailPanelProps) {
   const { t, i18n } = useTranslation('workitems')
   const [activeTab, setActiveTab] = useState<'comments' | 'activity'>('comments')
@@ -120,10 +127,13 @@ export function WorkItemDetailPanel({
   const [draftTypeId, setDraftTypeId] = useState('')
   const [draftAssigneeId, setDraftAssigneeId] = useState<string | null>(null)
   const [draftLimitDate, setDraftLimitDate] = useState('')
-  const [draftEstimation, setDraftEstimation] = useState('')
+  const [draftEstimation, setDraftEstimation] = useState(0)
   const [draftProgress, setDraftProgress] = useState(0)
   const [draftParentId, setDraftParentId] = useState<string | null>(null)
   const [confirmingDelete, setConfirmingDelete] = useState(false)
+  const [localCustomFieldValues, setLocalCustomFieldValues] = useState<Record<string, string>>({})
+  const [editingCustomFieldId, setEditingCustomFieldId] = useState<string | null>(null)
+  const [draftCustomFieldValue, setDraftCustomFieldValue] = useState('')
 
   const detailQuery = useWorkItemDetailQuery(projectId, itemId)
   const updateMutation = useUpdateWorkItemMutation(projectId, itemId ?? '')
@@ -135,10 +145,21 @@ export function WorkItemDetailPanel({
     setEditingField(null)
     setActiveTab('comments')
     setConfirmingDelete(false)
+    setEditingCustomFieldId(null)
   }, [itemId])
+
+  useEffect(() => {
+    if (!detail) return
+    const vals: Record<string, string> = {}
+    for (const cf of detail.customFields) {
+      vals[cf.fieldId] = cf.value
+    }
+    setLocalCustomFieldValues(vals)
+  }, [detail])
 
   const startEdit = (field: NonNullable<EditingField>) => {
     if (!detail) return
+    setEditingCustomFieldId(null)
     switch (field) {
       case 'title': setDraftTitle(detail.title); break
       case 'description': setDraftDescription(detail.description ?? ''); break
@@ -146,7 +167,7 @@ export function WorkItemDetailPanel({
       case 'type': setDraftTypeId(detail.typeId); break
       case 'assignee': setDraftAssigneeId(detail.assignee?.id ?? null); break
       case 'limitDate': setDraftLimitDate(detail.limitDate?.slice(0, 10) ?? ''); break
-      case 'estimation': setDraftEstimation(String(detail.estimation ?? 0)); break
+      case 'estimation': setDraftEstimation(detail.estimation ?? 0); break
       case 'progress': setDraftProgress(Math.round((detail.progress ?? 0) * 100)); break
       case 'parent': setDraftParentId(detail.parentId ?? null); break
     }
@@ -171,8 +192,61 @@ export function WorkItemDetailPanel({
     return result
   }, [itemId, workItems])
 
+  const applicableFields = useMemo(
+    () =>
+      customFields.filter(
+        (cf) =>
+          cf.appliesTo.length === 0 ||
+          cf.appliesTo.some((t) => t.id === detail?.typeId)
+      ),
+    [customFields, detail?.typeId]
+  )
+
   const save = (payload: UpdateWorkItemRequest) => {
     updateMutation.mutate(payload, { onSuccess: () => setEditingField(null) })
+  }
+
+  const saveCustomField = (fieldId: string, value: string) => {
+    updateMutation.mutate(
+      { customFields: { [fieldId]: value } },
+      {
+        onSuccess: () => {
+          setLocalCustomFieldValues((prev) => ({ ...prev, [fieldId]: value }))
+          setEditingCustomFieldId(null)
+        },
+      }
+    )
+  }
+
+  const resolveCustomFieldDisplay = (
+    typeName: string,
+    value: string,
+    options: { id: string; name: string }[]
+  ): string => {
+    if (typeName === 'Casilla de Verificación') {
+      return value === 'true' ? t('fieldValues.yes') : t('fieldValues.no')
+    }
+    if (!value) return '—'
+    switch (typeName) {
+      case 'Fecha':
+        return formatDate(value + 'T12:00:00')
+      case 'Selección': {
+        const opt = options.find((o) => o.id === value)
+        return opt?.name ?? value
+      }
+      case 'Selección Múltiple':
+        return value
+          .split(',')
+          .filter(Boolean)
+          .map((id) => options.find((o) => o.id === id)?.name ?? id)
+          .join(', ')
+      case 'Persona': {
+        const m = members.find((mb) => mb.id === value)
+        return m?.name ?? value
+      }
+      default:
+        return value
+    }
   }
 
   const isPending = updateMutation.isPending || deleteMutation.isPending
@@ -225,8 +299,25 @@ export function WorkItemDetailPanel({
         return `${value}%`
       case 'estimation':
         return `${parseFloat(value)}h`
-      default:
-        return value
+      default: {
+        const cf = customFields.find((f) => f.name === fieldName)
+        if (!cf) return value
+        const typeName = fieldTypeNameById.get(cf.type) ?? ''
+        switch (typeName) {
+          case 'Selección':
+            return cf.options.find((o) => o.id === value)?.name ?? value
+          case 'Selección Múltiple':
+            return value.split(',').filter(Boolean)
+              .map((id) => cf.options.find((o) => o.id === id)?.name ?? id)
+              .join(', ')
+          case 'Persona':
+            return members.find((m) => m.id === value)?.name ?? value
+          case 'Casilla de Verificación':
+            return value === 'true' ? t('fieldValues.yes') : t('fieldValues.no')
+          default:
+            return value
+        }
+      }
     }
   }
   const progressPercent = Math.round((detail?.progress ?? 0) * 100)
@@ -732,22 +823,19 @@ export function WorkItemDetailPanel({
                   </div>
                   {editingField === 'estimation' ? (
                     <div className="space-y-1.5 pt-0.5">
-                      <Input
-                        type="number"
+                      <NumberInput
                         min={0.5}
                         step={0.5}
                         value={draftEstimation}
-                        onChange={(e) => setDraftEstimation(e.target.value)}
-                        className="h-7 text-xs"
-                        autoFocus
+                        onChange={setDraftEstimation}
                         disabled={isPending}
                       />
                       <div className="flex gap-1">
                         <Button
                           size="sm"
                           className="h-6 text-xs px-2"
-                          onClick={() => save({ estimation: parseFloat(draftEstimation) })}
-                          disabled={isPending || !draftEstimation || parseFloat(draftEstimation) <= 0}
+                          onClick={() => save({ estimation: draftEstimation })}
+                          disabled={isPending || draftEstimation <= 0}
                         >
                           {t('detail.save')}
                         </Button>
@@ -851,47 +939,91 @@ export function WorkItemDetailPanel({
                       </div>
                     </div>
                   ) : (
-                    <p className="text-sm font-semibold text-green-400">
-                      {progressPercent}%
-                    </p>
+                    <div className="space-y-1.5 pt-0.5">
+                      <p className="text-sm font-semibold text-green-400">{progressPercent}%</p>
+                      <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-green-500 transition-all duration-500"
+                          style={{ width: `${progressPercent}%` }}
+                        />
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
 
-              {/* Work progress bar */}
-              <section className="space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground font-medium">
-                    {t('detail.workProgress')}
-                  </span>
-                  <span className="font-semibold text-green-400">{progressPercent}%</span>
-                </div>
-                <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-green-500 transition-all duration-500"
-                    style={{ width: `${progressPercent}%` }}
-                  />
-                </div>
-              </section>
-
               {/* Custom fields */}
-              {detail.customFields.length > 0 && (
-                <section className="space-y-2">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                    {t('detail.customFields')}
-                  </p>
-                  <div className="space-y-1.5">
-                    {detail.customFields.map((cf) => (
+              {applicableFields.length > 0 && (
+                <div className="grid grid-cols-2 gap-3">
+                  {applicableFields.map((cf) => {
+                    const cfTypeName = fieldTypeNameById.get(cf.type) ?? ''
+                    const cfValue = localCustomFieldValues[cf.id] ?? ''
+                    const isEditing = editingCustomFieldId === cf.id
+                    return (
                       <div
-                        key={cf.fieldId}
-                        className="flex items-center justify-between rounded-lg border border-border bg-muted/20 px-3 py-2"
+                        key={cf.id}
+                        className="rounded-lg border border-border bg-muted/20 px-3 py-2.5 space-y-1.5 min-w-0"
                       >
-                        <span className="text-xs text-muted-foreground">{cf.name}</span>
-                        <span className="text-xs font-medium text-foreground">{cf.value}</span>
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs text-muted-foreground">
+                            {cf.name}
+                            {cf.required && (
+                              <span className="ml-1 text-destructive">*</span>
+                            )}
+                          </p>
+                          {!isEditing && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                cancelEdit()
+                                setEditingCustomFieldId(cf.id)
+                                setDraftCustomFieldValue(cfValue)
+                              }}
+                              className="text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                              <Pencil size={11} />
+                            </button>
+                          )}
+                        </div>
+                        {isEditing ? (
+                          <div className="space-y-1.5">
+                            <CustomFieldInput
+                              field={cf}
+                              fieldTypeName={cfTypeName}
+                              value={draftCustomFieldValue}
+                              onChange={setDraftCustomFieldValue}
+                              members={members}
+                              disabled={isPending}
+                            />
+                            <div className="flex gap-1.5">
+                              <Button
+                                size="sm"
+                                className="h-6 text-xs px-2"
+                                onClick={() => saveCustomField(cf.id, draftCustomFieldValue)}
+                                disabled={isPending}
+                              >
+                                {t('detail.save')}
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-6 text-xs px-2"
+                                onClick={() => setEditingCustomFieldId(null)}
+                                disabled={isPending}
+                              >
+                                {t('detail.cancel')}
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-sm font-medium text-foreground truncate">
+                            {resolveCustomFieldDisplay(cfTypeName, cfValue, cf.options)}
+                          </p>
+                        )}
                       </div>
-                    ))}
-                  </div>
-                </section>
+                    )
+                  })}
+                </div>
               )}
             </div>
 

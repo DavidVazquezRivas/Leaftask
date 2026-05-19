@@ -24,7 +24,8 @@
     },
     "feedback": {
       "created": "Work item created successfully."
-    }
+    },
+    "customFieldsSection": "Custom Fields"
   },
   "detail": {
     "status": "Status",
@@ -65,5 +66,10 @@
     "description": "No work items yet. Create one to start building the tree.",
     "action": "New work item"
   },
-  "addRoot": "New work item"
+  "addRoot": "New work item",
+  "fieldValues": {
+    "yes": "Yes",
+    "no": "No",
+    "none": "None"
+  }
 }

@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import type { WorkItemTypeData, WorkItemStatusData } from '@/core/api/workitems'
 import type { ProjectMemberData } from '@/core/api/project/members'
+import type { CustomFieldData } from '@/core/api/project/customFields'
 import { Button } from '@/shared/components/ui/button'
 import {
   Dialog,
@@ -14,6 +15,7 @@ import {
 } from '@/shared/components/ui/dialog'
 import { Input } from '@/shared/components/ui/input'
 import { Label } from '@/shared/components/ui/label'
+import { NumberInput } from '@/shared/components/ui/number-input'
 import {
   Select,
   SelectContent,
@@ -22,6 +24,7 @@ import {
   SelectValue,
 } from '@/shared/components/ui/select'
 import { Textarea } from '@/shared/components/ui/textarea'
+import { CustomFieldInput } from './custom-fields'
 
 interface CreateWorkItemDialogProps {
   open: boolean
@@ -29,6 +32,8 @@ interface CreateWorkItemDialogProps {
   types: WorkItemTypeData[]
   statuses: WorkItemStatusData[]
   members: ProjectMemberData[]
+  customFields: CustomFieldData[]
+  fieldTypeNameById: Map<string, string>
   onClose: () => void
   onSubmit: (payload: {
     title: string
@@ -37,6 +42,7 @@ interface CreateWorkItemDialogProps {
     statusId: string
     assigneeId: string | null
     estimation: number
+    customFields: Record<string, string>
   }) => void
 }
 
@@ -46,6 +52,8 @@ export function CreateWorkItemDialog({
   types,
   statuses,
   members,
+  customFields,
+  fieldTypeNameById,
   onClose,
   onSubmit,
 }: CreateWorkItemDialogProps) {
@@ -56,6 +64,7 @@ export function CreateWorkItemDialog({
   const [statusId, setStatusId] = useState('')
   const [assigneeId, setAssigneeId] = useState<string | null>(null)
   const [estimation, setEstimation] = useState(8)
+  const [customFieldValues, setCustomFieldValues] = useState<Record<string, string>>({})
 
   useEffect(() => {
     if (!open) return
@@ -65,14 +74,63 @@ export function CreateWorkItemDialog({
     setStatusId(statuses[0]?.id ?? '')
     setAssigneeId(null)
     setEstimation(8)
+    setCustomFieldValues({})
   }, [open, types, statuses])
 
+  const applicableFields = useMemo(
+    () =>
+      customFields.filter(
+        (cf) =>
+          cf.appliesTo.length === 0 ||
+          cf.appliesTo.some((t) => t.id === typeId)
+      ),
+    [customFields, typeId]
+  )
+
+  // When type changes, clear values for fields that no longer apply
+  const handleTypeChange = (newTypeId: string) => {
+    setTypeId(newTypeId)
+    const nextApplicable = new Set(
+      customFields
+        .filter(
+          (cf) =>
+            cf.appliesTo.length === 0 ||
+            cf.appliesTo.some((t) => t.id === newTypeId)
+        )
+        .map((cf) => cf.id)
+    )
+    setCustomFieldValues((prev) => {
+      const next: Record<string, string> = {}
+      for (const [id, val] of Object.entries(prev)) {
+        if (nextApplicable.has(id)) next[id] = val
+      }
+      return next
+    })
+  }
+
+  const allRequiredFilled = applicableFields
+    .filter((cf) => cf.required)
+    .every((cf) => (customFieldValues[cf.id] ?? '').trim().length > 0)
+
   const canSubmit =
-    title.trim().length > 0 && typeId.length > 0 && statusId.length > 0 && estimation > 0
+    title.trim().length > 0 &&
+    typeId.length > 0 &&
+    statusId.length > 0 &&
+    estimation > 0 &&
+    allRequiredFilled
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!canSubmit) return
+
+    const fieldValues: Record<string, string> = {}
+    for (const cf of applicableFields) {
+      const val = customFieldValues[cf.id] ?? ''
+      if (val.trim().length > 0) {
+        fieldValues[cf.id] = val
+      }
+    }
+
     onSubmit({
       title: title.trim(),
       description: description.trim(),
@@ -80,6 +138,7 @@ export function CreateWorkItemDialog({
       statusId,
       assigneeId,
       estimation,
+      customFields: fieldValues,
     })
   }
 
@@ -103,7 +162,10 @@ export function CreateWorkItemDialog({
         >
           {/* Title */}
           <div className="space-y-2">
-            <Label htmlFor="wi-title">{t('create.fields.titleLabel')}</Label>
+            <Label htmlFor="wi-title">
+              {t('create.fields.titleLabel')}
+              <span className="ml-1 text-destructive">*</span>
+            </Label>
             <Input
               id="wi-title"
               value={title}
@@ -116,12 +178,7 @@ export function CreateWorkItemDialog({
 
           {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="wi-description">
-              {t('create.fields.descriptionLabel')}{' '}
-              <span className="text-xs font-normal text-muted-foreground">
-                {t('create.fields.descriptionOptional')}
-              </span>
-            </Label>
+            <Label htmlFor="wi-description">{t('create.fields.descriptionLabel')}</Label>
             <Textarea
               id="wi-description"
               value={description}
@@ -134,15 +191,16 @@ export function CreateWorkItemDialog({
 
           {/* Estimation */}
           <div className="space-y-2">
-            <Label htmlFor="wi-estimation">{t('create.fields.estimationLabel')}</Label>
-            <Input
+            <Label htmlFor="wi-estimation">
+              {t('create.fields.estimationLabel')}
+              <span className="ml-1 text-destructive">*</span>
+            </Label>
+            <NumberInput
               id="wi-estimation"
-              type="number"
               min={0.5}
               step={0.5}
               value={estimation}
-              onChange={(e) => setEstimation(Number(e.target.value))}
-              placeholder={t('create.fields.estimationPlaceholder')}
+              onChange={setEstimation}
               disabled={isSubmitting}
             />
           </div>
@@ -150,10 +208,13 @@ export function CreateWorkItemDialog({
           {/* Type + Status side by side */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label htmlFor="wi-type">{t('create.fields.type')}</Label>
+              <Label htmlFor="wi-type">
+                {t('create.fields.type')}
+                <span className="ml-1 text-destructive">*</span>
+              </Label>
               <Select
                 value={typeId}
-                onValueChange={setTypeId}
+                onValueChange={handleTypeChange}
                 disabled={isSubmitting || types.length === 0}
               >
                 <SelectTrigger id="wi-type">
@@ -170,7 +231,10 @@ export function CreateWorkItemDialog({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="wi-status">{t('create.fields.status')}</Label>
+              <Label htmlFor="wi-status">
+                {t('create.fields.status')}
+                <span className="ml-1 text-destructive">*</span>
+              </Label>
               <Select
                 value={statusId}
                 onValueChange={setStatusId}
@@ -192,12 +256,7 @@ export function CreateWorkItemDialog({
 
           {/* Assignee */}
           <div className="space-y-2">
-            <Label htmlFor="wi-assignee">
-              {t('create.fields.assignee')}{' '}
-              <span className="text-xs font-normal text-muted-foreground">
-                {t('create.fields.assigneeOptional')}
-              </span>
-            </Label>
+            <Label htmlFor="wi-assignee">{t('create.fields.assignee')}</Label>
             <Select
               value={assigneeId ?? 'none'}
               onValueChange={(v) => setAssigneeId(v === 'none' ? null : v)}
@@ -216,6 +275,38 @@ export function CreateWorkItemDialog({
               </SelectContent>
             </Select>
           </div>
+
+          {/* Custom fields */}
+          {applicableFields.length > 0 && (
+            <div className="space-y-3 rounded-lg border bg-muted/20 p-3">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                {t('create.customFieldsSection')}
+              </p>
+              {applicableFields.map((cf) => {
+                const typeName = fieldTypeNameById.get(cf.type) ?? ''
+                return (
+                  <div key={cf.id} className="space-y-1.5">
+                    <Label className="text-xs">
+                      {cf.name}
+                      {cf.required && (
+                        <span className="ml-1 text-destructive">*</span>
+                      )}
+                    </Label>
+                    <CustomFieldInput
+                      field={cf}
+                      fieldTypeName={typeName}
+                      value={customFieldValues[cf.id] ?? ''}
+                      onChange={(v) =>
+                        setCustomFieldValues((prev) => ({ ...prev, [cf.id]: v }))
+                      }
+                      members={members}
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                )
+              })}
+            </div>
+          )}
 
           <DialogFooter>
             <Button

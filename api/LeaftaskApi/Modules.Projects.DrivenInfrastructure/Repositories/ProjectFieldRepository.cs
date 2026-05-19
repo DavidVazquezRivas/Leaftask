@@ -47,7 +47,7 @@ public sealed class ProjectFieldRepository(ProjectsDbContext dbContext) : IProje
             .Include(pf => pf.Field)
                 .ThenInclude(f => f.AppliesTo)
             .FirstOrDefaultAsync(
-                pf => pf.Id == fieldId && EF.Property<Guid>(pf, "project_id") == projectId,
+                pf => pf.Field.Id == fieldId && EF.Property<Guid>(pf, "project_id") == projectId,
                 cancellationToken);
 
     public void Remove(ProjectField field) =>

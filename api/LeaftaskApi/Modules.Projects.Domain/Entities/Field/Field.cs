@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Domain.Entities;
+using Modules.Projects.Domain.Events;
 
 namespace Modules.Projects.Domain.Entities.Field;
 
@@ -30,4 +31,13 @@ public sealed class Field : Entity
         _appliesTo.Clear();
         _appliesTo.AddRange(types);
     }
+
+    public void NotifyCreated() =>
+        Raise(new FieldCreatedDomainEvent(Id, Name, IsOptional, FieldType.Id, _appliesTo.Select(wt => wt.Id).ToList()));
+
+    public void NotifyUpdated() =>
+        Raise(new FieldUpdatedDomainEvent(Id, Name, IsOptional, FieldType.Id, _appliesTo.Select(wt => wt.Id).ToList()));
+
+    public void NotifyDeleted() =>
+        Raise(new FieldDeletedDomainEvent(Id));
 }

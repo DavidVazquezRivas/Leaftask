@@ -21,6 +21,7 @@ public sealed class DeleteCustomFieldCommandHandler(IProjectFieldRepository fiel
 
         Field field = projectField.Field;
 
+        field.NotifyDeleted();
         fieldRepository.Remove(projectField);
         fieldRepository.RemoveField(field);
 

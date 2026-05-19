@@ -15,5 +15,16 @@ public static class FieldReadModelBackfillSeeder
                 SELECT 1 FROM workitem.field_read_models frm WHERE frm."Id" = f."Id"
             )
             """, cancellationToken);
+
+        await dbContext.Database.ExecuteSqlRawAsync("""
+            INSERT INTO workitem.field_read_model_work_item_types (field_read_model_id, work_item_type_id)
+            SELECT fwt."FieldId", fwt."AppliesToId"
+            FROM project.field_workitem_type_read_models fwt
+            WHERE NOT EXISTS (
+                SELECT 1 FROM workitem.field_read_model_work_item_types wfwt
+                WHERE wfwt.field_read_model_id = fwt."FieldId"
+                AND wfwt.work_item_type_id = fwt."AppliesToId"
+            )
+            """, cancellationToken);
     }
 }

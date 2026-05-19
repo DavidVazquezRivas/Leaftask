@@ -44,6 +44,7 @@ public sealed class CreateCustomFieldCommandHandler(
 
         Field field = new(Guid.NewGuid(), !command.Required, command.Name, fieldType);
         field.SetAppliesTo(workItemTypes);
+        field.NotifyCreated();
         await fieldRepository.AddFieldAsync(field, cancellationToken);
 
         List<Option> options = command.Options
@@ -69,7 +70,7 @@ public sealed class CreateCustomFieldCommandHandler(
             .ToList();
 
         return Result.Success(new CustomFieldDto(
-            projectField.Id,
+            field.Id,
             projectField.Name,
             fieldType.Id,
             optionDtos,

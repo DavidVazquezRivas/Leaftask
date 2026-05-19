@@ -4,7 +4,6 @@ using BuildingBlocks.Domain.Result;
 using Modules.WorkItems.Application.WorkItems;
 using Modules.WorkItems.Application.WorkItems.GetWorkItemDetails;
 using Modules.WorkItems.Domain.Entities;
-using Modules.WorkItems.Domain.Entities.Field;
 using Modules.WorkItems.Domain.Entities.Properties;
 using Modules.WorkItems.Domain.Errors;
 using Modules.WorkItems.Domain.Repositories;
@@ -97,8 +96,15 @@ public sealed class UpdateWorkItemCommandHandler(
             command.ParentId,
             command.UpdateParent);
 
-        List<WorkItemChange> customFieldChanges = await ApplyCustomFieldsAsync(
-            workItem, command.CustomFields, cancellationToken);
+        Result<List<WorkItemChange>> customFieldResult = await WorkItemCustomFieldsService.ApplyAsync(
+            workItem, command.CustomFields, fieldRepository, cancellationToken);
+
+        if (customFieldResult.IsFailure)
+        {
+            return Result.Failure<WorkItemDetailDto>(customFieldResult.Error);
+        }
+
+        List<WorkItemChange> customFieldChanges = customFieldResult.Value;
 
         changes = [.. changes, .. customFieldChanges];
 
@@ -133,50 +139,4 @@ public sealed class UpdateWorkItemCommandHandler(
         return Result.Success(detail!);
     }
 
-    private async Task<List<WorkItemChange>> ApplyCustomFieldsAsync(
-        WorkItem workItem,
-        IReadOnlyDictionary<Guid, string> customFields,
-        CancellationToken cancellationToken)
-    {
-        if (customFields.Count == 0)
-        {
-            return [];
-        }
-
-        List<FieldValue> existingValues = await fieldRepository.GetFieldValuesForWorkItemAsync(
-            workItem.Id, cancellationToken);
-
-        List<WorkItemChange> changes = [];
-
-        foreach ((Guid fieldId, string newValue) in customFields)
-        {
-            FieldValue? existing = existingValues.FirstOrDefault(
-                fv => EqualById(fv, fieldId));
-
-            if (existing is not null)
-            {
-                if (existing.Value != newValue)
-                {
-                    changes.Add(new WorkItemChange(existing.Field.Name, existing.Value, newValue));
-                    existing.UpdateValue(newValue);
-                }
-            }
-            else
-            {
-                FieldReadModel? field = await fieldRepository.GetFieldReadModelByIdAsync(fieldId, cancellationToken);
-                if (field is null)
-                {
-                    continue;
-                }
-
-                FieldValue newFieldValue = new(Guid.NewGuid(), field, workItem, newValue);
-                await fieldRepository.AddFieldValueAsync(newFieldValue, cancellationToken);
-                changes.Add(new WorkItemChange(field.Name, string.Empty, newValue));
-            }
-        }
-
-        return changes;
-    }
-
-    private static bool EqualById(FieldValue fv, Guid fieldId) => fv.Field.Id == fieldId;
 }

@@ -14,4 +14,5 @@ public sealed record CreateWorkItemCommand(
     Guid TypeId,
     Guid StatusId,
     Guid? AssigneeId,
-    Guid ParentId) : ICommand<Result<WorkItemDetailDto>>, IProjectPermissionRequest;
+    Guid ParentId,
+    IReadOnlyDictionary<Guid, string> CustomFields) : ICommand<Result<WorkItemDetailDto>>, IProjectPermissionRequest;

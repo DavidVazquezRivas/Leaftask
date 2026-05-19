@@ -108,7 +108,8 @@ public sealed class WorkItemManagementController : ApiBaseController
                     request.TypeId,
                     request.StatusId,
                     request.AssigneeId,
-                    request.ParentId),
+                    request.ParentId,
+                    request.CustomFields),
                 cancellationToken),
             201);
 }

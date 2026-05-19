@@ -18,6 +18,7 @@ using Modules.WorkItems.Domain.Repositories;
 using Modules.WorkItems.DrivenInfrastructure.Persistence;
 using Modules.WorkItems.DrivenInfrastructure.Queries;
 using Modules.WorkItems.DrivenInfrastructure.Repositories;
+using Modules.WorkItems.DrivingInfrastructure.Subscribers.Fields;
 using Modules.WorkItems.DrivingInfrastructure.Subscribers.Projects;
 using Modules.WorkItems.DrivingInfrastructure.Subscribers.Users;
 

@@ -103,6 +103,7 @@ export interface CreateWorkItemRequest {
   estimation: number
   description?: string
   assigneeId?: string | null
+  customFields?: Record<string, string>
 }
 
 export interface UpdateWorkItemRequest {

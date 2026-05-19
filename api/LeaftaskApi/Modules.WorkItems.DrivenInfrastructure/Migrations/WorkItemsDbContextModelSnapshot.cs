@@ -73,6 +73,21 @@ namespace Modules.WorkItems.DrivenInfrastructure.Migrations
                     b.ToTable("OutboxMessages", "workitem");
                 });
 
+            modelBuilder.Entity("FieldReadModelWorkItemType", b =>
+                {
+                    b.Property<Guid>("field_read_model_id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("work_item_type_id")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("field_read_model_id", "work_item_type_id");
+
+                    b.HasIndex("work_item_type_id");
+
+                    b.ToTable("field_read_model_work_item_types", "workitem");
+                });
+
             modelBuilder.Entity("Modules.WorkItems.Domain.Entities.ActivityLog", b =>
                 {
                     b.Property<Guid>("Id")
@@ -429,6 +444,21 @@ namespace Modules.WorkItems.DrivenInfrastructure.Migrations
                     b.HasIndex("work_item_id");
 
                     b.ToTable("work_logs", "workitem");
+                });
+
+            modelBuilder.Entity("FieldReadModelWorkItemType", b =>
+                {
+                    b.HasOne("Modules.WorkItems.Domain.Entities.Field.FieldReadModel", null)
+                        .WithMany()
+                        .HasForeignKey("field_read_model_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Modules.WorkItems.Domain.Entities.Properties.WorkItemType", null)
+                        .WithMany()
+                        .HasForeignKey("work_item_type_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Modules.WorkItems.Domain.Entities.ActivityLog", b =>

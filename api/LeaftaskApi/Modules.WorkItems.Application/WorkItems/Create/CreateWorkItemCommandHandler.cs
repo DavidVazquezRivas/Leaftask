@@ -1,6 +1,7 @@
 using BuildingBlocks.Application.Commands;
 using BuildingBlocks.Domain.Result;
 using Modules.WorkItems.Application.WorkItems;
+using Modules.WorkItems.Application.WorkItems.GetWorkItemDetails;
 using Modules.WorkItems.Domain.Entities;
 using Modules.WorkItems.Domain.Entities.Properties;
 using Modules.WorkItems.Domain.Errors;
@@ -12,7 +13,9 @@ public sealed class CreateWorkItemCommandHandler(
     IWorkItemRepository workItemRepository,
     IProjectReadModelRepository projectReadModelRepository,
     IWorkItemConfigurationRepository configurationRepository,
-    IUserReadModelRepository userReadModelRepository)
+    IUserReadModelRepository userReadModelRepository,
+    IFieldRepository fieldRepository,
+    IGetWorkItemDetailsQueryService detailsQueryService)
     : ICommandHandler<CreateWorkItemCommand, Result<WorkItemDetailDto>>
 {
     public async Task<Result<WorkItemDetailDto>> Handle(
@@ -85,28 +88,22 @@ public sealed class CreateWorkItemCommandHandler(
         await workItemRepository.AddAsync(workItem, cancellationToken);
         await workItemRepository.SaveChangesAsync(cancellationToken);
 
-        WorkItemDetailDto dto = new(
-            workItem.Id,
-            $"{project.Abbreviation}-{code}",
-            workItem.Title,
-            workItem.Description,
-            workItem.LimitDate,
-            workItem.Asignee is not null
-                ? new WorkItemAssigneeDetailDto(
-                    workItem.Asignee.Id,
-                    $"{workItem.Asignee.FirstName} {workItem.Asignee.LastName}")
-                : null,
-            workItem.Estimation,
-            new WorkItemDedicationDto(0f, 0),
-            workItem.Progress / 100f,
-            workItem.Type.Id,
-            workItem.Status.Id,
-            workItem.ParentId,
-            [],
-            [],
-            [],
-            []);
+        if (command.CustomFields.Count > 0)
+        {
+            Result<List<WorkItemChange>> customFieldResult = await WorkItemCustomFieldsService.ApplyAsync(
+                workItem, command.CustomFields, fieldRepository, cancellationToken);
 
-        return Result.Success(dto);
+            if (customFieldResult.IsFailure)
+            {
+                return Result.Failure<WorkItemDetailDto>(customFieldResult.Error);
+            }
+
+            await fieldRepository.SaveChangesAsync(cancellationToken);
+        }
+
+        WorkItemDetailDto? detail = await detailsQueryService.GetWorkItemDetailsAsync(
+            command.ProjectId, workItem.Id, cancellationToken);
+
+        return Result.Success(detail!);
     }
 }

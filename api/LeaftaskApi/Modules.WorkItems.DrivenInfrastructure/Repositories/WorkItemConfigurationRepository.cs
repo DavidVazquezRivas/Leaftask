@@ -15,4 +15,11 @@ public sealed class WorkItemConfigurationRepository(WorkItemsDbContext dbContext
     public async Task<WorkItemType?> GetTypeByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
         await dbContext.WorkItemTypes
             .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
+
+    public async Task<List<WorkItemType>> GetTypesByIdsAsync(
+        IReadOnlyList<Guid> ids,
+        CancellationToken cancellationToken = default) =>
+        await dbContext.WorkItemTypes
+            .Where(t => ids.Contains(t.Id))
+            .ToListAsync(cancellationToken);
 }

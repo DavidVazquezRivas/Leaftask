@@ -24,7 +24,8 @@
     },
     "feedback": {
       "created": "Elemento de trabajo creado correctamente."
-    }
+    },
+    "customFieldsSection": "Campos personalizados"
   },
   "detail": {
     "status": "Estado",
@@ -65,5 +66,10 @@
     "description": "Aún no hay elementos de trabajo. Crea uno para empezar a construir el árbol.",
     "action": "Nuevo elemento"
   },
-  "addRoot": "Nuevo elemento"
+  "addRoot": "Nuevo elemento",
+  "fieldValues": {
+    "yes": "Sí",
+    "no": "No",
+    "none": "Ninguno"
+  }
 }

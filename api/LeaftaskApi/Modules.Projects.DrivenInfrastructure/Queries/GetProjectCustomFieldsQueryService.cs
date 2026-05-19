@@ -43,7 +43,7 @@ public sealed class GetProjectCustomFieldsQueryService(ProjectsDbContext dbConte
 
         return projectFields
             .Select(pf => new CustomFieldDto(
-                pf.Id,
+                pf.Field.Id,
                 pf.Name,
                 pf.Field.FieldType.Id,
                 optionsByField[pf.Field.Id].ToList(),

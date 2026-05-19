@@ -27,4 +27,10 @@ public static class WorkItemErrors
 
     public static readonly Error CircularDependency =
         new("WorkItem.CircularDependency", "Setting this parent would create a circular dependency.", 422);
+
+    public static readonly Error RequiredFieldValueMissing =
+        new("WorkItem.RequiredFieldValueMissing", "A required custom field has no value.", 422);
+
+    public static readonly Error InvalidFieldValue =
+        new("WorkItem.InvalidFieldValue", "The value provided for a custom field is not valid.", 422);
 }

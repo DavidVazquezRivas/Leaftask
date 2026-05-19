@@ -9,4 +9,6 @@ public sealed class CreateWorkItemRequest
     public required decimal Estimation { get; init; }
     public string Description { get; init; } = string.Empty;
     public Guid? AssigneeId { get; init; }
+    public IReadOnlyDictionary<Guid, string> CustomFields { get; init; } =
+        new Dictionary<Guid, string>();
 }

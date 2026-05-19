@@ -82,6 +82,8 @@ public sealed class PatchCustomFieldCommandHandler(IProjectFieldRepository field
                 .ToList();
         }
 
+        projectField.Field.NotifyUpdated();
+
         await fieldRepository.SaveChangesAsync(cancellationToken);
 
         List<CustomFieldWorkItemTypeDto> workItemTypeDtos = projectField.Field.AppliesTo
@@ -89,7 +91,7 @@ public sealed class PatchCustomFieldCommandHandler(IProjectFieldRepository field
             .ToList();
 
         return Result.Success(new CustomFieldDto(
-            projectField.Id,
+            projectField.Field.Id,
             projectField.Name,
             fieldType.Id,
             optionDtos,

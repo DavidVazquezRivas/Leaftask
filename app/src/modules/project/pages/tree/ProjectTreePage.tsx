@@ -11,7 +11,11 @@ import {
   useWorkItemStatusesQuery,
   useCreateWorkItemMutation,
 } from '@/core/query/workitems'
-import { useProjectMembersQuery } from '@/core/query/project'
+import {
+  useProjectMembersQuery,
+  useProjectCustomFieldsQuery,
+  useProjectFieldTypesQuery,
+} from '@/core/query/project'
 
 import { makeProjectNodeAdapter } from './components/projectNodeAdapter'
 import { CreateWorkItemDialog } from './components/CreateWorkItemDialog'
@@ -30,6 +34,8 @@ export function ProjectTreePage() {
   const typesQuery = useWorkItemTypesQuery()
   const statusesQuery = useWorkItemStatusesQuery()
   const membersQuery = useProjectMembersQuery(projectId ?? null, { limit: 100 })
+  const customFieldsQuery = useProjectCustomFieldsQuery(projectId ?? '')
+  const fieldTypesQuery = useProjectFieldTypesQuery()
   const createMutation = useCreateWorkItemMutation(projectId ?? '')
 
   const [createState, setCreateState] = useState<CreateState>({
@@ -51,6 +57,15 @@ export function ProjectTreePage() {
     () => workItemsQuery.data?.data ?? [],
     [workItemsQuery.data]
   )
+  const customFields = useMemo(
+    () => customFieldsQuery.data?.data ?? [],
+    [customFieldsQuery.data]
+  )
+  const fieldTypeNameById = useMemo(
+    () =>
+      new Map((fieldTypesQuery.data?.data ?? []).map((ft) => [ft.id, ft.name])),
+    [fieldTypesQuery.data]
+  )
 
   const nodeAdapter = useMemo(
     () => makeProjectNodeAdapter(types, statuses),
@@ -69,6 +84,7 @@ export function ProjectTreePage() {
     statusId: string
     assigneeId: string | null
     estimation: number
+    customFields: Record<string, string>
   }) => {
     createMutation.mutate(
       {
@@ -78,6 +94,7 @@ export function ProjectTreePage() {
         statusId: payload.statusId,
         assigneeId: payload.assigneeId,
         estimation: payload.estimation,
+        customFields: payload.customFields,
         parentId: createState.parentId ?? (projectId as string),
       },
       { onSuccess: closeCreate }
@@ -137,6 +154,8 @@ export function ProjectTreePage() {
         types={types}
         statuses={statuses}
         members={members}
+        customFields={customFields}
+        fieldTypeNameById={fieldTypeNameById}
         onClose={closeCreate}
         onSubmit={handleCreate}
       />
@@ -153,6 +172,8 @@ export function ProjectTreePage() {
         statuses={statuses}
         workItems={workItems}
         members={members}
+        customFields={customFields}
+        fieldTypeNameById={fieldTypeNameById}
       />
     </div>
   )

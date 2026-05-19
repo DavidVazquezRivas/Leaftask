@@ -6,4 +6,5 @@ public interface IWorkItemConfigurationRepository
 {
     Task<WorkItemStatus?> GetStatusByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<WorkItemType?> GetTypeByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<List<WorkItemType>> GetTypesByIdsAsync(IReadOnlyList<Guid> ids, CancellationToken cancellationToken = default);
 }
