@@ -17,9 +17,16 @@ public sealed class WorkLog : Entity
     }
 
     public Guid Id { get; }
-    public DateTime Date { get; }
-    public decimal Hours { get; }
-    public string Comment { get; }
+    public DateTime Date { get; private set; }
+    public decimal Hours { get; private set; }
+    public string Comment { get; private set; }
     public WorkItem WorkItem { get; }
     public UserReadModel User { get; }
+
+    public void Update(DateTime? date, decimal? hours, string? comment)
+    {
+        if (date.HasValue) Date = date.Value;
+        if (hours.HasValue) Hours = hours.Value;
+        if (comment is not null) Comment = comment;
+    }
 }

@@ -71,5 +71,20 @@
     "yes": "Yes",
     "no": "No",
     "none": "None"
+  },
+  "workLog": {
+    "title": "Work Log",
+    "totalLogged": "Total logged",
+    "estimation": "Estimation",
+    "difference": "Difference",
+    "empty": "No entries yet.",
+    "date": "Date",
+    "hours": "Hours",
+    "description": "Description",
+    "descriptionLabel": "Description (optional)",
+    "descriptionPlaceholder": "What did you work on?",
+    "newEntry": "New entry",
+    "addEntry": "Add entry",
+    "editDedication": "Log hours"
   }
 }

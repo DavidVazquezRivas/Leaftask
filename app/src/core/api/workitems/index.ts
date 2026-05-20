@@ -1,4 +1,5 @@
 export { WorkItemsGateway } from './WorkItemsGateway'
+export { WorkLogGateway } from './WorkLogGateway'
 export type {
   WorkItemData,
   WorkItemAssigneeData,
@@ -18,4 +19,11 @@ export type {
   GetWorkItemStatusesSuccessResponse,
   CreateWorkItemSuccessResponse,
   UpdateWorkItemSuccessResponse,
+  WorkLogData,
+  WorkLogUserData,
+  LogWorkRequest,
+  UpdateWorkLogRequest,
+  GetWorkLogsSuccessResponse,
+  LogWorkSuccessResponse,
+  UpdateWorkLogSuccessResponse,
 } from './workitems.types'

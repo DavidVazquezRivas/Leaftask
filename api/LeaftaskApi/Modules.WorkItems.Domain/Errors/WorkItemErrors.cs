@@ -33,4 +33,10 @@ public static class WorkItemErrors
 
     public static readonly Error InvalidFieldValue =
         new("WorkItem.InvalidFieldValue", "The value provided for a custom field is not valid.", 422);
+
+    public static readonly Error WorkLogNotFound =
+        new("WorkItem.WorkLog.NotFound", "The specified work log was not found.", 404);
+
+    public static readonly Error WorkLogNotOwner =
+        new("WorkItem.WorkLog.NotOwner", "You can only modify your own work logs.", 403);
 }

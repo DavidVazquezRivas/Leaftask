@@ -14,6 +14,7 @@ using Modules.WorkItems.Application.Configuration.GetWorkItemStatuses;
 using Modules.WorkItems.Application.Configuration.GetWorkItemTypes;
 using Modules.WorkItems.Application.WorkItems.GetProjectWorkItems;
 using Modules.WorkItems.Application.WorkItems.GetWorkItemDetails;
+using Modules.WorkItems.Application.WorkLogs.List;
 using Modules.WorkItems.Domain.Repositories;
 using Modules.WorkItems.DrivenInfrastructure.Persistence;
 using Modules.WorkItems.DrivenInfrastructure.Queries;
@@ -82,6 +83,7 @@ public static class DependencyInjection
         services.AddScoped<IUserReadModelRepository, UserReadModelRepository>();
         services.AddScoped<IWorkItemConfigurationRepository, WorkItemConfigurationRepository>();
         services.AddScoped<IFieldRepository, FieldRepository>();
+        services.AddScoped<IWorkLogRepository, WorkLogRepository>();
 
         return services;
     }
@@ -92,6 +94,7 @@ public static class DependencyInjection
         services.AddScoped<IGetWorkItemStatusesQueryService, GetWorkItemStatusesQueryService>();
         services.AddScoped<IGetProjectWorkItemsQueryService, GetProjectWorkItemsQueryService>();
         services.AddScoped<IGetWorkItemDetailsQueryService, GetWorkItemDetailsQueryService>();
+        services.AddScoped<IGetWorkLogsQueryService, GetWorkLogsQueryService>();
 
         return services;
     }

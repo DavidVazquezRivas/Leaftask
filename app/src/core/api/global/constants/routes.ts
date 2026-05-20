@@ -99,6 +99,16 @@ export const ApiRoutes = {
       Delete: (projectId: string, itemId: string) =>
         `api/v1/workitems/${projectId}/${itemId}`,
     },
+    WorkLogs: {
+      List: (projectId: string, itemId: string) =>
+        `api/v1/workitems/${projectId}/${itemId}/work-logs`,
+      Create: (projectId: string, itemId: string) =>
+        `api/v1/workitems/${projectId}/${itemId}/work-logs`,
+      Update: (projectId: string, itemId: string, logId: string) =>
+        `api/v1/workitems/${projectId}/${itemId}/work-logs/${logId}`,
+      Delete: (projectId: string, itemId: string, logId: string) =>
+        `api/v1/workitems/${projectId}/${itemId}/work-logs/${logId}`,
+    },
     Configuration: {
       Types: 'api/v1/workitems/types',
       Statuses: 'api/v1/workitems/statuses',

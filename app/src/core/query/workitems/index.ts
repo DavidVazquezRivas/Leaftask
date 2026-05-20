@@ -3,5 +3,13 @@ export {
   useWorkItemTypesQuery,
   useWorkItemStatusesQuery,
   useWorkItemDetailQuery,
+  useWorkLogsQuery,
 } from './queries'
-export { useCreateWorkItemMutation, useUpdateWorkItemMutation, useDeleteWorkItemMutation } from './mutations'
+export {
+  useCreateWorkItemMutation,
+  useUpdateWorkItemMutation,
+  useDeleteWorkItemMutation,
+  useLogWorkMutation,
+  useUpdateWorkLogMutation,
+  useDeleteWorkLogMutation,
+} from './mutations'

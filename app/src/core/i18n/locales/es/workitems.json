@@ -71,5 +71,20 @@
     "yes": "Sí",
     "no": "No",
     "none": "Ninguno"
+  },
+  "workLog": {
+    "title": "Registro de horas",
+    "totalLogged": "Total registrado",
+    "estimation": "Estimación",
+    "difference": "Diferencia",
+    "empty": "No hay registros aún.",
+    "date": "Fecha",
+    "hours": "Horas",
+    "description": "Descripción",
+    "descriptionLabel": "Descripción (opcional)",
+    "descriptionPlaceholder": "¿En qué trabajaste?",
+    "newEntry": "Nuevo registro",
+    "addEntry": "Agregar registro",
+    "editDedication": "Registrar horas"
   }
 }

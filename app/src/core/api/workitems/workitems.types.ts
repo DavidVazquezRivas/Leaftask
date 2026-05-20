@@ -121,6 +121,39 @@ export interface UpdateWorkItemRequest {
   customFields?: Record<string, string>
 }
 
+export interface WorkLogUserData {
+  id: string
+  firstName: string
+  lastName: string
+}
+
+export interface WorkLogData {
+  id: string
+  dedication: number
+  date: string
+  user: WorkLogUserData
+  description: string
+}
+
+export interface LogWorkRequest {
+  dedication: number
+  date: string
+  description: string
+}
+
+export interface UpdateWorkLogRequest {
+  dedication?: number
+  date?: string
+  description?: string
+}
+
+export type GetWorkLogsSuccessResponse = ApiSuccessResponse<WorkLogData[]>
+export type GetWorkLogsApiResponse = ApiResponse<WorkLogData[]>
+export type LogWorkSuccessResponse = ApiSuccessResponse<WorkLogData>
+export type LogWorkApiResponse = ApiResponse<WorkLogData>
+export type UpdateWorkLogSuccessResponse = ApiSuccessResponse<WorkLogData>
+export type UpdateWorkLogApiResponse = ApiResponse<WorkLogData>
+
 export type GetWorkItemsSuccessResponse = ApiSuccessResponse<WorkItemData[]>
 export type GetWorkItemsApiResponse = ApiResponse<WorkItemData[]>
 

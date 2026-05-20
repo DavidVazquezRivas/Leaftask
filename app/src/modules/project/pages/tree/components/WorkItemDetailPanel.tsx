@@ -18,6 +18,7 @@ import type { UpdateWorkItemRequest } from '@/core/api/workitems'
 import type { ProjectMemberData } from '@/core/api/project/members'
 import type { CustomFieldData } from '@/core/api/project/customFields'
 import { CustomFieldInput } from './custom-fields'
+import { WorkLogModal } from './WorkLogModal'
 import { useWorkItemDetailQuery } from '@/core/query/workitems'
 import { useUpdateWorkItemMutation, useDeleteWorkItemMutation } from '@/core/query/workitems'
 import { Button } from '@/shared/components/ui/button'
@@ -131,6 +132,7 @@ export function WorkItemDetailPanel({
   const [draftProgress, setDraftProgress] = useState(0)
   const [draftParentId, setDraftParentId] = useState<string | null>(null)
   const [confirmingDelete, setConfirmingDelete] = useState(false)
+  const [workLogOpen, setWorkLogOpen] = useState(false)
   const [localCustomFieldValues, setLocalCustomFieldValues] = useState<Record<string, string>>({})
   const [editingCustomFieldId, setEditingCustomFieldId] = useState<string | null>(null)
   const [draftCustomFieldValue, setDraftCustomFieldValue] = useState('')
@@ -330,6 +332,7 @@ export function WorkItemDetailPanel({
       : null
 
   return (
+    <>
     <div
       className={cn(
         'fixed inset-0 z-50',
@@ -859,10 +862,20 @@ export function WorkItemDetailPanel({
 
                 {/* Dedication */}
                 <div className="rounded-lg border border-border bg-muted/20 px-3 py-2.5 space-y-1">
-                  <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                    <Activity size={11} />
-                    {t('detail.dedication')}
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                      <Activity size={11} />
+                      {t('detail.dedication')}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setWorkLogOpen(true)}
+                      className="text-muted-foreground hover:text-foreground transition-colors"
+                      aria-label={t('workLog.editDedication')}
+                    >
+                      <Pencil size={11} />
+                    </button>
+                  </div>
                   <p className="text-sm font-semibold text-foreground">
                     {dedicationTotal > 0
                       ? t('detail.hours', { count: dedicationTotal })
@@ -1176,5 +1189,16 @@ export function WorkItemDetailPanel({
         )}
       </div>
     </div>
+
+    <WorkLogModal
+      open={workLogOpen}
+      projectId={projectId}
+      itemId={itemId ?? ''}
+      itemCode={detail?.code ?? ''}
+      itemTitle={detail?.title ?? ''}
+      estimation={detail?.estimation ?? null}
+      onClose={() => setWorkLogOpen(false)}
+    />
+    </>
   )
 }

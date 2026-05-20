@@ -1,3 +1,6 @@
 export { useCreateWorkItemMutation } from './useCreateWorkItemMutation'
 export { useUpdateWorkItemMutation } from './useUpdateWorkItemMutation'
 export { useDeleteWorkItemMutation } from './useDeleteWorkItemMutation'
+export { useLogWorkMutation } from './useLogWorkMutation'
+export { useUpdateWorkLogMutation } from './useUpdateWorkLogMutation'
+export { useDeleteWorkLogMutation } from './useDeleteWorkLogMutation'
