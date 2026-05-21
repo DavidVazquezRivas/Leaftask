@@ -1,4 +1,19 @@
-import type { CSSProperties } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
+
+function useIsDark() {
+  const [isDark, setIsDark] = useState(() =>
+    document.documentElement.classList.contains('dark')
+  )
+  useEffect(() => {
+    const el = document.documentElement
+    const obs = new MutationObserver(() =>
+      setIsDark(el.classList.contains('dark'))
+    )
+    obs.observe(el, { attributes: true, attributeFilter: ['class'] })
+    return () => obs.disconnect()
+  }, [])
+  return isDark
+}
 
 import {
   ORBITAL_BASE_RADIUS,
@@ -87,6 +102,7 @@ export function OrbitalNode({
   onClick,
   onAddChild,
 }: OrbitalNodeProps) {
+  const isDark = useIsDark()
   const { title, subtitle, color, shape, filled, size, orbits, avatar, over } =
     visual
 
@@ -95,7 +111,8 @@ export function OrbitalNode({
   const rings = buildRings(orbits, baseRadius)
   const totalRadius = computeTotalRadius(orbits, size)
   const totalSize = totalRadius * 2
-  const bgColor = nodeBackground(color)
+  const bgColor = nodeBackground(color, isDark)
+  const buttonBg = isDark ? '#0a0f1e' : '#ffffff'
   const isComplete = filled >= 100
 
   const shapeOffset = totalRadius - baseRadius
@@ -118,9 +135,9 @@ export function OrbitalNode({
 
   const boxShadow = [
     outerGlow,
-    'inset 0 0 0 1px rgba(255,255,255,0.10)',
-    'inset 0 3px 8px rgba(255,255,255,0.07)',
-    'inset 0 -6px 14px rgba(0,0,0,0.45)',
+    isDark ? 'inset 0 0 0 1px rgba(255,255,255,0.10)' : 'inset 0 0 0 1px rgba(0,0,0,0.06)',
+    isDark ? 'inset 0 3px 8px rgba(255,255,255,0.07)' : 'inset 0 3px 8px rgba(255,255,255,0.60)',
+    isDark ? 'inset 0 -6px 14px rgba(0,0,0,0.45)' : 'inset 0 -6px 14px rgba(0,0,0,0.08)',
   ].join(', ')
 
   const isImageAvatar =
@@ -430,7 +447,7 @@ export function OrbitalNode({
                 width: 18,
                 height: 18,
                 borderRadius: '50%',
-                background: '#0a0f1e',
+                background: buttonBg,
                 border: `1.5px solid ${color}`,
                 color: color,
                 boxShadow: `0 0 6px ${color}66`,
@@ -459,7 +476,7 @@ export function OrbitalNode({
                 width: 18,
                 height: 18,
                 borderRadius: '50%',
-                background: '#0a0f1e',
+                background: buttonBg,
                 border: `1.5px solid ${color}88`,
                 color: `${color}cc`,
                 boxShadow: `0 0 4px ${color}44`,

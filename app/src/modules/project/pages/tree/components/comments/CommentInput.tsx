@@ -65,7 +65,7 @@ export function CommentInput({ projectId, itemId, mentionUsers, onSubmit, isSubm
         onImageUpload={(file) =>
           ApiGateway.workItem.attachments.presignAndUpload(projectId, itemId, file)
         }
-        className="min-h-0"
+        className="[&_.ProseMirror]:max-h-36 [&_.ProseMirror]:overflow-y-auto"
       />
       <div className="flex justify-end gap-1.5">
         <Button variant="ghost" size="sm" onClick={handleCancel} disabled={isSubmitting}>
