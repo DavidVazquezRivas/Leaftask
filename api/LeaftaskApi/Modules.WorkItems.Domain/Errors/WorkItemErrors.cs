@@ -39,4 +39,10 @@ public static class WorkItemErrors
 
     public static readonly Error WorkLogNotOwner =
         new("WorkItem.WorkLog.NotOwner", "You can only modify your own work logs.", 403);
+
+    public static readonly Error AttachmentNotFound =
+        new("WorkItem.Attachment.NotFound", "The specified attachment was not found.", 404);
+
+    public static readonly Error AttachmentNotOwner =
+        new("WorkItem.Attachment.NotOwner", "You can only delete your own attachments.", 403);
 }

@@ -1,5 +1,6 @@
 export { WorkItemsGateway } from './WorkItemsGateway'
 export { WorkLogGateway } from './WorkLogGateway'
+export { AttachmentGateway } from './AttachmentGateway'
 export type {
   WorkItemData,
   WorkItemAssigneeData,

@@ -32,6 +32,7 @@
     "type": "Tipo",
     "description": "Descripción",
     "noDescription": "Sin descripción.",
+    "descriptionPlaceholder": "Añade una descripción...",
     "assignee": "Responsable",
     "unassigned": "Sin asignar",
     "limitDate": "Fecha Límite",

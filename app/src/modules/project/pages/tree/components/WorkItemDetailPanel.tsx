@@ -21,12 +21,13 @@ import { CustomFieldInput } from './custom-fields'
 import { WorkLogModal } from './WorkLogModal'
 import { useWorkItemDetailQuery } from '@/core/query/workitems'
 import { useUpdateWorkItemMutation, useDeleteWorkItemMutation } from '@/core/query/workitems'
+import { ApiGateway } from '@/core/api/ApiGateway'
 import { Button } from '@/shared/components/ui/button'
 import { Calendar } from '@/shared/components/ui/calendar'
 import { Input } from '@/shared/components/ui/input'
 import { NumberInput } from '@/shared/components/ui/number-input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/components/ui/popover'
-import { Textarea } from '@/shared/components/ui/textarea'
+import { RichTextEditor, RichTextContent } from '@/shared/components/ui/rich-text-editor'
 import {
   Select,
   SelectContent,
@@ -297,6 +298,10 @@ export function WorkItemDetailPanel({
         const w = workItems.find((wi) => wi.id === value)
         return w ? `${w.code} – ${w.title}` : value
       }
+      case 'description': {
+        const text = value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+        return text.length > 60 ? `${text.slice(0, 60)}…` : text || '—'
+      }
       case 'progress':
         return `${value}%`
       case 'estimation':
@@ -540,19 +545,20 @@ export function WorkItemDetailPanel({
                 </div>
                 {editingField === 'description' ? (
                   <div className="space-y-2">
-                    <Textarea
+                    <RichTextEditor
                       value={draftDescription}
-                      onChange={(e) => setDraftDescription(e.target.value)}
-                      rows={4}
-                      className="resize-none text-sm"
-                      autoFocus
+                      onChange={setDraftDescription}
                       disabled={isPending}
+                      placeholder={t('detail.descriptionPlaceholder')}
+                      onImageUpload={(file) =>
+                        ApiGateway.workItem.attachments.presignAndUpload(projectId, itemId ?? '', file)
+                      }
                     />
                     <div className="flex gap-1.5">
                       <Button
                         size="sm"
                         className="h-7 text-xs px-3"
-                        onClick={() => save({ description: draftDescription })}
+                        onClick={() => save({ description: draftDescription || undefined })}
                         disabled={isPending}
                       >
                         {t('detail.save')}
@@ -569,14 +575,11 @@ export function WorkItemDetailPanel({
                     </div>
                   </div>
                 ) : (
-                  <div className="rounded-lg border border-border bg-muted/30 px-3 py-2.5 text-sm text-foreground min-h-14">
-                    {detail.description ? (
-                      detail.description
-                    ) : (
-                      <span className="text-muted-foreground italic">
-                        {t('detail.noDescription')}
-                      </span>
-                    )}
+                  <div className="rounded-lg border border-border bg-muted/30 px-3 py-2.5 min-h-14">
+                    <RichTextContent
+                      html={detail.description}
+                      emptyLabel={t('detail.noDescription')}
+                    />
                   </div>
                 )}
               </section>

@@ -14,10 +14,17 @@ services:
       - Cors__AllowedOrigins__1=http://localhost:8080
       - Serilog__WriteTo__0__Name=Seq
       - Serilog__WriteTo__0__Args__serverUrl=http://seq:80
+      - Minio__Endpoint=minio:9000
+      - Minio__AccessKey=${MINIO_ACCESS_KEY}
+      - Minio__SecretKey=${MINIO_SECRET_KEY}
+      - Minio__BucketName=leaftask-attachments
+      - Minio__PublicEndpoint=http://localhost:9000
     ports:
       - "8080:8080"
     depends_on:
       postgres:
+        condition: service_healthy
+      minio:
         condition: service_healthy
 
   postgres:
@@ -36,6 +43,25 @@ services:
       timeout: 5s
       retries: 10
       start_period: 20s
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+    volumes:
+      - ./.containers/minio_data:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
 
   seq:
     image: datalust/seq:latest

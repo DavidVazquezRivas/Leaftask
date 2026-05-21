@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BuildingBlocks.Application\BuildingBlocks.Application.csproj" />
+    <ProjectReference Include="..\BuildingBlocks.DrivenInfrastructure\BuildingBlocks.DrivenInfrastructure.csproj" />
     <ProjectReference Include="..\BuildingBlocks.DrivingInfrastructure\BuildingBlocks.DrivingInfrastructure.csproj" />
     <ProjectReference Include="..\Modules.WorkItems.DrivenInfrastructure\Modules.WorkItems.DrivenInfrastructure.csproj" />
     <ProjectReference Include="..\Modules.Projects.Integration\Modules.Projects.Integration.csproj" />

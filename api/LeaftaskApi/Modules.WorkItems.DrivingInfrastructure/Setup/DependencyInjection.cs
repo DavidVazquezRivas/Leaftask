@@ -1,9 +1,12 @@
+using BuildingBlocks.Application.Abstractions;
 using BuildingBlocks.Application.Behaviors;
+using BuildingBlocks.DrivenInfrastructure.Storage;
 using BuildingBlocks.DrivingInfrastructure.Jobs.Quartz;
 using BuildingBlocks.DrivingInfrastructure.Jobs.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Minio;
 using Modules.WorkItems.DrivingInfrastructure.Jobs;
 using Quartz;
 using Modules.Projects.Integration;
@@ -36,6 +39,7 @@ public static class DependencyInjection
         services.AddMessaging();
         services.AddRepositories();
         services.AddQueryServices();
+        services.AddFileStorage(configuration);
 
         return services;
     }
@@ -84,6 +88,7 @@ public static class DependencyInjection
         services.AddScoped<IWorkItemConfigurationRepository, WorkItemConfigurationRepository>();
         services.AddScoped<IFieldRepository, FieldRepository>();
         services.AddScoped<IWorkLogRepository, WorkLogRepository>();
+        services.AddScoped<IAttachmentRepository, AttachmentRepository>();
 
         return services;
     }
@@ -95,6 +100,24 @@ public static class DependencyInjection
         services.AddScoped<IGetProjectWorkItemsQueryService, GetProjectWorkItemsQueryService>();
         services.AddScoped<IGetWorkItemDetailsQueryService, GetWorkItemDetailsQueryService>();
         services.AddScoped<IGetWorkLogsQueryService, GetWorkLogsQueryService>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddFileStorage(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        MinioOptions minioOptions = configuration.GetSection("Minio").Get<MinioOptions>() ?? new MinioOptions();
+
+        services.Configure<MinioOptions>(configuration.GetSection("Minio"));
+
+        services.AddMinio(cfg => cfg
+            .WithEndpoint(minioOptions.Endpoint)
+            .WithCredentials(minioOptions.AccessKey, minioOptions.SecretKey)
+            .WithSSL(minioOptions.UseSSL));
+
+        services.AddSingleton<IFileStorage, MinioFileStorage>();
 
         return services;
     }

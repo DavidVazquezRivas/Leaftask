@@ -32,6 +32,7 @@
     "type": "Type",
     "description": "Description",
     "noDescription": "No description provided.",
+    "descriptionPlaceholder": "Add a description...",
     "assignee": "Assignee",
     "unassigned": "Unassigned",
     "limitDate": "Limit Date",

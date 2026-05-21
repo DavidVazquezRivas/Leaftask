@@ -2,7 +2,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
-	<PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Minio" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BuildingBlocks.Application\BuildingBlocks.Application.csproj" />

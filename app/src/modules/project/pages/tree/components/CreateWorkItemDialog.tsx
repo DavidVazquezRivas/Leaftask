@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/components/ui/select'
-import { Textarea } from '@/shared/components/ui/textarea'
+import { RichTextEditor } from '@/shared/components/ui/rich-text-editor'
 import { CustomFieldInput } from './custom-fields'
 
 interface CreateWorkItemDialogProps {
@@ -178,14 +178,12 @@ export function CreateWorkItemDialog({
 
           {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="wi-description">{t('create.fields.descriptionLabel')}</Label>
-            <Textarea
-              id="wi-description"
+            <Label>{t('create.fields.descriptionLabel')}</Label>
+            <RichTextEditor
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={setDescription}
               placeholder={t('create.fields.descriptionPlaceholder')}
               disabled={isSubmitting}
-              rows={3}
             />
           </div>
 

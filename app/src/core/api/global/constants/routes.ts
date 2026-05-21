@@ -109,6 +109,14 @@ export const ApiRoutes = {
       Delete: (projectId: string, itemId: string, logId: string) =>
         `api/v1/workitems/${projectId}/${itemId}/work-logs/${logId}`,
     },
+    Attachments: {
+      Upload: (projectId: string, itemId: string) =>
+        `api/v1/projects/${projectId}/work-items/${itemId}/attachments`,
+      Delete: (projectId: string, itemId: string, attachmentId: string) =>
+        `api/v1/projects/${projectId}/work-items/${itemId}/attachments/${attachmentId}`,
+      PresignedUpload: (projectId: string, itemId: string, fileName: string) =>
+        `api/v1/projects/${projectId}/work-items/${itemId}/attachments/presigned-upload?fileName=${encodeURIComponent(fileName)}`,
+    },
     Configuration: {
       Types: 'api/v1/workitems/types',
       Statuses: 'api/v1/workitems/statuses',

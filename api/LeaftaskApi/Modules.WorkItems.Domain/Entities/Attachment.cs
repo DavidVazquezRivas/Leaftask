@@ -6,12 +6,14 @@ public sealed class Attachment : Entity
 {
     private Attachment() { }
 
-    public Attachment(Guid id, string fileName, Uri fileUrl, DateTime uploadedAt)
+    public Attachment(Guid id, string fileName, Uri fileUrl, DateTime uploadedAt, WorkItem workItem, UserReadModel user)
     {
         Id = id;
         FileName = fileName;
         FileUrl = fileUrl;
         UploadedAt = uploadedAt;
+        WorkItem = workItem;
+        User = user;
     }
 
     public Guid Id { get; }
