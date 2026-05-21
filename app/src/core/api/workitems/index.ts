@@ -1,6 +1,8 @@
 export { WorkItemsGateway } from './WorkItemsGateway'
 export { WorkLogGateway } from './WorkLogGateway'
 export { AttachmentGateway } from './AttachmentGateway'
+export { CommentGateway } from './CommentGateway'
+export type { AddCommentRequest, UpdateCommentRequest } from './CommentGateway'
 export type {
   WorkItemData,
   WorkItemAssigneeData,

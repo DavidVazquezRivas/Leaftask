@@ -14,11 +14,15 @@ export function RichTextContent({ html, emptyLabel = 'Sin descripción', classNa
   }
 
   const sanitized = DOMPurify.sanitize(html)
+  const fixed = sanitized.replace(
+    /<span([^>]*data-type="mention"[^>]*data-label="([^"]*)"[^>]*)>[^<]*<\/span>/g,
+    (_, attrs, label) => `<span${attrs}>@${label}</span>`
+  )
 
   return (
     <div
       className={cn(richTextClass, className)}
-      dangerouslySetInnerHTML={{ __html: sanitized }}
+      dangerouslySetInnerHTML={{ __html: fixed }}
     />
   )
 }

@@ -73,6 +73,12 @@
     "no": "No",
     "none": "None"
   },
+  "comments": {
+    "placeholder": "Write a comment… (@mention to notify someone)",
+    "send": "Send",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
   "workLog": {
     "title": "Work Log",
     "totalLogged": "Total logged",

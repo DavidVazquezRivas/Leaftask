@@ -17,10 +17,15 @@ public sealed class Attachment : Entity
     }
 
     public Guid Id { get; }
-    public string FileName { get; }
-    public Uri FileUrl { get; }
+    public string FileName { get; } = string.Empty;
+    public Uri FileUrl { get; } = null!;
     public DateTime UploadedAt { get; }
-    public WorkItem WorkItem { get; }
-    public UserReadModel User { get; }
-    public WorkItemComment? Comment { get; }
+    public WorkItem WorkItem { get; } = null!;
+    public UserReadModel User { get; } = null!;
+    public WorkItemComment? Comment { get; private set; }
+
+    public void LinkToComment(WorkItemComment? comment)
+    {
+        Comment = comment;
+    }
 }

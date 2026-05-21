@@ -4,6 +4,7 @@ export {
   useWorkItemStatusesQuery,
   useWorkItemDetailQuery,
   useWorkLogsQuery,
+  useCommentsQuery,
 } from './queries'
 export {
   useCreateWorkItemMutation,
@@ -12,4 +13,7 @@ export {
   useLogWorkMutation,
   useUpdateWorkLogMutation,
   useDeleteWorkLogMutation,
+  useAddCommentMutation,
+  useUpdateCommentMutation,
+  useDeleteCommentMutation,
 } from './mutations'

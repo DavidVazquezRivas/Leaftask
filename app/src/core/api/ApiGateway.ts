@@ -8,7 +8,7 @@ import { ProjectCustomFieldsGateway } from '@/core/api/project/customFields'
 import { ProjectManagementGateway } from '@/core/api/project/management'
 import { ProjectMembersGateway } from '@/core/api/project/members'
 import { ProjectRolesGateway } from '@/core/api/project/roles'
-import { WorkItemsGateway, WorkLogGateway, AttachmentGateway } from '@/core/api/workitems'
+import { WorkItemsGateway, WorkLogGateway, AttachmentGateway, CommentGateway } from '@/core/api/workitems'
 
 export const ApiGateway = {
   organization: {
@@ -27,6 +27,7 @@ export const ApiGateway = {
     management: WorkItemsGateway,
     workLogs: WorkLogGateway,
     attachments: AttachmentGateway,
+    comments: CommentGateway,
   },
   user: {
     session: SessionGateway,

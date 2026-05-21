@@ -19,6 +19,21 @@ public sealed class AttachmentRepository(WorkItemsDbContext dbContext) : IAttach
             .Where(a => a.Id == attachmentId && EF.Property<Guid>(a, "work_item_id") == workItemId)
             .FirstOrDefaultAsync(cancellationToken);
 
+    public async Task<List<Attachment>> GetByIdsTrackedAsync(
+        IReadOnlyList<Guid> attachmentIds,
+        Guid workItemId,
+        CancellationToken cancellationToken = default) =>
+        await dbContext.Attachments
+            .Where(a => attachmentIds.Contains(a.Id) && EF.Property<Guid>(a, "work_item_id") == workItemId)
+            .ToListAsync(cancellationToken);
+
+    public async Task<List<Attachment>> GetByCommentIdTrackedAsync(
+        Guid commentId,
+        CancellationToken cancellationToken = default) =>
+        await dbContext.Attachments
+            .Where(a => EF.Property<Guid?>(a, "comment_id") == commentId)
+            .ToListAsync(cancellationToken);
+
     public void Remove(Attachment attachment) =>
         dbContext.Attachments.Remove(attachment);
 

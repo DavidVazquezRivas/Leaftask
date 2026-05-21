@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import {
   X,
   Pencil,
@@ -20,7 +20,15 @@ import type { CustomFieldData } from '@/core/api/project/customFields'
 import { CustomFieldInput } from './custom-fields'
 import { WorkLogModal } from './WorkLogModal'
 import { useWorkItemDetailQuery } from '@/core/query/workitems'
-import { useUpdateWorkItemMutation, useDeleteWorkItemMutation } from '@/core/query/workitems'
+import {
+  useUpdateWorkItemMutation,
+  useDeleteWorkItemMutation,
+  useCommentsQuery,
+  useAddCommentMutation,
+  useUpdateCommentMutation,
+  useDeleteCommentMutation,
+} from '@/core/query/workitems'
+import { useSessionMeQuery } from '@/core/query/user/session'
 import { ApiGateway } from '@/core/api/ApiGateway'
 import { Button } from '@/shared/components/ui/button'
 import { Calendar } from '@/shared/components/ui/calendar'
@@ -28,6 +36,7 @@ import { Input } from '@/shared/components/ui/input'
 import { NumberInput } from '@/shared/components/ui/number-input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/components/ui/popover'
 import { RichTextEditor, RichTextContent } from '@/shared/components/ui/rich-text-editor'
+import { CommentInput, CommentItem } from './comments'
 import {
   Select,
   SelectContent,
@@ -137,12 +146,39 @@ export function WorkItemDetailPanel({
   const [localCustomFieldValues, setLocalCustomFieldValues] = useState<Record<string, string>>({})
   const [editingCustomFieldId, setEditingCustomFieldId] = useState<string | null>(null)
   const [draftCustomFieldValue, setDraftCustomFieldValue] = useState('')
+  const [tabSectionHeight, setTabSectionHeight] = useState(320)
+  const dragState = useRef<{ startY: number; startH: number } | null>(null)
+
+  const handleResizeDragStart = (e: React.MouseEvent) => {
+    e.preventDefault()
+    dragState.current = { startY: e.clientY, startH: tabSectionHeight }
+    const onMove = (ev: MouseEvent) => {
+      if (!dragState.current) return
+      const delta = ev.clientY - dragState.current.startY
+      setTabSectionHeight(Math.max(180, Math.min(700, dragState.current.startH - delta)))
+    }
+    const onUp = () => {
+      dragState.current = null
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('mouseup', onUp)
+    }
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mouseup', onUp)
+  }
 
   const detailQuery = useWorkItemDetailQuery(projectId, itemId)
   const updateMutation = useUpdateWorkItemMutation(projectId, itemId ?? '')
   const deleteMutation = useDeleteWorkItemMutation(projectId)
+  const sessionQuery = useSessionMeQuery()
+  const commentsQuery = useCommentsQuery(projectId, itemId ?? '')
+  const addCommentMutation = useAddCommentMutation(projectId, itemId ?? '')
+  const updateCommentMutation = useUpdateCommentMutation(projectId, itemId ?? '')
+  const deleteCommentMutation = useDeleteCommentMutation(projectId, itemId ?? '')
 
   const detail = detailQuery.data?.data
+  const currentUserId = sessionQuery.data?.data?.id ?? ''
+  const allComments = commentsQuery.data?.pages.flatMap((p) => p.data) ?? []
+  const mentionUsers = members.map((m) => ({ id: m.id, name: m.name }))
 
   useEffect(() => {
     setEditingField(null)
@@ -408,27 +444,70 @@ export function WorkItemDetailPanel({
                   </div>
                 </div>
               ) : (
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-start gap-2 group flex-1 min-w-0">
-                    <h2 className="text-lg font-semibold leading-tight text-foreground">
-                      {detail.title}
-                    </h2>
-                    <button
-                      type="button"
-                      onClick={() => startEdit('title')}
-                      className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity mt-1 text-muted-foreground hover:text-foreground"
-                    >
-                      <Pencil size={12} />
-                    </button>
+                <>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-2 group flex-1 min-w-0">
+                      <h2 className="text-lg font-semibold leading-tight text-foreground">
+                        {detail.title}
+                      </h2>
+                      <button
+                        type="button"
+                        onClick={() => startEdit('title')}
+                        className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity mt-1 text-muted-foreground hover:text-foreground"
+                      >
+                        <Pencil size={12} />
+                      </button>
+                    </div>
+                    <div className="flex items-center gap-0.5 shrink-0">
+                      {!confirmingDelete && (
+                        <button
+                          type="button"
+                          onClick={() => setConfirmingDelete(true)}
+                          className="rounded-md p-1 text-muted-foreground hover:text-red-400 hover:bg-accent transition-colors"
+                          disabled={isPending}
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={onClose}
+                        className="rounded-md p-1 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="shrink-0 rounded-md p-1 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
+                  {confirmingDelete && (
+                    <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border/60">
+                      <span className="text-xs text-muted-foreground flex-1">
+                        {t('detail.deleteConfirm')}
+                      </span>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        className="h-7 text-xs px-3"
+                        onClick={handleDelete}
+                        disabled={isPending}
+                      >
+                        {deleteMutation.isPending ? (
+                          <Loader2 size={12} className="animate-spin" />
+                        ) : (
+                          t('detail.deleteConfirmYes')
+                        )}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 text-xs px-3"
+                        onClick={() => setConfirmingDelete(false)}
+                        disabled={isPending}
+                      >
+                        {t('detail.cancel')}
+                      </Button>
+                    </div>
+                  )}
+                </>
               )}
 
             </div>
@@ -1044,56 +1123,26 @@ export function WorkItemDetailPanel({
             </div>
 
             {/* Delete */}
-            <div className="flex-none px-6 py-3 border-t border-border">
-              {confirmingDelete ? (
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground flex-1">
-                    {t('detail.deleteConfirm')}
-                  </span>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    className="h-7 text-xs px-3"
-                    onClick={handleDelete}
-                    disabled={isPending}
-                  >
-                    {deleteMutation.isPending ? (
-                      <Loader2 size={12} className="animate-spin" />
-                    ) : (
-                      t('detail.deleteConfirmYes')
-                    )}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-7 text-xs px-3"
-                    onClick={() => setConfirmingDelete(false)}
-                    disabled={isPending}
-                  >
-                    {t('detail.cancel')}
-                  </Button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setConfirmingDelete(true)}
-                  className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-red-400 transition-colors"
-                  disabled={isPending}
-                >
-                  <Trash2 size={12} />
-                  {t('detail.delete')}
-                </button>
-              )}
-            </div>
-
             {/* Tabs */}
-            <div className="flex-none border-t border-border">
-              <div className="flex">
+            <div
+              className="flex flex-col flex-none"
+              style={{ height: tabSectionHeight }}
+            >
+              {/* Resize handle — sits on the dividing border */}
+              <div
+                onMouseDown={handleResizeDragStart}
+                className="flex-none flex items-center justify-center h-2 border-t border-border cursor-row-resize group select-none"
+              >
+                <div className="w-8 h-0.5 rounded-full bg-transparent group-hover:bg-muted-foreground/40 transition-colors" />
+              </div>
+
+              {/* Tab buttons */}
+              <div className="flex-none flex border-b border-border">
                 <button
                   type="button"
                   onClick={() => setActiveTab('comments')}
                   className={cn(
-                    'flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-colors border-b-2',
+                    'flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-colors border-b-2 -mb-px',
                     activeTab === 'comments'
                       ? 'text-foreground border-indigo-500'
                       : 'text-muted-foreground border-transparent hover:text-foreground'
@@ -1106,7 +1155,7 @@ export function WorkItemDetailPanel({
                   type="button"
                   onClick={() => setActiveTab('activity')}
                   className={cn(
-                    'flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-colors border-b-2',
+                    'flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-colors border-b-2 -mb-px',
                     activeTab === 'activity'
                       ? 'text-foreground border-indigo-500'
                       : 'text-muted-foreground border-transparent hover:text-foreground'
@@ -1117,76 +1166,91 @@ export function WorkItemDetailPanel({
                 </button>
               </div>
 
-              <div className="h-50 overflow-y-auto px-6 py-4">
-                {activeTab === 'comments' ? (
-                  detail.comments.length === 0 ? (
+              {/* Tab content — fills remaining height */}
+              {activeTab === 'comments' && (
+                <div className="flex flex-col flex-1 min-h-0 gap-3 px-6 py-4">
+                  <div className="flex-1 min-h-0 space-y-4 overflow-y-auto">
+                    {allComments.length === 0 ? (
+                      <p className="text-sm text-muted-foreground text-center py-6">
+                        {t('detail.noComments')}
+                      </p>
+                    ) : (
+                      allComments.map((comment) => (
+                        <CommentItem
+                          key={comment.id}
+                          comment={comment}
+                          projectId={projectId}
+                          itemId={itemId ?? ''}
+                          currentUserId={currentUserId}
+                          mentionUsers={mentionUsers}
+                          locale={i18n.language}
+                          onUpdate={async (commentId, content) => {
+                            await updateCommentMutation.mutateAsync({ commentId, content })
+                          }}
+                          onDelete={async (commentId) => {
+                            await deleteCommentMutation.mutateAsync(commentId)
+                          }}
+                        />
+                      ))
+                    )}
+                  </div>
+                  <div className="flex-none">
+                    <CommentInput
+                      projectId={projectId}
+                      itemId={itemId ?? ''}
+                      mentionUsers={mentionUsers}
+                      isSubmitting={addCommentMutation.isPending}
+                      onSubmit={async (content) => { await addCommentMutation.mutateAsync({ content }) }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'activity' && (
+                <div className="flex-1 min-h-0 overflow-y-auto px-6 py-4">
+                  {detail.log.length === 0 ? (
                     <p className="text-sm text-muted-foreground text-center py-6">
-                      {t('detail.noComments')}
+                      {t('detail.noActivity')}
                     </p>
                   ) : (
-                    <div className="space-y-4">
-                      {detail.comments.map((comment) => (
-                        <div key={comment.id} className="flex gap-3">
-                          <span className="shrink-0 inline-flex size-7 items-center justify-center rounded-full bg-indigo-500/20 text-indigo-400 text-[10px] font-semibold">
-                            {getInitials(comment.author.fullName)}
+                    <div className="space-y-3">
+                      {detail.log.map((entry, i) => (
+                        <div key={i} className="flex gap-3">
+                          <span className="shrink-0 inline-flex size-6 items-center justify-center rounded-full bg-muted text-muted-foreground text-[9px] font-semibold">
+                            {getInitials(entry.user.fullName)}
                           </span>
                           <div className="space-y-0.5">
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs font-semibold text-foreground">
-                                {comment.author.fullName}
+                            <span className="text-xs text-muted-foreground">
+                              {formatRelative(entry.timestamp, i18n.language)}
+                            </span>
+                            <p className="text-xs text-foreground">
+                              <span className="font-medium">{entry.user.fullName}</span>
+                              {' '}
+                              {t('detail.changed')}
+                              {' '}
+                              <span className="text-muted-foreground">
+                                {fieldDisplayNames[entry.fieldName] ?? entry.fieldName}
                               </span>
-                              <span className="text-xs text-muted-foreground">
-                                {formatRelative(comment.createdAt, i18n.language)}
+                              {' '}
+                              {t('detail.from')}
+                              {' '}
+                              <span className="line-through text-muted-foreground">
+                                {resolveActivityValue(entry.fieldName, entry.oldValue.value)}
                               </span>
-                            </div>
-                            <p className="text-sm text-foreground">{comment.content}</p>
+                              {' '}
+                              {t('detail.to')}
+                              {' '}
+                              <span className="font-medium">
+                                {resolveActivityValue(entry.fieldName, entry.newValue.value)}
+                              </span>
+                            </p>
                           </div>
                         </div>
                       ))}
                     </div>
-                  )
-                ) : detail.log.length === 0 ? (
-                  <p className="text-sm text-muted-foreground text-center py-6">
-                    {t('detail.noActivity')}
-                  </p>
-                ) : (
-                  <div className="space-y-3">
-                    {detail.log.map((entry, i) => (
-                      <div key={i} className="flex gap-3">
-                        <span className="shrink-0 inline-flex size-6 items-center justify-center rounded-full bg-muted text-muted-foreground text-[9px] font-semibold">
-                          {getInitials(entry.user.fullName)}
-                        </span>
-                        <div className="space-y-0.5">
-                          <span className="text-xs text-muted-foreground">
-                            {formatRelative(entry.timestamp, i18n.language)}
-                          </span>
-                          <p className="text-xs text-foreground">
-                            <span className="font-medium">{entry.user.fullName}</span>
-                            {' '}
-                            {t('detail.changed')}
-                            {' '}
-                            <span className="text-muted-foreground">
-                              {fieldDisplayNames[entry.fieldName] ?? entry.fieldName}
-                            </span>
-                            {' '}
-                            {t('detail.from')}
-                            {' '}
-                            <span className="line-through text-muted-foreground">
-                              {resolveActivityValue(entry.fieldName, entry.oldValue.value)}
-                            </span>
-                            {' '}
-                            {t('detail.to')}
-                            {' '}
-                            <span className="font-medium">
-                              {resolveActivityValue(entry.fieldName, entry.newValue.value)}
-                            </span>
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              )}
             </div>
           </>
         )}

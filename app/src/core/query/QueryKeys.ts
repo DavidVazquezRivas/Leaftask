@@ -2,6 +2,7 @@ const workItemAll = ['workitem'] as const
 const workItemManagementAll = [...workItemAll, 'management'] as const
 const workItemConfigAll = [...workItemAll, 'config'] as const
 const workItemWorkLogsAll = [...workItemAll, 'work-logs'] as const
+const workItemCommentsAll = [...workItemAll, 'comments'] as const
 
 const projectAll = ['project'] as const
 const projectManagementAll = [...projectAll, 'management'] as const
@@ -32,6 +33,11 @@ export const QueryKeys = {
       all: workItemWorkLogsAll,
       list: (projectId: string, itemId: string) =>
         [...workItemWorkLogsAll, 'list', projectId, itemId] as const,
+    },
+    comments: {
+      all: workItemCommentsAll,
+      list: (projectId: string, itemId: string) =>
+        [...workItemCommentsAll, 'list', projectId, itemId] as const,
     },
   },
   project: {

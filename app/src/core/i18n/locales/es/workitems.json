@@ -73,6 +73,12 @@
     "no": "No",
     "none": "Ninguno"
   },
+  "comments": {
+    "placeholder": "Escribe un comentario… (@mención para notificar a alguien)",
+    "send": "Enviar",
+    "save": "Guardar",
+    "cancel": "Cancelar"
+  },
   "workLog": {
     "title": "Registro de horas",
     "totalLogged": "Total registrado",

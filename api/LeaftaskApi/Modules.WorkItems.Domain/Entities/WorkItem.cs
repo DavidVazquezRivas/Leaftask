@@ -1,6 +1,7 @@
 using System.Globalization;
 using BuildingBlocks.Domain.Entities;
 using Modules.WorkItems.Domain.Entities.Properties;
+using Modules.WorkItems.Domain.Events;
 
 namespace Modules.WorkItems.Domain.Entities;
 
@@ -60,6 +61,13 @@ public sealed class WorkItem : Entity
         UserReadModel? assignee = null,
         Guid? parentId = null) =>
         new(Guid.NewGuid(), code, title, description, estimation, limitDate, project, status, type, assignee, parentId);
+
+    public WorkItemComment AddComment(string content, UserReadModel author, IReadOnlyList<Guid> mentionedUserIds)
+    {
+        WorkItemComment comment = new(Guid.NewGuid(), content, this, author);
+        Raise(new CommentAddedDomainEvent(Id, comment.Id, author.Id, mentionedUserIds));
+        return comment;
+    }
 
     public IReadOnlyList<WorkItemChange> ApplyUpdate(
         string? title,

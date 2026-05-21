@@ -117,6 +117,16 @@ export const ApiRoutes = {
       PresignedUpload: (projectId: string, itemId: string, fileName: string) =>
         `api/v1/projects/${projectId}/work-items/${itemId}/attachments/presigned-upload?fileName=${encodeURIComponent(fileName)}`,
     },
+    Comments: {
+      List: (projectId: string, itemId: string) =>
+        `api/v1/projects/${projectId}/work-items/${itemId}/comments`,
+      Create: (projectId: string, itemId: string) =>
+        `api/v1/projects/${projectId}/work-items/${itemId}/comments`,
+      Update: (projectId: string, itemId: string, commentId: string) =>
+        `api/v1/projects/${projectId}/work-items/${itemId}/comments/${commentId}`,
+      Delete: (projectId: string, itemId: string, commentId: string) =>
+        `api/v1/projects/${projectId}/work-items/${itemId}/comments/${commentId}`,
+    },
     Configuration: {
       Types: 'api/v1/workitems/types',
       Statuses: 'api/v1/workitems/statuses',

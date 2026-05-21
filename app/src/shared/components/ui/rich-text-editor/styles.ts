@@ -26,6 +26,8 @@ export const richTextClass = [
   '[&_img]:rounded-md [&_img]:max-w-full [&_img]:my-3 [&_img]:border [&_img]:border-border',
   // Blockquote
   '[&_blockquote]:border-l-2 [&_blockquote]:border-border [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground [&_blockquote]:my-2 [&_blockquote]:italic',
+  // Mentions
+  '[&_span[data-type=mention]]:text-primary [&_span[data-type=mention]]:font-medium [&_span[data-type=mention]]:bg-primary/10 [&_span[data-type=mention]]:rounded [&_span[data-type=mention]]:px-1 [&_span[data-type=mention]]:py-0.5',
 ].join(' ')
 
 /** Extra classes only needed inside the editable ProseMirror div */
