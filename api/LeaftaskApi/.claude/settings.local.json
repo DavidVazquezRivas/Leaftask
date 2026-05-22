@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"d:\\\\Workspace\\\\Leaftask\\\\api\\\\LeaftaskApi\" -Force)",
+      "Bash(Select-Object Name, PSIsContainer)",
+      "Bash(Format-Table -AutoSize)",
+      "Bash(Get-ChildItem -Path \"d:\\\\Workspace\\\\Leaftask\\\\api\\\\LeaftaskApi\\\\Modules.Organizations.DrivenInfrastructure\\\\Entities\\\\\" -File | Select-Object Name)",
+      "Bash(dotnet build *)",
+      "Bash(dotnet test *)",
+      "Bash(dotnet run *)",
+      "Bash(docker compose *)",
+      "Bash(Get-Content \"C:\\\\Users\\\\vazqu\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\d--Workspace-Leaftask-api-LeaftaskApi\\\\3d88a0d3-202b-4c7a-81c0-a05c720fb309\\\\tasks\\\\bb4m71lyi.output\" -Wait)",
+      "Bash(Select-String --line-buffered \"api\\\\.host|error|Error|ERROR|Application started|Now listening|exited|migrations|FINISHED|exception|Exception\")",
+      "Bash(curl -s -w \"\\\\n%{http_code}\" http://localhost:8080/swagger/index.html)",
+      "Bash(dotnet ef *)",
+      "Bash(Get-ChildItem -Directory)",
+      "Bash(Select-Object Name)",
+      "Bash(Get-ChildItem -Path \"d:\\\\Workspace\\\\Leaftask\\\\api\\\\LeaftaskApi\" -Recurse -Directory -Filter \"*Organizations*\")",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)",
+      "Bash(cd \"d:\\\\Workspace\\\\Leaftask\\\\api\" && docker compose up --build -d 2>&1 | tail -20)",
+      "Read(//d/Workspace/Leaftask/api/**)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:56745/swagger/index.html)",
+      "Bash(curl -s http://localhost:8080/swagger/v1/swagger.json)",
+      "Bash(Start-Sleep -Seconds 5)",
+      "Bash(Select-String -Pattern '\"title\"|\"paths\"|\"error\"|\"exception\"')",
+      "Bash(Select-Object -First 10)",
+      "Bash(Get-ChildItem -Recurse -Directory)",
+      "Bash(find ./Modules.Organizations* -type f -name \"*Behavior*\" -o -name \"*Validator*\")",
+      "Bash(Get-ChildItem -Path . -Name)",
+      "Bash(xargs grep -l \"ProjectMember\\\\|project.*member\")",
+      "Bash(Select-String -Pattern \"\\(GetMyProjects|IPaginatedQuery|PaginatedResult|CursorHelper|SortParser\\)\")"
+    ]
+  }
+}

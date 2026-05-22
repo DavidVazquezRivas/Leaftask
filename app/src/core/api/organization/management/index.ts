@@ -1,0 +1,22 @@
+export { OrganizationManagementGateway } from '@/core/api/organization/management/OrganizationManagementGateway'
+export type {
+  CreateOrganizationManagementApiResponse,
+  CreateOrganizationManagementRequest,
+  CreateOrganizationManagementSuccessResponse,
+  DeleteOrganizationManagementApiResponse,
+  DeleteOrganizationManagementSuccessResponse,
+  GetOrganizationManagementDetailApiResponse,
+  GetOrganizationManagementDetailSuccessResponse,
+  GetOrganizationManagementPermissionsApiResponse,
+  GetOrganizationManagementPermissionsSuccessResponse,
+  GetOrganizationManagementApiResponse,
+  GetOrganizationManagementParams,
+  GetOrganizationManagementSuccessResponse,
+  OrganizationManagementPermissionData,
+  OrganizationManagementSortParam,
+  OrganizationManagementDetailData,
+  OrganizationManagementSummaryData,
+  PatchOrganizationManagementApiResponse,
+  PatchOrganizationManagementRequest,
+  PatchOrganizationManagementSuccessResponse,
+} from '@/core/api/organization/management/organizationManagement.types'

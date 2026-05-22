@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+	  <PackageReference Include="MediatR" />
+	  <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" />
+	  <PackageReference Include="Newtonsoft.Json" />
+	  <PackageReference Include="Quartz" />
+	  <PackageReference Include="Quartz.Extensions.DependencyInjection" />
+	  <PackageReference Include="Quartz.Extensions.Hosting" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\BuildingBlocks.Domain\BuildingBlocks.Domain.csproj" />
+	  <ProjectReference Include="..\BuildingBlocks.DrivenInfrastructure\BuildingBlocks.DrivenInfrastructure.csproj" />
+	  <ProjectReference Include="..\BuildingBlocks.Integration\BuildingBlocks.Integration.csproj" />
+	</ItemGroup>
+</Project>

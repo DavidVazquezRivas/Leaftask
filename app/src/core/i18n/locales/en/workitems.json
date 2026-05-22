@@ -1,0 +1,97 @@
+{
+  "create": {
+    "title": "New work item",
+    "description": "Fill in the details for the new work item.",
+    "fields": {
+      "titleLabel": "Title",
+      "titlePlaceholder": "Work item title",
+      "descriptionLabel": "Description",
+      "descriptionOptional": "(optional)",
+      "descriptionPlaceholder": "Describe the work item...",
+      "type": "Type",
+      "typePlaceholder": "Select type",
+      "status": "Status",
+      "statusPlaceholder": "Select status",
+      "assignee": "Assignee",
+      "assigneeOptional": "(optional)",
+      "assigneeUnassigned": "Unassigned",
+      "estimationLabel": "Estimation",
+      "estimationPlaceholder": "Hours (e.g. 8)"
+    },
+    "actions": {
+      "submit": "Create",
+      "cancel": "Cancel"
+    },
+    "feedback": {
+      "created": "Work item created successfully."
+    },
+    "customFieldsSection": "Custom Fields"
+  },
+  "detail": {
+    "status": "Status",
+    "type": "Type",
+    "description": "Description",
+    "noDescription": "No description provided.",
+    "descriptionPlaceholder": "Add a description...",
+    "assignee": "Assignee",
+    "unassigned": "Unassigned",
+    "limitDate": "Limit Date",
+    "noLimitDate": "Not set",
+    "parent": "Dependency / Parent",
+    "noParent": "None",
+    "estimation": "Estimation",
+    "dedication": "Dedication",
+    "registers_one": "{{count}} register",
+    "registers_other": "{{count}} registers",
+    "progress": "Progress",
+    "workProgress": "Work progress",
+    "hours": "{{count}}h",
+    "editProgress": "Edit progress",
+    "saveProgress": "Save",
+    "cancelProgress": "Cancel",
+    "comments": "Comments",
+    "activityLog": "Activity Log",
+    "noComments": "No comments yet.",
+    "noActivity": "No activity recorded yet.",
+    "customFields": "Custom Fields",
+    "changed": "changed",
+    "from": "from",
+    "to": "to",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete work item",
+    "deleteConfirm": "This action cannot be undone.",
+    "deleteConfirmYes": "Delete"
+  },
+  "empty": {
+    "description": "No work items yet. Create one to start building the tree.",
+    "action": "New work item"
+  },
+  "addRoot": "New work item",
+  "fieldValues": {
+    "yes": "Yes",
+    "no": "No",
+    "none": "None"
+  },
+  "comments": {
+    "placeholder": "Write a comment… (@mention to notify someone)",
+    "send": "Send",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "workLog": {
+    "title": "Work Log",
+    "totalLogged": "Total logged",
+    "estimation": "Estimation",
+    "difference": "Difference",
+    "empty": "No entries yet.",
+    "date": "Date",
+    "hours": "Hours",
+    "description": "Description",
+    "descriptionLabel": "Description (optional)",
+    "descriptionPlaceholder": "What did you work on?",
+    "newEntry": "New entry",
+    "addEntry": "Add entry",
+    "editDedication": "Log hours"
+  }
+}

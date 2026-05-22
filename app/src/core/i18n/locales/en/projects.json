@@ -1,0 +1,270 @@
+{
+  "management": {
+    "settings": {
+      "title": "Project Settings",
+      "subtitle": "Configure project details and manage access.",
+      "tabs": {
+        "general": "General",
+        "rolesPermissions": "Roles & Permissions",
+        "members": "Members",
+        "customFields": "Custom Fields"
+      },
+      "general": {
+        "validation": {
+          "required": "This field is required",
+          "abbreviationMaxLength": "Abbreviation must be 3 characters or fewer"
+        },
+        "permissions": {
+          "noConfigure": "You don't have permission to configure this project.",
+          "noDelete": "You don't have permission to delete this project."
+        },
+        "fields": {
+          "name": {
+            "label": "Project Name",
+            "placeholder": "My project",
+            "hint": "The display name of your project"
+          },
+          "abbreviation": {
+            "label": "Abbreviation",
+            "placeholder": "ABC",
+            "hint": "Short identifier, up to 3 characters"
+          },
+          "privacyLevel": {
+            "label": "Privacy",
+            "hint": "Controls who can see this project"
+          }
+        },
+        "privacyOptions": {
+          "public": "Public",
+          "restricted": "Restricted",
+          "private": "Private"
+        },
+        "actions": {
+          "save": "Save changes",
+          "saving": "Saving...",
+          "cancel": "Cancel"
+        },
+        "dangerZone": {
+          "title": "Danger Zone",
+          "description": "Deleting this project is irreversible. All data will be permanently lost.",
+          "deleteAction": "Delete project",
+          "deleting": "Deleting..."
+        },
+        "feedback": {
+          "updated": "Project updated successfully",
+          "deleted": "Project deleted"
+        }
+      }
+    },
+    "members": {
+      "title": "Project Members",
+      "subtitle": "Manage team members with access to this project.",
+      "roleFallback": "Unknown role",
+      "actions": {
+        "inviteMember": "Invite Member",
+        "createAgent": "Create Agent",
+        "removeMember": "Remove member"
+      },
+      "permissions": {
+        "noInvite": "You don't have permission to invite members.",
+        "noCancelInvitation": "You don't have permission to cancel invitations.",
+        "noRemove": "You don't have permission to remove members.",
+        "forbidden": "This action requires approval and can't be completed right now."
+      },
+      "pendingInvitations": {
+        "title": "Pending Invitations",
+        "pending": "Pending",
+        "cancel": "Cancel invitation",
+        "canceled": "Invitation canceled successfully.",
+        "expand": "Expand",
+        "collapse": "Collapse"
+      },
+      "inviteDialog": {
+        "title": "Invite member",
+        "description": "Invite a user and assign a project role.",
+        "userLabel": "User",
+        "userPlaceholder": "Search and select a user",
+        "searchPlaceholder": "Search by name or email...",
+        "loadingUsers": "Loading users...",
+        "emptyUsers": "No users found.",
+        "roleLabel": "Role",
+        "rolePlaceholder": "Select a role",
+        "cancel": "Cancel",
+        "submit": "Send invitation",
+        "submitting": "Sending..."
+      },
+      "states": {
+        "loading": "Loading members...",
+        "error": "Could not load members.",
+        "emptyMembers": "No members yet."
+      },
+      "stats": {
+        "people": "People",
+        "agents": "Agents",
+        "total": "Total Members"
+      },
+      "feedback": {
+        "roleUpdated": "Member role updated successfully.",
+        "memberDeleted": "Member removed successfully.",
+        "ownerCannotBeRemoved": "Owner members cannot be removed.",
+        "atLeastOneOwner": "At least one owner is required in the project.",
+        "invitationSent": "Invitation sent successfully.",
+        "alreadyInvited": "This user already has a pending invitation."
+      }
+    },
+    "rolesPermissions": {
+      "title": "Project Roles",
+      "subtitle": "Define roles and configure permission levels for each action",
+      "createRole": "Create Role",
+      "membersCount_one": "{{count}} member",
+      "membersCount_other": "{{count}} members",
+      "actions": {
+        "editRole": "Edit role",
+        "deleteRole": "Delete role"
+      },
+      "levels": {
+        "full": "Full",
+        "supervised": "Supervised",
+        "none": "None"
+      },
+      "permissionLevels": {
+        "title": "Permission Levels",
+        "full": {
+          "label": "Full:",
+          "description": "Can perform action without approval"
+        },
+        "supervised": {
+          "label": "Supervised:",
+          "description": "Requires approval from Full permission holder"
+        },
+        "none": {
+          "label": "None:",
+          "description": "Cannot perform action"
+        }
+      },
+      "states": {
+        "loading": "Loading roles...",
+        "error": "Could not load roles.",
+        "emptyRoles": "No roles available."
+      },
+      "feedback": {
+        "roleCreated": "Role created successfully.",
+        "roleUpdated": "Role updated successfully.",
+        "roleDeleted": "Role deleted successfully.",
+        "supervisedAction": "This role action was submitted for approval."
+      },
+      "editor": {
+        "createTitle": "Create role",
+        "editTitle": "Edit role",
+        "description": "Define the role name and permission levels.",
+        "roleNameLabel": "Role name",
+        "roleNamePlaceholder": "Project Manager",
+        "permissionsTitle": "Permissions",
+        "mixedPlaceholder": "Mixed",
+        "cancel": "Cancel",
+        "createSubmit": "Create",
+        "updateSubmit": "Save changes",
+        "submitting": "Saving..."
+      },
+      "deleteDialog": {
+        "title": "Delete role",
+        "description": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete role",
+        "deleting": "Deleting..."
+      }
+    },
+    "customFields": {
+      "title": "Custom Fields",
+      "subtitle": "Add custom fields to work items for better project tracking.",
+      "addField": "Add Custom Field",
+      "fieldTypesSection": {
+        "title": "Available Field Types"
+      },
+      "field": {
+        "typeFallback": "Unknown type",
+        "options": "Options",
+        "appliesTo": "Applies to"
+      },
+      "actions": {
+        "editField": "Edit field",
+        "deleteField": "Delete field"
+      },
+      "permissions": {
+        "noManage": "You don't have permission to manage custom fields."
+      },
+      "dialog": {
+        "createTitle": "Add Custom Field",
+        "editTitle": "Edit Custom Field",
+        "description": "Define the field name, type, and options.",
+        "nameLabel": "Name",
+        "namePlaceholder": "Field name",
+        "typeLabel": "Field Type",
+        "typePlaceholder": "Select a type",
+        "requiredLabel": "Required field",
+        "requiredHint": "Work items must fill this field",
+        "appliesToLabel": "Applies to types",
+        "appliesToHint": "No selection = applies to all types",
+        "appliesToAll": "All types",
+        "optionsLabel": "Options",
+        "optionPlaceholder": "Option name",
+        "addOption": "Add",
+        "cancel": "Cancel",
+        "createSubmit": "Add field",
+        "updateSubmit": "Save changes",
+        "submitting": "Saving..."
+      },
+      "validation": {
+        "nameRequired": "Name is required",
+        "typeRequired": "Field type is required",
+        "optionsRequired": "At least one option is required for selection fields"
+      },
+      "states": {
+        "loading": "Loading custom fields...",
+        "error": "Could not load custom fields.",
+        "empty": "No custom fields yet. Add one to track additional data on work items."
+      },
+      "feedback": {
+        "created": "Custom field created successfully.",
+        "updated": "Custom field updated successfully.",
+        "deleted": "Custom field deleted successfully."
+      }
+    },
+    "create": {
+      "trigger": "New project",
+      "validation": {
+        "required": "This field is required",
+        "abbreviationMaxLength": "Abbreviation must be 3 characters or fewer"
+      },
+      "modal": {
+        "title": "Create project",
+        "description": "Add a new project. You can configure more details from the project settings.",
+        "cancel": "Cancel",
+        "submit": "Create project",
+        "submitting": "Creating..."
+      },
+      "fields": {
+        "name": {
+          "label": "Name",
+          "placeholder": "My project"
+        },
+        "abbreviation": {
+          "label": "Abbreviation",
+          "placeholder": "ABC",
+          "hint": "Up to 3 characters"
+        },
+        "privacyLevel": {
+          "label": "Privacy"
+        }
+      },
+      "privacyOptions": {
+        "public": "Public",
+        "restricted": "Restricted",
+        "private": "Private"
+      },
+      "feedback": {
+        "created": "Project created successfully"
+      }
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "errors": {
+    "unknown": "An unexpected error occurred.",
+    "network": "Could not connect to the server.",
+    "unauthorized": "Your session has expired. Please sign in again."
+  },
+  "notFound": {
+    "code": "ERROR 404",
+    "title": "Page not found",
+    "description": "The page you are trying to open does not exist or may have changed.",
+    "back": "Go back",
+    "home": "Go home"
+  },
+  "publicLayout": {
+    "brand": "Leaftask",
+    "subtitle": "Collaborative workspaces",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "language": "Language",
+    "footer": "Build with focus and clarity."
+  },
+  "privateLayout": {
+    "user": "User",
+    "organizations": "Organizations",
+    "language": "Language",
+    "theme": "Toggle theme",
+    "notifications": "Notifications",
+    "chat": "Chat"
+  },
+  "privatePanel": {
+    "title": "Personal Projects",
+    "subtitle": "Personal workspace",
+    "placeholder": "Your personal projects will appear here soon.",
+    "projectsEmpty": "You have no personal projects yet.",
+    "newPersonalProject": "New Personal Project",
+    "settings": "User settings",
+    "userUnknown": "User",
+    "userRolePlaceholder": "Role will be shown here"
+  },
+  "organizationPanel": {
+    "title": "Organization Projects",
+    "subtitle": "Organization workspace",
+    "placeholder": "Organization projects will appear here soon.",
+    "projectsEmpty": "This organization has no projects yet.",
+    "settings": "Organization settings"
+  },
+  "projectsPanel": {
+    "treeView": "Tree View",
+    "settings": "Settings"
+  },
+  "common": {
+    "retry": "Retry",
+    "dismiss": "Dismiss"
+  }
+}

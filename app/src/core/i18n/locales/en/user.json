@@ -1,0 +1,21 @@
+{
+  "login": {
+    "title": "Sign in",
+    "subtitle": "Access Leaftask using your identity provider.",
+    "oauthDescription": "Choose a provider to sign in securely.",
+    "googleClientIdMissing": "VITE_GOOGLE_CLIENT_ID is missing. Google OAuth cannot be initialized.",
+    "cardTitle": "Welcome back",
+    "cardDescription": "Choose a provider to continue.",
+    "oauthBadge": "Secure sign in"
+  },
+  "session": {
+    "refreshFailed": "Could not refresh session.",
+    "invalidToken": "Session token is invalid."
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Manage your personal account settings.",
+    "logoutDescription": "You can sign out from this device here.",
+    "logout": "Sign out"
+  }
+}

@@ -1,0 +1,80 @@
+import { useMutation } from '@tanstack/react-query'
+import { toast } from 'sonner'
+
+import { ApiGateway } from '@/core/api/ApiGateway'
+import { ApiError } from '@/core/api/global/errors/ApiError'
+import type { CreateOrganizationInvitationRequest } from '@/core/api/organization/invitations'
+import { i18n } from '@/core/i18n'
+import { QueryKeys } from '@/core/query/QueryKeys'
+import { isForbiddenError, useApiErrorHandler } from '@/core/query/hooks'
+import { queryClient } from '@/core/query/queryClient'
+
+export const useCreateOrganizationInvitationMutation = (
+  organizationId: string
+) => {
+  const handleApiError = useApiErrorHandler()
+
+  return useMutation({
+    mutationKey: QueryKeys.organization.invitations.create(organizationId),
+    mutationFn: async (payload: CreateOrganizationInvitationRequest) => {
+      return ApiGateway.organization.invitations.createInvitation(
+        organizationId,
+        payload
+      )
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: QueryKeys.organization.members.all,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: QueryKeys.organization.members.distribution.all,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: QueryKeys.organization.invitations.pending(organizationId),
+        }),
+      ])
+
+      toast.success(
+        i18n.t('management.settings.members.feedback.invitationSent', {
+          ns: 'organizations',
+          defaultValue: 'Invitation sent successfully.',
+        })
+      )
+    },
+    onError: (error) => {
+      if (isForbiddenError(error)) {
+        toast.info(
+          i18n.t('management.settings.members.permissions.noInvite', {
+            ns: 'organizations',
+            defaultValue: "You don't have permission to invite members.",
+          })
+        )
+        return
+      }
+
+      if (error instanceof ApiError && error.status === 409) {
+        const parts = error.code.split('.')
+        if (parts[0] === 'Organization' && parts[1] === 'Invitation') {
+          const last = parts.slice(2).join('.')
+          const key = `errors.invitation.${last.charAt(0).toLowerCase()}${last.slice(1)}`
+
+          const translated = i18n.t(key, {
+            ns: 'organizations',
+            defaultValue:
+              error.message ??
+              i18n.t('management.settings.members.feedback.invitationSent', {
+                ns: 'organizations',
+              }),
+            keySeparator: '.',
+          })
+
+          toast.error(translated)
+          return
+        }
+      }
+
+      handleApiError(error)
+    },
+  })
+}

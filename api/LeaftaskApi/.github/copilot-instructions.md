@@ -1,0 +1,16 @@
+# Copilot Instructions
+
+## Project Guidelines
+- En este proyecto ya existía `UserReadModel` en el módulo de organizaciones (dominio y configuración), por lo que no se debe duplicar en infraestructura.
+- El usuario prefiere un enfoque genérico para consumo de eventos de integración: un handler base en BuildingBlocks que gestione idempotencia vía Inbox y registro final, delegando la lógica de negocio al módulo (capa Application).
+- El usuario prefiere que los contratos de repositorio se ubiquen en la capa de dominio, no en la capa de aplicación.
+- El usuario quiere paginación cursor-based basada en el orden real de la consulta (por ejemplo, created_at), no en comparar Id mayores. El nextCursor debe derivarse del último registro de la página según ese orden.
+- Cuando el cursor sea un Guid, se tipa como `Guid?` desde la request para evitar parseos manuales.
+- En consultas EF, se debe usar `ToListAsync()` en lugar de `ToList()`.
+- El usuario prefiere un enfoque genérico para validación de permisos de organización para no ensuciar los command handlers, incluyendo manejo diferenciado por nivel de permiso.
+- El usuario no quiere consultas directas a la base de datos de Organizations desde Projects; deben tratarse como servicios separados. Para permisos en Projects, usar CQRS con datos replicados en Projects o contratos/métodos públicos expuestos por Modules.Organizations.Integration.
+- En el módulo Projects, el usuario prefiere que el modelo de dominio de `Project` no almacene `OwnerId` como propiedad del dominio; debe mantener la interfaz (`IProjectOwner`) y resolver el mapeo de `id` y `type` en `ProjectEntityTypeConfiguration`.
+
+## Controller Guidelines
+- Los controladores deben mantenerse delgados: deben crear una consulta/comando, enviarlo a través de MediatR y permitir que un QueryHandler/CommandHandler delegue a un servicio. 
+- Los DTOs de respuesta deben seguir las convenciones de respuesta/consulta del módulo existente en lugar de incluir lógica de acceso a datos o EF en el controlador.

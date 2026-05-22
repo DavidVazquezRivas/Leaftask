@@ -1,0 +1,74 @@
+<Solution>
+  <Folder Name="/docs/">
+    <File Path="Migrations.md" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="Api.Host/Api.Host.csproj" />
+  </Folder>
+  <Folder Name="/src/BuildingBlocks/">
+    <Project Path="BuildingBlocks.Application/BuildingBlocks.Application.csproj" />
+    <Project Path="BuildingBlocks.Domain/BuildingBlocks.Domain.csproj" />
+    <Project Path="BuildingBlocks.DrivenInfrastructure/BuildingBlocks.DrivenInfrastructure.csproj" />
+    <Project Path="BuildingBlocks.DrivingInfrastructure/BuildingBlocks.DrivingInfrastructure.csproj" Id="635d0488-f31f-4e82-81df-79406876c397" />
+    <Project Path="BuildingBlocks.Integration/BuildingBlocks.Integration.csproj" Id="0eb1c7d0-2867-4fbb-8b11-0adc73f9864a" />
+  </Folder>
+  <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/Organizations/">
+    <Project Path="Modules.Organizations.Application/Modules.Organizations.Application.csproj" Id="15f9ba06-4dea-4e39-84a7-70a30ceee5a3" />
+    <Project Path="Modules.Organizations.Domain/Modules.Organizations.Domain.csproj" Id="53000f7a-4bc8-4141-8ef8-65dff4a6407f" />
+    <Project Path="Modules.Organizations.DrivenInfrastructure/Modules.Organizations.DrivenInfrastructure.csproj" Id="59a998f9-73e6-4f05-a908-4050fb02e8e8" />
+    <Project Path="Modules.Organizations.DrivingInfrastructure/Modules.Organizations.DrivingInfrastructure.csproj" />
+    <Project Path="Modules.Organizations.Integration/Modules.Organizations.Integration.csproj" Id="50af49a8-06d2-453b-9e89-bd1ec5abbb9f" />
+  </Folder>
+  <Folder Name="/src/Modules/Projects/">
+    <Project Path="Modules.Projects.Application/Modules.Projects.Application.csproj" Id="1f6db04f-02d0-4f02-baa7-941cecf94848" />
+    <Project Path="Modules.Projects.Domain/Modules.Projects.Domain.csproj" Id="b6023af3-c214-4183-8600-51721824b84f" />
+    <Project Path="Modules.Projects.DrivenInfrastructure/Modules.Projects.DrivenInfrastructure.csproj" Id="f025e88e-8bab-4b17-a544-b9310c825513" />
+    <Project Path="Modules.Projects.DrivingInfrastructure/Modules.Projects.DrivingInfrastructure.csproj" Id="ca3e5707-fb12-439b-935c-37512559680b" />
+    <Project Path="Modules.Projects.Integration/Modules.Projects.Integration.csproj" Id="bb949f4d-74e3-49be-b2e0-590c396bf0d9" />
+  </Folder>
+  <Folder Name="/src/Modules/Users/">
+    <Project Path="Modules.User.Application/Modules.Users.Application.csproj" />
+    <Project Path="Modules.User.Domain/Modules.Users.Domain.csproj" />
+    <Project Path="Modules.User.DrivenInfrastructure/Modules.Users.DrivenInfrastructure.csproj" />
+    <Project Path="Modules.User.DrivingInfrastructure/Modules.Users.DrivingInfrastructure.csproj" />
+    <Project Path="Modules.User.Integration/Modules.Users.Integration.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/WorkItems/">
+    <Project Path="Modules.WorkItems.Application/Modules.WorkItems.Application.csproj" Id="c12b6058-d68b-4d5e-8885-44203700508d" />
+    <Project Path="Modules.WorkItems.Domain/Modules.WorkItems.Domain.csproj" Id="881e5d26-6aaf-4223-8f76-17d63a908266" />
+    <Project Path="Modules.WorkItems.DrivenInfrastructure/Modules.WorkItems.DrivenInfrastructure.csproj" Id="7357f19a-e658-4a70-93d9-b8dfa2f87877" />
+    <Project Path="Modules.WorkItems.DrivingInfrastructure/Modules.WorkItems.DrivingInfrastructure.csproj" Id="3424bef6-4333-465f-98b0-ffb70f2f1bde" />
+    <Project Path="Modules.WorkItems.Integration/Modules.WorkItems.Integration.csproj" Id="83b1a76f-10de-49be-973f-cb57beba12a1" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/BuildingBlocks/">
+    <Project Path="BuildingBlocks.Application.UnitTests/BuildingBlocks.Application.UnitTests.csproj" Id="99bf71a8-22d9-418c-9619-4ffc49ae93d6" />
+    <Project Path="BuildingBlocks.Domain.UnitTests/BuildingBlocks.Domain.UnitTests.csproj" Id="df3ddfa3-af75-4f47-b6d2-6e4bf12c19b9" />
+  </Folder>
+  <Folder Name="/tests/Modules/" />
+  <Folder Name="/tests/Modules/Organizations/">
+    <Project Path="Modules.Organizations.Application.UnitTests/Modules.Organizations.Application.UnitTests.csproj" Id="c7733e47-ec53-49a2-a411-3fe016bf2c40" />
+    <Project Path="Modules.Organizations.Domain.UnitTests/Modules.Organizations.Domain.UnitTests.csproj" Id="e5b799e7-8075-4014-89ae-04309c016375" />
+  </Folder>
+  <Folder Name="/tests/Modules/Projects/">
+    <Project Path="Modules.Projects.Application.UnitTests/Modules.Projects.Application.UnitTests.csproj" Id="12198c3e-d0eb-4bc8-9824-c4bad7684d6c" />
+    <Project Path="Modules.Projects.Domain.UnitTests/Modules.Projects.Domain.UnitTests.csproj" Id="30b6db54-98c1-4241-a187-ae7d0dd7ef71" />
+  </Folder>
+  <Folder Name="/tests/Modules/Users/">
+    <Project Path="Modules.Users.Application.UnitTests/Modules.Users.Application.UnitTests.csproj" Id="0abaccd0-4173-41bf-8095-9a89f89c2e49" />
+    <Project Path="Modules.Users.Domain.UnitTests/Modules.Users.Domain.UnitTests.csproj" Id="d40887fc-f4f1-4c78-af31-85340b41552f" />
+  </Folder>
+  <Folder Name="/tests/Modules/WorkItems/">
+    <Project Path="Modules.WorkItems.Application.UnitTests/Modules.WorkItems.Application.UnitTests.csproj" Id="9bca9409-2492-474f-ab09-c6a59df0fc34" />
+    <Project Path="Modules.WorkItems.Domains.UnitTests/Modules.WorkItems.Domains.UnitTests.csproj" Id="245f0075-f047-46b5-8b16-2fbc3f988175" />
+  </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
+</Solution>

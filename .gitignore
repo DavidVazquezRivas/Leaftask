@@ -1,1 +1,20 @@
+# Dependencies
 node_modules/
+
+# Build outputs
+**/bin/
+**/obj/
+
+# Container files
+.containers/
+docker-compose.override.yml
+
+# IDE files
+.vscode/
+.vs/
+.history/
+.claude/
+*.lscache
+
+# Environment files
+.env

@@ -1,0 +1,9 @@
+export function getInitials(fullName: string | null | undefined): string {
+  if (!fullName) return '?'
+  return fullName
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0].toUpperCase())
+    .join('')
+}
