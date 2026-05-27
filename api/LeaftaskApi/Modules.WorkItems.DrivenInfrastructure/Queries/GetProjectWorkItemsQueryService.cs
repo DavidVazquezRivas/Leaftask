@@ -47,6 +47,13 @@ public sealed class GetProjectWorkItemsQueryService(WorkItemsDbContext dbContext
                 wi.ParentId))
             .ToListAsync(cancellationToken);
 
+        Dictionary<Guid, decimal> dedicationByItem = await dbContext.WorkLogs
+            .AsNoTracking()
+            .Where(wl => EF.Property<Guid>(wl.WorkItem, "project_read_model_id") == projectId)
+            .GroupBy(wl => wl.WorkItem.Id)
+            .Select(g => new { WorkItemId = g.Key, Total = g.Sum(wl => wl.Hours) })
+            .ToDictionaryAsync(x => x.WorkItemId, x => x.Total, cancellationToken);
+
         IReadOnlyCollection<string> effectiveSort = NormalizeSort(sort);
 
         return CursorPaginationHelper.Paginate(
@@ -65,7 +72,7 @@ public sealed class GetProjectWorkItemsQueryService(WorkItemsDbContext dbContext
                 row.AssigneeId.HasValue
                     ? new WorkItemAssigneeDto(row.AssigneeId.Value, row.AssigneeFirstName!, row.AssigneeLastName!)
                     : null,
-                null,
+                dedicationByItem.TryGetValue(row.Id, out decimal hours) ? (float?)hours : null,
                 row.TypeId,
                 row.StatusId,
                 row.ParentId));

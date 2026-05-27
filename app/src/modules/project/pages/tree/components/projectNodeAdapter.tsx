@@ -31,7 +31,9 @@ export const makeProjectNodeAdapter = (
       shape: isBug ? 'spike' : 'circle',
       filled: Math.round(raw.progress * 100),
       size: Math.min((raw.estimation ?? 0) / 80, 1),
-      orbits: 0,  // driven by registered work — not yet implemented
+      orbits: raw.estimation && raw.estimation > 0 && raw.dedication
+        ? raw.dedication / raw.estimation
+        : 0,
       avatar: raw.assignee
         ? getInitials(raw.assignee.firstName, raw.assignee.lastName)
         : '?',
