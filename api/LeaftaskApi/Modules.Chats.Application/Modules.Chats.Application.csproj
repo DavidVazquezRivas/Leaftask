@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BuildingBlocks.Application\BuildingBlocks.Application.csproj" />
+    <ProjectReference Include="..\Modules.Chats.Domain\Modules.Chats.Domain.csproj" />
+    <ProjectReference Include="..\Modules.Chats.Integration\Modules.Chats.Integration.csproj" />
+  </ItemGroup>
+
+</Project>

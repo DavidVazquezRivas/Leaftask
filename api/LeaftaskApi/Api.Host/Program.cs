@@ -6,6 +6,7 @@ using BuildingBlocks.DrivingInfrastructure.Jobs.Quartz;
 using Modules.Organizations.DrivingInfrastructure.Setup;
 using Modules.Projects.DrivingInfrastructure.Setup;
 using Modules.Users.DrivingInfrastructure.Setup;
+using Modules.Chats.DrivingInfrastructure.Setup;
 using Modules.WorkItems.DrivingInfrastructure.Setup;
 using Serilog;
 
@@ -33,6 +34,7 @@ builder.Services.AddUsersModule(builder.Configuration, builder.Environment.IsDev
 builder.Services.AddOrganizationsModule(builder.Configuration, builder.Environment.IsDevelopment());
 builder.Services.AddProjectsModule(builder.Configuration);
 builder.Services.AddWorkItemsModule(builder.Configuration);
+builder.Services.AddChatsModule(builder.Configuration);
 
 // --- Authentication and authorization configuration ---
 builder.Services.AddAuthenticationConfig(builder.Configuration);

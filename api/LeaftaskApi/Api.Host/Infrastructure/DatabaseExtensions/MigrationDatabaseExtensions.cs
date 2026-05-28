@@ -1,4 +1,5 @@
 ﻿using System.Net.Sockets;
+using Modules.Chats.DrivingInfrastructure.Setup;
 using Modules.Organizations.DrivingInfrastructure.Setup;
 using Modules.Projects.DrivingInfrastructure.Setup;
 using Modules.Users.DrivingInfrastructure.Setup;
@@ -22,6 +23,7 @@ internal static class MigrationDatabaseExtensions
                 await OrganizationModuleInitialization.ApplyMigrationsAsync(app.Services);
                 await ProjectsModuleInitialization.ApplyMigrationsAsync(app.Services);
                 await WorkItemsModuleInitialization.ApplyMigrationsAsync(app.Services);
+                await ChatsModuleInitialization.ApplyMigrationsAsync(app.Services);
                 return;
             }
             catch (Exception ex) when (attempt < maxAttempts && IsDatabaseUnavailable(ex))
