@@ -132,6 +132,17 @@ export const ApiRoutes = {
       Statuses: 'api/v1/workitems/statuses',
     },
   },
+  Chat: {
+    List: 'api/v1/chats',
+    Create: 'api/v1/chats',
+    Delete: (chatId: string) => `api/v1/chats/${chatId}`,
+    Polling: 'api/v1/chats/polling',
+    MarkAsRead: (chatId: string) => `api/v1/chats/${chatId}/read`,
+    Messages: {
+      List: (chatId: string) => `api/v1/chats/${chatId}/messages`,
+      Create: (chatId: string) => `api/v1/chats/${chatId}/messages`,
+    },
+  },
   User: {
     Users: {
       List: 'api/v1/users',

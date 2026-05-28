@@ -1,3 +1,6 @@
+const chatAll = ['chat'] as const
+const chatMessagesAll = [...chatAll, 'messages'] as const
+
 const workItemAll = ['workitem'] as const
 const workItemManagementAll = [...workItemAll, 'management'] as const
 const workItemConfigAll = [...workItemAll, 'config'] as const
@@ -15,6 +18,14 @@ const organizationAll = ['organization'] as const
 const organizationManagementAll = [...organizationAll, 'management'] as const
 
 export const QueryKeys = {
+  chat: {
+    all: chatAll,
+    list: () => [...chatAll, 'list'] as const,
+    messages: {
+      all: chatMessagesAll,
+      list: (chatId: string) => [...chatMessagesAll, 'list', chatId] as const,
+    },
+  },
   workItem: {
     all: workItemAll,
     management: {
