@@ -1,0 +1,15 @@
+type: object
+properties:
+  otherParticipantId:
+    type: string
+    format: uuid
+    description: ID of the user or agent to start a conversation with.
+    example: '123e4567-e89b-12d3-a456-426614174099'
+  otherParticipantType:
+    type: string
+    enum: [person, agent]
+    description: Whether the other participant is a human user or an AI agent.
+    example: 'person'
+required:
+  - otherParticipantId
+  - otherParticipantType

@@ -259,13 +259,19 @@ paths:
   # ==========================================
   # CHATS MODULE
   # ==========================================
-  # --- General & Polling ---
+  # --- Collection ---
   /chats:
     $ref: './modules/chats/paths/general.yaml#/paths/~1'
   /chats/polling:
     $ref: './modules/chats/paths/general.yaml#/paths/~1polling'
 
-  # --- Chat Actions ---
+  # --- Item actions ---
+  /chats/{chatId}:
+    $ref: './modules/chats/paths/general.yaml#/paths/~1{chatId}'
+  /chats/{chatId}/read:
+    $ref: './modules/chats/paths/general.yaml#/paths/~1{chatId}~1read'
+
+  # --- Messaging ---
   /chats/{chatId}/messages:
     $ref: './modules/chats/paths/messages.yaml#/paths/~1{chatId}~1messages'
 

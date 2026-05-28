@@ -1,0 +1,28 @@
+type: object
+properties:
+  data:
+    type: object
+    description: Paginated result wrapper.
+    properties:
+      items:
+        type: array
+        items:
+          $ref: '../models/ChatMessage.yaml'
+      nextCursor:
+        type: string
+        nullable: true
+        description: Opaque token for fetching the next page. Null if there are no more pages.
+        example: 'eyJpZCI6IjEyMyJ9'
+      hasMore:
+        type: boolean
+        description: Whether there are additional pages after this one.
+        example: false
+    required:
+      - items
+      - nextCursor
+      - hasMore
+  meta:
+    $ref: '../../../../shared/schemas/PaginatedMeta.yaml'
+required:
+  - data
+  - meta
