@@ -17,6 +17,9 @@ interface PrimarySidebarProps {
   onChatLabel: string
   onOrganizationsLabel: string
   isLoading: boolean
+  isChatActive?: boolean
+  onChatClick?: () => void
+  unreadChatCount?: number
 }
 
 export function PrimarySidebar({
@@ -29,6 +32,9 @@ export function PrimarySidebar({
   onChatLabel,
   onOrganizationsLabel,
   isLoading,
+  isChatActive,
+  onChatClick,
+  unreadChatCount = 0,
 }: PrimarySidebarProps) {
   return (
     <aside className="flex h-full w-16 shrink-0 flex-col items-center border-r bg-card/60 py-4 backdrop-blur-sm">
@@ -87,14 +93,22 @@ export function PrimarySidebar({
           <Bell />
         </Button>
 
-        <Button
-          size="icon-sm"
-          variant="ghost"
-          aria-label={onChatLabel}
-          title={onChatLabel}
-        >
-          <MessageSquare />
-        </Button>
+        <div className="relative">
+          <Button
+            size="icon-sm"
+            variant={isChatActive ? 'default' : 'ghost'}
+            aria-label={onChatLabel}
+            title={onChatLabel}
+            onClick={onChatClick}
+          >
+            <MessageSquare />
+          </Button>
+          {!isChatActive && unreadChatCount > 0 && (
+            <span className="pointer-events-none absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold leading-none text-white">
+              {unreadChatCount > 99 ? '99+' : unreadChatCount}
+            </span>
+          )}
+        </div>
       </div>
     </aside>
   )

@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 
 import { AppPaths } from '@/core/router'
 import {
@@ -10,8 +10,13 @@ import {
   usePrivateLayoutProjects,
   usePrivateLayoutSession,
 } from '@/shared/components/layouts/hooks'
+import { useChatsQuery, useChatPollingQuery } from '@/core/query/chat'
 
 export function PrivateLayout() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const isChatActive = location.pathname.startsWith('/app/chats')
+
   const {
     isOrganizationContext,
     organizations,
@@ -32,6 +37,11 @@ export function PrivateLayout() {
     canCreateProject,
   } = usePrivateLayoutProjects(isOrganizationContext, selectedOrganizationId)
 
+  const chatsQuery = useChatsQuery()
+  useChatPollingQuery(isChatActive ? 5_000 : 30_000)
+
+  const totalUnread = (chatsQuery.data ?? []).reduce((sum, c) => sum + c.unreadCount, 0)
+
   const projectsEmptyLabel = isOrganizationContext
     ? tGlobal('organizationPanel.projectsEmpty')
     : tGlobal('privatePanel.projectsEmpty')
@@ -49,29 +59,34 @@ export function PrivateLayout() {
           onChatLabel={tGlobal('privateLayout.chat')}
           onOrganizationsLabel={organizationSidebarLabel}
           isLoading={organizationsQuery.isLoading}
+          isChatActive={isChatActive}
+          onChatClick={() => navigate(AppPaths.chat())}
+          unreadChatCount={totalUnread}
         />
 
-        <PrivateContextPanel
-          title={panelTitle}
-          subtitle={panelSubtitle}
-          isOrganizationContext={isOrganizationContext}
-          organizationSettingsPath={
-            selectedOrganizationId
-              ? AppPaths.organizationSettings(selectedOrganizationId)
-              : null
-          }
-          organizationId={selectedOrganizationId}
-          projects={projects}
-          isProjectsLoading={isProjectsLoading}
-          projectsEmptyLabel={projectsEmptyLabel}
-          canCreateProject={canCreateProject}
-          personalSettingsLabel={tGlobal('privatePanel.settings')}
-          organizationSettingsLabel={organizationSettingsLabel}
-          displayName={displayName}
-          rolePlaceholderLabel={tGlobal('privatePanel.userRolePlaceholder')}
-        />
+        {!isChatActive && (
+          <PrivateContextPanel
+            title={panelTitle}
+            subtitle={panelSubtitle}
+            isOrganizationContext={isOrganizationContext}
+            organizationSettingsPath={
+              selectedOrganizationId
+                ? AppPaths.organizationSettings(selectedOrganizationId)
+                : null
+            }
+            organizationId={selectedOrganizationId}
+            projects={projects}
+            isProjectsLoading={isProjectsLoading}
+            projectsEmptyLabel={projectsEmptyLabel}
+            canCreateProject={canCreateProject}
+            personalSettingsLabel={tGlobal('privatePanel.settings')}
+            organizationSettingsLabel={organizationSettingsLabel}
+            displayName={displayName}
+            rolePlaceholderLabel={tGlobal('privatePanel.userRolePlaceholder')}
+          />
+        )}
 
-        <main className="min-w-0 flex-1 overflow-y-auto px-6 py-8">
+        <main className={`min-w-0 flex-1 ${isChatActive ? 'h-full overflow-hidden' : 'overflow-y-auto px-6 py-8'}`}>
           <Outlet />
         </main>
       </div>
