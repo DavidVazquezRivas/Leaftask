@@ -18,6 +18,12 @@
     <Project Path="BuildingBlocks.Integration/BuildingBlocks.Integration.csproj" Id="0eb1c7d0-2867-4fbb-8b11-0adc73f9864a" />
   </Folder>
   <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/Agents/">
+    <Project Path="Modules.Agents.Application/Modules.Agents.Application.csproj" Id="3d9aae09-dc61-47b6-8ed4-2dfc532943ea" />
+    <Project Path="Modules.Agents.Domain/Modules.Agents.Domain.csproj" Id="b681e314-76c4-4c45-a03a-9cceb2087fed" />
+    <Project Path="Modules.Agents.DrivenInfrastructure/Modules.Agents.DrivenInfrastructure.csproj" Id="9c56ba04-9e91-47c7-9492-e3bb0355819d" />
+    <Project Path="Modules.Agents.DrivingInfrastructure/Modules.Agents.DrivingInfrastructure.csproj" Id="fdd71b71-d34b-4bd7-937f-51b6fbba13a8" />
+  </Folder>
   <Folder Name="/src/Modules/Chats/">
     <Project Path="Modules.Chats.Application/Modules.Chats.Application.csproj" Id="07d410de-129d-4080-a6ea-c428af52b161" />
     <Project Path="Modules.Chats.Domain/Modules.Chats.Domain.csproj" Id="8b675432-66c2-4b86-b202-63e9bd6496f9" />
