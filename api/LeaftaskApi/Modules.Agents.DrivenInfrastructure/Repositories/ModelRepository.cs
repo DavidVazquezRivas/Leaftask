@@ -10,12 +10,10 @@ public sealed class ModelRepository(AgentsDbContext dbContext) : IModelRepositor
     public async Task<IReadOnlyList<Model>> GetAllAsync(CancellationToken cancellationToken = default) =>
         await dbContext.Models
             .Include(m => m.Provider)
-            .AsNoTracking()
             .ToListAsync(cancellationToken);
 
     public async Task<Model?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
         await dbContext.Models
             .Include(m => m.Provider)
-            .AsNoTracking()
             .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
 }

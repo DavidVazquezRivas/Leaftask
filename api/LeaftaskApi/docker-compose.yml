@@ -19,7 +19,7 @@ services:
       - Minio__SecretKey=${MINIO_SECRET_KEY}
       - Minio__BucketName=leaftask-attachments
       - Minio__PublicEndpoint=http://localhost:9000
-      - Modules__Agents__OpenAI__ApiKey=${OPENAI_API_KEY}  
+      - Modules__Agents__Providers__OpenAi__ApiKey=${OPENAI_API_KEY}
     ports:
       - "8080:8080"
     depends_on:

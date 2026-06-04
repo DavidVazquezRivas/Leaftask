@@ -15,6 +15,8 @@
     <ProjectReference Include="..\Modules.Agents.Application\Modules.Agents.Application.csproj" />
     <ProjectReference Include="..\Modules.Agents.DrivenInfrastructure\Modules.Agents.DrivenInfrastructure.csproj" />
     <ProjectReference Include="..\Modules.Agents.Integration\Modules.Agents.Integration.csproj" />
+    <ProjectReference Include="..\Modules.Projects.Integration\Modules.Projects.Integration.csproj" />
+    <ProjectReference Include="..\Modules.WorkItems.Integration\Modules.WorkItems.Integration.csproj" />
   </ItemGroup>
 
 </Project>

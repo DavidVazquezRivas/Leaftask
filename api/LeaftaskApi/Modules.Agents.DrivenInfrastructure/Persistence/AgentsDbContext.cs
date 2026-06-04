@@ -16,6 +16,7 @@ public sealed class AgentsDbContext(
     AgentsModuleEventMapper eventMapper) : AppDbContext(options, domainEventsDispatcher, eventMapper)
 {
     public DbSet<Agent> Agents { get; set; }
+    public DbSet<ProjectReadModel> ProjectReadModels { get; set; }
     public DbSet<AgentTemplate> AgentTemplates { get; set; }
     public DbSet<AgentEventTrigger> AgentEventTriggers { get; set; }
     public DbSet<AgentTimeTrigger> AgentTimeTriggers { get; set; }

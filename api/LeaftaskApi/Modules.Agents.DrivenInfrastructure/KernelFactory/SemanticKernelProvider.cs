@@ -8,7 +8,7 @@ namespace Modules.Agents.DrivenInfrastructure.KernelFactory;
 
 public sealed class SemanticKernelProvider(IServiceProvider serviceProvider) : IAgentKernelFactory
 {
-    private static readonly HttpClient AnthropicHttpClient = CreateAnthropicClient();
+    internal static readonly HttpClient AnthropicHttpClient = CreateAnthropicClient();
 
     public Kernel CreateKernel(Agent agent)
     {

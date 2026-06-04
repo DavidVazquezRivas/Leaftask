@@ -13,10 +13,5 @@ public sealed class AgentEventTriggerConfiguration : IEntityTypeConfiguration<Ag
         builder.Property(t => t.Id).HasColumnName("id");
         builder.Property(t => t.UserPrompt).HasColumnName("user_prompt").IsRequired();
         builder.Property(t => t.Event).HasColumnName("event").IsRequired();
-
-        builder.HasOne(t => t.Agent)
-            .WithMany()
-            .HasForeignKey("agent_id")
-            .IsRequired();
     }
 }

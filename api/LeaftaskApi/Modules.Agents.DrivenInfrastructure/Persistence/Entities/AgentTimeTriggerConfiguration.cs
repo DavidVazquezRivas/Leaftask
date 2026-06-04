@@ -15,10 +15,5 @@ public sealed class AgentTimeTriggerConfiguration : IEntityTypeConfiguration<Age
         builder.Property(t => t.CronExpression).HasColumnName("cron_expression").IsRequired();
         builder.Property(t => t.TimeZone).HasColumnName("time_zone").IsRequired();
         builder.Property(t => t.IsActive).HasColumnName("is_active");
-
-        builder.HasOne(t => t.Agent)
-            .WithMany()
-            .HasForeignKey("agent_id")
-            .IsRequired();
     }
 }

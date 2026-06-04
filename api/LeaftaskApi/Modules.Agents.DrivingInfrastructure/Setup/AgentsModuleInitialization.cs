@@ -23,5 +23,6 @@ public static class AgentsModuleInitialization
 
         await ModelProviderSeeder.SeedAsync(dbContext, configuration);
         await ModelSeeder.SeedAsync(dbContext);
+        await ProjectReadModelBackfillSeeder.SeedAsync(dbContext);
     }
 }

@@ -4,14 +4,21 @@ using BuildingBlocks.DrivingInfrastructure.Jobs.Quartz;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Modules.Agents.Application.Agents;
+using Modules.Agents.Application.Bootstrap;
 using Modules.Agents.Application.Events;
 using Modules.Agents.Application.Kernel;
+using Modules.Agents.Application.Projects.Create;
 using Modules.Agents.Application.Services;
 using Modules.Agents.Domain.Repositories;
+using Modules.Agents.DrivenInfrastructure.Bootstrap;
 using Modules.Agents.DrivenInfrastructure.KernelFactory;
 using Modules.Agents.DrivenInfrastructure.Persistence;
 using Modules.Agents.DrivenInfrastructure.Repositories;
 using Modules.Agents.DrivingInfrastructure.Jobs;
+using Modules.Agents.DrivingInfrastructure.Scheduling;
+using Modules.Agents.DrivingInfrastructure.Subscribers.Projects;
+using Modules.Agents.DrivingInfrastructure.Subscribers.WorkItems;
 using Quartz;
 
 namespace Modules.Agents.DrivingInfrastructure.Setup;
@@ -46,7 +53,29 @@ public static class DependencyInjection
         OutboxOptions outboxOptions = configuration.GetSection("Modules:Agents:Outbox").Get<OutboxOptions>()
                                       ?? new OutboxOptions();
 
-        services.AddQuartz(q => q.AddOutboxJob<AgentsOutboxJob>(outboxOptions));
+        OutboxOptions executionOptions = configuration.GetSection("Modules:Agents:Execution").Get<OutboxOptions>()
+                                         ?? new OutboxOptions { IntervalInSeconds = 10, BatchSize = 5 };
+
+        services.AddQuartz(q =>
+        {
+            q.AddOutboxJob<AgentsOutboxJob>(outboxOptions);
+
+            JobKey processorKey = new(nameof(AgentExecutionProcessorJob));
+            q.AddJob<AgentExecutionProcessorJob>(opts => opts
+                .WithIdentity(processorKey)
+                .UsingJobData("BatchSize", executionOptions.BatchSize));
+            q.AddTrigger(opts => opts
+                .ForJob(processorKey)
+                .WithIdentity($"{nameof(AgentExecutionProcessorJob)}-trigger")
+                .WithSimpleSchedule(x => x
+                    .WithIntervalInSeconds(executionOptions.IntervalInSeconds)
+                    .RepeatForever()));
+
+            q.AddJob<AgentTimeTriggerExecutionJob>(opts => opts
+                .WithIdentity(nameof(AgentTimeTriggerExecutionJob))
+                .StoreDurably());
+        });
+
         return services;
     }
 
@@ -55,9 +84,13 @@ public static class DependencyInjection
         services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssembly(typeof(AgentOrchestrator).Assembly);
+            config.RegisterServicesFromAssembly(typeof(CreateProjectReadModelOnProjectCreatedCommand).Assembly);
+            config.RegisterServicesFromAssembly(typeof(ProjectCreatedIntegrationEventHandler).Assembly);
+            config.RegisterServicesFromAssembly(typeof(UsersMentionedInCommentIntegrationEventHandler).Assembly);
 
             config.AddOpenBehavior(typeof(LoggingBehavior<,>));
             config.AddOpenBehavior(typeof(ValidationBehavior<,>));
+            config.AddOpenBehavior(typeof(Modules.Agents.Application.Authorization.ProjectPermissionBehavior<,>));
         });
 
         services.AddSingleton<AgentsModuleEventMapper>();
@@ -69,6 +102,8 @@ public static class DependencyInjection
     {
         services.AddScoped<IAgentRepository, AgentRepository>();
         services.AddScoped<IModelRepository, ModelRepository>();
+        services.AddScoped<IProjectReadModelRepository, ProjectReadModelRepository>();
+        services.AddScoped<IAgentExecutionQueueRepository, AgentExecutionQueueRepository>();
 
         return services;
     }
@@ -76,6 +111,9 @@ public static class DependencyInjection
     private static IServiceCollection AddModelProvider(this IServiceCollection services)
     {
         services.AddScoped<IAgentKernelFactory, SemanticKernelProvider>();
+        services.AddScoped<IBootstrapAgentService, BootstrapAgentService>();
+        services.AddScoped<IAgentScheduler>(sp =>
+            new QuartzAgentScheduler(sp.GetRequiredService<ISchedulerFactory>()));
         services.AddScoped<AgentOrchestrator>();
 
         return services;
