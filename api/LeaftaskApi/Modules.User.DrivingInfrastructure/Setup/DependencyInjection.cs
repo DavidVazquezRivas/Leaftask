@@ -1,5 +1,7 @@
 ﻿using BuildingBlocks.Application.Behaviors;
+using BuildingBlocks.DrivingInfrastructure.Jobs.Outbox;
 using BuildingBlocks.DrivingInfrastructure.Jobs.Quartz;
+using BuildingBlocks.DrivingInfrastructure.Tools;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -17,7 +19,7 @@ using Modules.Users.DrivenInfrastructure.Repositories;
 using Modules.Users.DrivenInfrastructure.Session.Jwt;
 using Modules.Users.DrivenInfrastructure.Session.OAuth;
 using Modules.Users.DrivingInfrastructure.Jobs;
-using BuildingBlocks.DrivingInfrastructure.Jobs.Outbox;
+using Modules.Users.DrivingInfrastructure.Tools;
 using Quartz;
 
 namespace Modules.Users.DrivingInfrastructure.Setup;
@@ -41,6 +43,8 @@ public static class DependencyInjection
         services.AddSeedingStrategy(isDevelopment);
 
         services.AddSessionServices(configuration);
+
+        services.AddAiTools();
 
         return services;
     }
@@ -125,6 +129,12 @@ public static class DependencyInjection
         services.AddScoped<IRefreshTokenExpirationPolicy, RefreshTokenExpirationPolicy>();
         services.AddScoped<IRefreshTokenFactory, RefreshTokenFactory>();
 
+        return services;
+    }
+
+    private static IServiceCollection AddAiTools(this IServiceCollection services)
+    {
+        services.AddTransient<IAiTool, UserManagementAiTool>();
         return services;
     }
 }

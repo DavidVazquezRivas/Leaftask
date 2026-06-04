@@ -20,7 +20,7 @@ internal static class MigrationDatabaseExtensions
             try
             {
                 await UsersModuleInitialization.ApplyMigrationsAsync(app.Services);
-                await OrganizationModuleInitialization.ApplyMigrationsAsync(app.Services);
+                await OrganizationsModuleInitialization.ApplyMigrationsAsync(app.Services);
                 await ProjectsModuleInitialization.ApplyMigrationsAsync(app.Services);
                 await WorkItemsModuleInitialization.ApplyMigrationsAsync(app.Services);
                 await ChatsModuleInitialization.ApplyMigrationsAsync(app.Services);
@@ -51,12 +51,16 @@ internal static class MigrationDatabaseExtensions
         while (current is not null)
         {
             if (current is SocketException)
+            {
                 return true;
+            }
 
             // PostgresException SqlState 57P03 = "the database system is starting up"
             string? sqlState = current.GetType().GetProperty("SqlState")?.GetValue(current) as string;
             if (sqlState is "57P03")
+            {
                 return true;
+            }
 
             current = current.InnerException;
         }

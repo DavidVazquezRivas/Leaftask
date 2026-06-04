@@ -1,5 +1,7 @@
 ﻿using BuildingBlocks.Application.Behaviors;
+using BuildingBlocks.DrivingInfrastructure.Jobs.Outbox;
 using BuildingBlocks.DrivingInfrastructure.Jobs.Quartz;
+using BuildingBlocks.DrivingInfrastructure.Tools;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -11,15 +13,12 @@ using Modules.Organizations.Application.Invitations.GetPending;
 using Modules.Organizations.Application.Management;
 using Modules.Organizations.Application.Management.Create;
 using Modules.Organizations.Application.Management.GetMyOrganizations;
-using Modules.Organizations.Application.Members.Delete;
 using Modules.Organizations.Application.Members.GetDistribution;
 using Modules.Organizations.Application.Members.GetMembers;
-using Modules.Organizations.Application.Members.UpdateRole;
 using Modules.Organizations.Application.Roles.Create;
 using Modules.Organizations.Application.Roles.GetMyPermissions;
 using Modules.Organizations.Application.Roles.GetPermissions;
 using Modules.Organizations.Application.Roles.GetRoles;
-using Modules.Organizations.Application.Roles.Patch;
 using Modules.Organizations.Domain.Repositories;
 using Modules.Organizations.DrivenInfrastructure.Persistence;
 using Modules.Organizations.DrivenInfrastructure.Persistence.Seeding;
@@ -28,8 +27,8 @@ using Modules.Organizations.DrivenInfrastructure.Repositories;
 using Modules.Organizations.DrivingInfrastructure.Jobs;
 using Modules.Organizations.DrivingInfrastructure.Services;
 using Modules.Organizations.DrivingInfrastructure.Subscribers;
+using Modules.Organizations.DrivingInfrastructure.Tools;
 using Modules.Organizations.Integration;
-using BuildingBlocks.DrivingInfrastructure.Jobs.Outbox;
 using Quartz;
 
 namespace Modules.Organizations.DrivingInfrastructure.Setup;
@@ -50,6 +49,8 @@ public static class DependencyInjection
         services.AddRepositories();
         services.AddQueryServices();
         services.AddSeedingStrategy(isDevelopment);
+
+        services.AddAiTools();
 
         return services;
     }
@@ -111,12 +112,15 @@ public static class DependencyInjection
     {
         services.AddScoped<IGetOrganizationDetailsQueryService, GetOrganizationDetailsQueryService>();
         services.AddScoped<IGetMyOrganizationsQueryService, GetMyOrganizationsQueryService>();
-        services.AddScoped<IGetPendingOrganizationInvitationsQueryService, GetPendingOrganizationInvitationsQueryService>();
+        services
+            .AddScoped<IGetPendingOrganizationInvitationsQueryService, GetPendingOrganizationInvitationsQueryService>();
         services.AddScoped<IGetOrganizationPermissionsQueryService, GetOrganizationPermissionsQueryService>();
         services.AddScoped<IGetMyOrganizationPermissionsQueryService, GetMyOrganizationPermissionsQueryService>();
         services.AddScoped<IGetOrganizationRoleDetailsQueryService, GetOrganizationRoleDetailsQueryService>();
         services.AddScoped<IGetOrganizationRolesQueryService, GetOrganizationRolesQueryService>();
-        services.AddScoped<IGetOrganizationMembersDistributionQueryService, GetOrganizationMembersDistributionQueryService>();
+        services
+            .AddScoped<IGetOrganizationMembersDistributionQueryService,
+                GetOrganizationMembersDistributionQueryService>();
         services.AddScoped<IGetOrganizationMembersQueryService, GetOrganizationMembersQueryService>();
 
         return services;
@@ -132,6 +136,15 @@ public static class DependencyInjection
         {
             services.AddScoped<IOrganizationSeederStrategy, ProductionOrganizationSeeder>();
         }
+
+        return services;
+    }
+
+    private static IServiceCollection AddAiTools(this IServiceCollection services)
+    {
+        services.AddTransient<IAiTool, OrganizationInvitationAiTool>();
+        services.AddTransient<IAiTool, OrganizationMembersAiTool>();
+        services.AddTransient<IAiTool, OrganizationRolesAiTool>();
 
         return services;
     }

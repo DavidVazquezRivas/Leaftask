@@ -1,31 +1,30 @@
 using BuildingBlocks.Application.Abstractions;
 using BuildingBlocks.Application.Behaviors;
 using BuildingBlocks.DrivenInfrastructure.Storage;
-using BuildingBlocks.DrivingInfrastructure.Jobs.Quartz;
 using BuildingBlocks.DrivingInfrastructure.Jobs.Outbox;
+using BuildingBlocks.DrivingInfrastructure.Jobs.Quartz;
+using BuildingBlocks.DrivingInfrastructure.Tools;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Minio;
-using Modules.WorkItems.DrivingInfrastructure.Jobs;
-using Quartz;
-using Modules.Projects.Integration;
 using Modules.WorkItems.Application.Authorization;
-using Modules.WorkItems.Application.Events;
-using Modules.WorkItems.Application.Projects.Create;
+using Modules.WorkItems.Application.Comments.List;
 using Modules.WorkItems.Application.Configuration.GetWorkItemStatuses;
 using Modules.WorkItems.Application.Configuration.GetWorkItemTypes;
+using Modules.WorkItems.Application.Events;
+using Modules.WorkItems.Application.Projects.Create;
 using Modules.WorkItems.Application.WorkItems.GetProjectWorkItems;
 using Modules.WorkItems.Application.WorkItems.GetWorkItemDetails;
-using Modules.WorkItems.Application.Comments.List;
 using Modules.WorkItems.Application.WorkLogs.List;
 using Modules.WorkItems.Domain.Repositories;
 using Modules.WorkItems.DrivenInfrastructure.Persistence;
 using Modules.WorkItems.DrivenInfrastructure.Queries;
 using Modules.WorkItems.DrivenInfrastructure.Repositories;
-using Modules.WorkItems.DrivingInfrastructure.Subscribers.Fields;
+using Modules.WorkItems.DrivingInfrastructure.Jobs;
 using Modules.WorkItems.DrivingInfrastructure.Subscribers.Projects;
-using Modules.WorkItems.DrivingInfrastructure.Subscribers.Users;
+using Modules.WorkItems.DrivingInfrastructure.Tools;
+using Quartz;
 
 namespace Modules.WorkItems.DrivingInfrastructure.Setup;
 
@@ -41,6 +40,7 @@ public static class DependencyInjection
         services.AddRepositories();
         services.AddQueryServices();
         services.AddFileStorage(configuration);
+        services.AddAiTools();
 
         return services;
     }
@@ -121,6 +121,17 @@ public static class DependencyInjection
             .WithSSL(minioOptions.UseSSL));
 
         services.AddSingleton<IFileStorage, MinioFileStorage>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddAiTools(this IServiceCollection services)
+    {
+        services.AddTransient<IAiTool, WorkItemAttachmentsAiTool>();
+        services.AddTransient<IAiTool, WorkItemCommentsAiTool>();
+        services.AddTransient<IAiTool, WorkItemConfigurationAiTool>();
+        services.AddTransient<IAiTool, WorkItemManagementAiTool>();
+        services.AddTransient<IAiTool, WorkItemTimeTrackingAiTool>();
 
         return services;
     }
