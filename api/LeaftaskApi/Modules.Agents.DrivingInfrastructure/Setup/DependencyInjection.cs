@@ -1,9 +1,18 @@
-﻿using System.Globalization;
+using BuildingBlocks.Application.Behaviors;
+using BuildingBlocks.DrivingInfrastructure.Jobs.Outbox;
+using BuildingBlocks.DrivingInfrastructure.Jobs.Quartz;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Modules.Agents.Application.Events;
+using Modules.Agents.Application.Kernel;
 using Modules.Agents.Application.Services;
-using Modules.Agents.DrivenInfrastructure.ModelProvider;
-using Modules.Agents.DrivenInfrastructure.ModelProvider.ChatCompletion;
+using Modules.Agents.Domain.Repositories;
+using Modules.Agents.DrivenInfrastructure.KernelFactory;
+using Modules.Agents.DrivenInfrastructure.Persistence;
+using Modules.Agents.DrivenInfrastructure.Repositories;
+using Modules.Agents.DrivingInfrastructure.Jobs;
+using Quartz;
 
 namespace Modules.Agents.DrivingInfrastructure.Setup;
 
@@ -13,29 +22,60 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddModelProvider(configuration);
+        services.AddDatabase(configuration);
+        services.AddJobs(configuration);
+        services.AddMessaging();
+        services.AddRepositories();
+        services.AddModelProvider();
 
         return services;
     }
 
-    private static IServiceCollection AddModelProvider(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddDatabase(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
-        string providerType =
-            configuration.GetSection("Modules:Agents:Provider").Get<string>()
-                ?.ToLower(CultureInfo.DefaultThreadCurrentCulture) ??
-            throw new InvalidOperationException("AI_PROVIDER environment variable is not set.");
+        services.AddDbContext<AgentsDbContext>(options =>
+            options.UseNpgsql(configuration.GetConnectionString("Database")));
 
-        switch (providerType)
+        return services;
+    }
+
+    private static IServiceCollection AddJobs(this IServiceCollection services, IConfiguration configuration)
+    {
+        OutboxOptions outboxOptions = configuration.GetSection("Modules:Agents:Outbox").Get<OutboxOptions>()
+                                      ?? new OutboxOptions();
+
+        services.AddQuartz(q => q.AddOutboxJob<AgentsOutboxJob>(outboxOptions));
+        return services;
+    }
+
+    private static IServiceCollection AddMessaging(this IServiceCollection services)
+    {
+        services.AddMediatR(config =>
         {
-            case "openai":
-                services.AddSingleton<IChatCompletionConfigurator, OpenAiConfigurator>();
-                break;
-            default:
-                throw new InvalidOperationException(
-                    $"[AI_BOOTSTRAP] Unsupported AI provider type configured in 'Modules:Agents:Provider': '{providerType}'. Supported values are 'openai' or 'anthropic'.");
-        }
+            config.RegisterServicesFromAssembly(typeof(AgentOrchestrator).Assembly);
 
-        services.AddSingleton<SemanticKernelProvider>();
+            config.AddOpenBehavior(typeof(LoggingBehavior<,>));
+            config.AddOpenBehavior(typeof(ValidationBehavior<,>));
+        });
+
+        services.AddSingleton<AgentsModuleEventMapper>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddRepositories(this IServiceCollection services)
+    {
+        services.AddScoped<IAgentRepository, AgentRepository>();
+        services.AddScoped<IModelRepository, ModelRepository>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddModelProvider(this IServiceCollection services)
+    {
+        services.AddScoped<IAgentKernelFactory, SemanticKernelProvider>();
         services.AddScoped<AgentOrchestrator>();
 
         return services;
