@@ -17,6 +17,7 @@
     <ProjectReference Include="..\Modules.Agents.Integration\Modules.Agents.Integration.csproj" />
     <ProjectReference Include="..\Modules.Projects.Integration\Modules.Projects.Integration.csproj" />
     <ProjectReference Include="..\Modules.WorkItems.Integration\Modules.WorkItems.Integration.csproj" />
+    <ProjectReference Include="..\Modules.Chats.Integration\Modules.Chats.Integration.csproj" />
   </ItemGroup>
 
 </Project>

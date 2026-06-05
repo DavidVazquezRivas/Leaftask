@@ -48,8 +48,8 @@ public class ListChatsQueryHandlerTests
         ChatLastMessageDto lastMessage = new("Hello!", DateTime.UtcNow, "delivered");
         List<ChatDto> chats =
         [
-            new(Guid.NewGuid(), "Alice Doe", lastMessage, "person", null),
-            new(Guid.NewGuid(), "AI Assistant", new ChatLastMessageDto("Hi", DateTime.UtcNow.AddMinutes(-5), "read"), "agent", null)
+            new(Guid.NewGuid(), "Alice Doe", lastMessage, "person", null, null, 0),
+            new(Guid.NewGuid(), "AI Assistant", new ChatLastMessageDto("Hi", DateTime.UtcNow.AddMinutes(-5), "read"), "agent", null, null, 0)
         ];
 
         _queryServiceMock.ListChatsAsync(userId, Arg.Any<CancellationToken>())

@@ -17,6 +17,7 @@ using Modules.Agents.DrivenInfrastructure.Persistence;
 using Modules.Agents.DrivenInfrastructure.Repositories;
 using Modules.Agents.DrivingInfrastructure.Jobs;
 using Modules.Agents.DrivingInfrastructure.Scheduling;
+using Modules.Agents.DrivingInfrastructure.Subscribers.Chats;
 using Modules.Agents.DrivingInfrastructure.Subscribers.Projects;
 using Modules.Agents.DrivingInfrastructure.Subscribers.WorkItems;
 using Quartz;
@@ -87,6 +88,7 @@ public static class DependencyInjection
             config.RegisterServicesFromAssembly(typeof(CreateProjectReadModelOnProjectCreatedCommand).Assembly);
             config.RegisterServicesFromAssembly(typeof(ProjectCreatedIntegrationEventHandler).Assembly);
             config.RegisterServicesFromAssembly(typeof(UsersMentionedInCommentIntegrationEventHandler).Assembly);
+            config.RegisterServicesFromAssembly(typeof(ChatMessageSentIntegrationEventHandler).Assembly);
 
             config.AddOpenBehavior(typeof(LoggingBehavior<,>));
             config.AddOpenBehavior(typeof(ValidationBehavior<,>));

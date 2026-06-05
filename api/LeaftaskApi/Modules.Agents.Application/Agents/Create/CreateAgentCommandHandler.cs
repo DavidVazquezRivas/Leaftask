@@ -20,9 +20,14 @@ public sealed class CreateAgentCommandHandler(
 {
     private static readonly IReadOnlyList<string> AvailableEventTypes =
     [
-        AgentEventTypes.ProjectCreated,
-        AgentEventTypes.ProjectDeleted,
-        AgentEventTypes.WorkItemMention
+        AgentEventTypes.WorkItemCreated,
+        AgentEventTypes.WorkItemStatusChanged,
+        AgentEventTypes.WorkItemAssigneeChanged,
+        AgentEventTypes.WorkItemDeleted,
+        AgentEventTypes.WorkItemProgressUpdated,
+        AgentEventTypes.WorkItemCommentAdded,
+        AgentEventTypes.WorkItemMention,
+        AgentEventTypes.ChatMessageSent,
     ];
 
     public async Task<Result<AgentDto>> Handle(CreateAgentCommand command, CancellationToken cancellationToken)

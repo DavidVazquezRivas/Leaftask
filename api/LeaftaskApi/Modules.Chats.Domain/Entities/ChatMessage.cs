@@ -40,7 +40,7 @@ public sealed class ChatMessage : Entity
         ChatParticipant sender)
     {
         ChatMessage message = new(id, content, createdAt, status, chat, sender);
-        message.Raise(new MessageCreatedDomainEvent(id, sender.Id, content));
+        message.Raise(new MessageCreatedDomainEvent(id, chat.Id, sender.Id, content));
         return message;
     }
 }
