@@ -12,7 +12,7 @@ namespace Modules.Projects.Application.Management.GetProject;
 
 public sealed class GetProjectQueryHandler(
     IProjectRepository projectRepository,
-    IOrganizationPermissionChecker organizationPermissionChecker,
+    IProjectAccessChecker accessChecker,
     IUserContext userContext)
     : IQueryHandler<GetProjectQuery, Result<ProjectResponse>>
 {
@@ -20,27 +20,12 @@ public sealed class GetProjectQueryHandler(
     {
         Project? project = await projectRepository.GetByIdAsync(request.ProjectId, cancellationToken);
         if (project is null)
-        {
             return Result.Failure<ProjectResponse>(ProjectErrors.ProjectNotFound);
-        }
 
-        bool canAccess = await CanAccessAsync(project, userContext.UserId, cancellationToken);
-        if (!canAccess)
-        {
+        if (!await accessChecker.CanAccessAsync(project, userContext.UserId, cancellationToken))
             return Result.Failure<ProjectResponse>(ProjectErrors.AccessDenied);
-        }
 
         return Result.Success(ToResponse(project));
-    }
-
-    private async Task<bool> CanAccessAsync(Project project, Guid userId, CancellationToken cancellationToken)
-    {
-        if (project.OwnerType == OwnerType.Organization)
-        {
-            return await organizationPermissionChecker.IsMemberAsync(project.OwnerId, userId, cancellationToken);
-        }
-
-        return project.OwnerId == userId;
     }
 
     private static ProjectResponse ToResponse(Project project)

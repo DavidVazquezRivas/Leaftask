@@ -113,6 +113,7 @@ public static class DependencyInjection
         services.AddScoped<IUserReadModelRepository, UserReadModelRepository>();
         services.AddScoped<IOrganizationReadModelRepository, OrganizationReadModelRepository>();
         services.AddScoped<IOrganizationPermissionChecker, OrganizationPermissionChecker>();
+        services.AddScoped<IProjectAccessChecker, ProjectAccessChecker>();
         services.AddScoped<IProjectPermissionChecker, ProjectPermissionChecker>();
         services.AddScoped<IProjectPermissionService, ProjectPermissionService>();
         services.AddScoped<IProjectRoleRepository, ProjectRoleRepository>();

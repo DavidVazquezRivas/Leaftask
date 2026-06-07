@@ -14,71 +14,37 @@ namespace Modules.Projects.Application.UnitTests.Management.GetProject;
 
 public class GetProjectQueryHandlerTests
 {
-    private readonly GetProjectQueryHandler _handler;
-    private readonly IProjectRepository _projectRepositoryMock;
-    private readonly IOrganizationPermissionChecker _permissionCheckerMock;
-    private readonly IUserContext _userContextMock;
+    private readonly GetProjectQueryHandler handler;
+    private readonly IProjectRepository projectRepository;
+    private readonly IProjectAccessChecker accessChecker;
+    private readonly IUserContext userContext;
 
     public GetProjectQueryHandlerTests()
     {
-        _projectRepositoryMock = Substitute.For<IProjectRepository>();
-        _permissionCheckerMock = Substitute.For<IOrganizationPermissionChecker>();
-        _userContextMock = Substitute.For<IUserContext>();
+        projectRepository = Substitute.For<IProjectRepository>();
+        accessChecker = Substitute.For<IProjectAccessChecker>();
+        userContext = Substitute.For<IUserContext>();
 
-        _handler = new GetProjectQueryHandler(
-            _projectRepositoryMock,
-            _permissionCheckerMock,
-            _userContextMock);
+        handler = new GetProjectQueryHandler(projectRepository, accessChecker, userContext);
     }
 
     [Fact]
-    public async Task Handle_Should_ReturnSuccess_When_PersonalProjectAndUserIsOwner()
+    public async Task Handle_Should_ReturnSuccess_When_AccessCheckerAllows()
     {
         // Arrange
         Guid userId = Guid.NewGuid();
-        _userContextMock.UserId.Returns(userId);
-
+        userContext.UserId.Returns(userId);
         Project project = ProjectTestBuilder.AProject().OwnedByUser(userId).Build();
 
-        _projectRepositoryMock.GetByIdAsync(project.Id, Arg.Any<CancellationToken>())
-            .Returns(project);
+        projectRepository.GetByIdAsync(project.Id, Arg.Any<CancellationToken>()).Returns(project);
+        accessChecker.CanAccessAsync(project, userId, Arg.Any<CancellationToken>()).Returns(true);
 
         // Act
-        Result<ProjectResponse> result = await _handler.Handle(new GetProjectQuery(project.Id), CancellationToken.None);
+        Result<ProjectResponse> result = await handler.Handle(new GetProjectQuery(project.Id), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Id.Should().Be(project.Id);
-        result.Value.Name.Should().Be(project.Name);
-        result.Value.OrganizationId.Should().BeNull();
-
-        await _permissionCheckerMock.DidNotReceive()
-            .IsMemberAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_Should_ReturnSuccess_When_OrganizationProjectAndUserIsMember()
-    {
-        // Arrange
-        Guid userId = Guid.NewGuid();
-        Guid organizationId = Guid.NewGuid();
-        _userContextMock.UserId.Returns(userId);
-
-        Project project = ProjectTestBuilder.AProject().OwnedByOrganization(organizationId).Build();
-
-        _projectRepositoryMock.GetByIdAsync(project.Id, Arg.Any<CancellationToken>())
-            .Returns(project);
-
-        _permissionCheckerMock.IsMemberAsync(organizationId, userId, Arg.Any<CancellationToken>())
-            .Returns(true);
-
-        // Act
-        Result<ProjectResponse> result = await _handler.Handle(new GetProjectQuery(project.Id), CancellationToken.None);
-
-        // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Id.Should().Be(project.Id);
-        result.Value.OrganizationId.Should().Be(organizationId);
     }
 
     [Fact]
@@ -86,13 +52,11 @@ public class GetProjectQueryHandlerTests
     {
         // Arrange
         Guid projectId = Guid.NewGuid();
-        _userContextMock.UserId.Returns(Guid.NewGuid());
-
-        _projectRepositoryMock.GetByIdAsync(projectId, Arg.Any<CancellationToken>())
-            .Returns((Project?)null);
+        userContext.UserId.Returns(Guid.NewGuid());
+        projectRepository.GetByIdAsync(projectId, Arg.Any<CancellationToken>()).Returns((Project?)null);
 
         // Act
-        Result<ProjectResponse> result = await _handler.Handle(new GetProjectQuery(projectId), CancellationToken.None);
+        Result<ProjectResponse> result = await handler.Handle(new GetProjectQuery(projectId), CancellationToken.None);
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -100,42 +64,18 @@ public class GetProjectQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_Should_ReturnFailure_When_PersonalProjectAndUserIsNotOwner()
-    {
-        // Arrange
-        _userContextMock.UserId.Returns(Guid.NewGuid());
-
-        Project project = ProjectTestBuilder.AProject().OwnedByUser(Guid.NewGuid()).Build();
-
-        _projectRepositoryMock.GetByIdAsync(project.Id, Arg.Any<CancellationToken>())
-            .Returns(project);
-
-        // Act
-        Result<ProjectResponse> result = await _handler.Handle(new GetProjectQuery(project.Id), CancellationToken.None);
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        result.Error.Should().Be(ProjectErrors.AccessDenied);
-    }
-
-    [Fact]
-    public async Task Handle_Should_ReturnFailure_When_OrganizationProjectAndUserIsNotMember()
+    public async Task Handle_Should_ReturnFailure_When_AccessCheckerDenies()
     {
         // Arrange
         Guid userId = Guid.NewGuid();
-        Guid organizationId = Guid.NewGuid();
-        _userContextMock.UserId.Returns(userId);
+        userContext.UserId.Returns(userId);
+        Project project = ProjectTestBuilder.AProject().OwnedByUser(Guid.NewGuid()).Build();
 
-        Project project = ProjectTestBuilder.AProject().OwnedByOrganization(organizationId).Build();
-
-        _projectRepositoryMock.GetByIdAsync(project.Id, Arg.Any<CancellationToken>())
-            .Returns(project);
-
-        _permissionCheckerMock.IsMemberAsync(organizationId, userId, Arg.Any<CancellationToken>())
-            .Returns(false);
+        projectRepository.GetByIdAsync(project.Id, Arg.Any<CancellationToken>()).Returns(project);
+        accessChecker.CanAccessAsync(project, userId, Arg.Any<CancellationToken>()).Returns(false);
 
         // Act
-        Result<ProjectResponse> result = await _handler.Handle(new GetProjectQuery(project.Id), CancellationToken.None);
+        Result<ProjectResponse> result = await handler.Handle(new GetProjectQuery(project.Id), CancellationToken.None);
 
         // Assert
         result.IsFailure.Should().BeTrue();
