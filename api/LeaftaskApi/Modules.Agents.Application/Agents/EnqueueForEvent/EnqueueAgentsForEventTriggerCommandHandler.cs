@@ -1,13 +1,13 @@
 using BuildingBlocks.Application.Commands;
 using Modules.Agents.Domain.Entities;
-using Modules.Agents.Domain.Entities.Queue;
+using Modules.Agents.Domain.Entities.Execution;
 using Modules.Agents.Domain.Repositories;
 
 namespace Modules.Agents.Application.Agents.EnqueueForEvent;
 
 public sealed class EnqueueAgentsForEventTriggerCommandHandler(
     IAgentRepository agentRepository,
-    IAgentExecutionQueueRepository queueRepository)
+    IAgentExecutionRepository executionRepository)
     : ICommandHandler<EnqueueAgentsForEventTriggerCommand>
 {
     public async Task Handle(EnqueueAgentsForEventTriggerCommand command, CancellationToken cancellationToken)
@@ -21,17 +21,17 @@ public sealed class EnqueueAgentsForEventTriggerCommandHandler(
 
         foreach (Agent agent in agents)
         {
-            AgentExecutionQueue entry = new(
+            AgentExecution entry = new(
                 Guid.NewGuid(),
                 command.Payload,
-                QueueStatus.Pending,
+                ExecutionStatus.Pending,
                 now,
                 now,
                 agent);
 
-            await queueRepository.AddAsync(entry, cancellationToken);
+            await executionRepository.AddAsync(entry, cancellationToken);
         }
 
-        await queueRepository.SaveChangesAsync(cancellationToken);
+        await executionRepository.SaveChangesAsync(cancellationToken);
     }
 }

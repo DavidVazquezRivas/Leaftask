@@ -2,6 +2,7 @@ using System.Text.Json;
 using BuildingBlocks.DrivingInfrastructure.Events;
 using MediatR;
 using Modules.Agents.Application.Agents.EnqueueForEvent;
+using Modules.Agents.Application.Agents.Resume;
 using Modules.Agents.Domain;
 using Modules.Agents.DrivenInfrastructure.Persistence;
 using Modules.WorkItems.Integration;
@@ -23,6 +24,13 @@ public sealed class WorkItemCommentAddedIntegrationEventHandler(
         await sender.Send(
             new EnqueueAgentsForEventTriggerCommand(
                 AgentEventTypes.WorkItemCommentAdded,
+                JsonSerializer.Serialize(notification)),
+            cancellationToken);
+
+        await sender.Send(
+            new TryResumeAgentExecutionsCommand(
+                AgentEventTypes.WorkItemCommentAdded,
+                notification.ProjectId.ToString(),
                 JsonSerializer.Serialize(notification)),
             cancellationToken);
     }

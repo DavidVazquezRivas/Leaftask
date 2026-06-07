@@ -23,7 +23,8 @@ public sealed class AgentManagementController : ApiBaseController
                 request.ProjectId ?? Guid.Empty,
                 request.Name,
                 request.Instructions,
-                Guid.TryParse(request.TemplateId, out Guid tid) ? tid : null),
+                Guid.TryParse(request.TemplateId, out Guid tid) ? tid : null,
+                request.RoleId ?? Guid.Empty),
             cancellationToken);
 
         return HandleResult(result, StatusCodes.Status201Created);

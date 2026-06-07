@@ -4,4 +4,5 @@ public sealed record CreateAgentRequest(
     Guid? ProjectId,
     string Name,
     string Instructions,
-    string? TemplateId);
+    string? TemplateId,
+    Guid? RoleId);

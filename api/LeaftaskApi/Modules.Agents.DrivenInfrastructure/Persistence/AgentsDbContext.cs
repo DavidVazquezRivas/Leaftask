@@ -5,8 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Modules.Agents.Application.Events;
 using Modules.Agents.Domain.Entities;
 using Modules.Agents.Domain.Entities.AgentTriggers;
+using Modules.Agents.Domain.Entities.Execution;
 using Modules.Agents.Domain.Entities.Model;
-using Modules.Agents.Domain.Entities.Queue;
 
 namespace Modules.Agents.DrivenInfrastructure.Persistence;
 
@@ -20,7 +20,9 @@ public sealed class AgentsDbContext(
     public DbSet<AgentTemplate> AgentTemplates { get; set; }
     public DbSet<AgentEventTrigger> AgentEventTriggers { get; set; }
     public DbSet<AgentTimeTrigger> AgentTimeTriggers { get; set; }
-    public DbSet<AgentExecutionQueue> AgentExecutionQueues { get; set; }
+    public DbSet<AgentExecution> AgentExecutions { get; set; }
+    public DbSet<AgentExecutionMessage> AgentExecutionMessages { get; set; }
+    public DbSet<AgentExecutionPendingEvent> AgentExecutionPendingEvents { get; set; }
     public DbSet<ModelProvider> ModelProviders { get; set; }
     public DbSet<Model> Models { get; set; }
     public DbSet<ModelConfig> ModelConfigs { get; set; }

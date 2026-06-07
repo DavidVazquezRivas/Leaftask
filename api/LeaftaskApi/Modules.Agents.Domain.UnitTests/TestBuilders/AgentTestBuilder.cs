@@ -9,6 +9,7 @@ public sealed class AgentTestBuilder
 {
     private Guid _id = Guid.NewGuid();
     private Guid _projectId = Guid.NewGuid();
+    private Guid _roleId = Guid.NewGuid();
     private string _name = "Test Agent";
     private string _instructions = "Monitor overdue tasks daily";
     private string _systemPrompt = "You are a helpful project management assistant";
@@ -23,6 +24,7 @@ public sealed class AgentTestBuilder
 
     public AgentTestBuilder WithId(Guid id) { _id = id; return this; }
     public AgentTestBuilder WithProjectId(Guid projectId) { _projectId = projectId; return this; }
+    public AgentTestBuilder WithRoleId(Guid roleId) { _roleId = roleId; return this; }
     public AgentTestBuilder WithName(string name) { _name = name; return this; }
     public AgentTestBuilder WithInstructions(string instructions) { _instructions = instructions; return this; }
     public AgentTestBuilder WithSystemPrompt(string systemPrompt) { _systemPrompt = systemPrompt; return this; }
@@ -56,6 +58,7 @@ public sealed class AgentTestBuilder
             modelConfig,
             _templateId,
             _createdAt,
+            _roleId,
             _eventTriggers,
             _timeTriggers);
     }

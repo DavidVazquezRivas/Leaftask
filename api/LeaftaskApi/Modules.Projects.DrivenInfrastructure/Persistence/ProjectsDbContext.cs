@@ -7,6 +7,7 @@ using Modules.Projects.Domain.Entities;
 using Modules.Projects.Domain.Entities.Field;
 using Modules.Projects.Domain.Entities.Invitation;
 using Modules.Projects.Domain.Entities.Member;
+using AgentReadModel = Modules.Projects.Domain.Entities.Member.AgentReadModel;
 using Modules.Projects.Domain.Entities.Owner;
 using Modules.Projects.Domain.Entities.Role;
 
@@ -31,6 +32,7 @@ public sealed class ProjectsDbContext(
     public DbSet<WorkItemTypeReadModel> WorkItemTypeReadModels { get; set; }
     public DbSet<UserReadModel> UserReadModels { get; set; }
     public DbSet<OrganizationReadModel> OrganizationReadModels { get; set; }
+    public DbSet<AgentReadModel> AgentReadModels { get; set; }
     public DbSet<InboxMessage> InboxMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

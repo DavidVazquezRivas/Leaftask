@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BuildingBlocks.Application\BuildingBlocks.Application.csproj" />
     <ProjectReference Include="..\Modules.Agents.Domain\Modules.Agents.Domain.csproj" />
+    <ProjectReference Include="..\Modules.Agents.Integration\Modules.Agents.Integration.csproj" />
     <ProjectReference Include="..\Modules.Projects.Integration\Modules.Projects.Integration.csproj" />
   </ItemGroup>
 

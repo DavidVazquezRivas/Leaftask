@@ -73,6 +73,7 @@ public sealed class CreateAgentCommandHandler(
             modelConfig,
             command.TemplateId,
             now,
+            command.RoleId,
             bootstrapResult.EventTriggers.Select(e => (e.EventType, e.UserPrompt)),
             bootstrapResult.TimeTriggers.Select(t => (t.Name, t.CronExpression, t.TimeZone)));
 

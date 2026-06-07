@@ -9,4 +9,5 @@ public sealed record CreateAgentCommand(
     Guid ProjectId,
     string Name,
     string Instructions,
-    Guid? TemplateId) : ICommand<Result<AgentDto>>, IProjectPermissionRequest;
+    Guid? TemplateId,
+    Guid RoleId) : ICommand<Result<AgentDto>>, IProjectPermissionRequest;

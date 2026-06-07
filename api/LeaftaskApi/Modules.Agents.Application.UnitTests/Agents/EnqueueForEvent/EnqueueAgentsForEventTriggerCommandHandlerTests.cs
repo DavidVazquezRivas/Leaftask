@@ -2,7 +2,7 @@ using FluentAssertions;
 using Modules.Agents.Application.Agents.EnqueueForEvent;
 using Modules.Agents.Domain;
 using Modules.Agents.Domain.Entities;
-using Modules.Agents.Domain.Entities.Queue;
+using Modules.Agents.Domain.Entities.Execution;
 using Modules.Agents.Domain.Repositories;
 using Modules.Agents.Domain.UnitTests.TestBuilders;
 using NSubstitute;
@@ -13,13 +13,13 @@ public class EnqueueAgentsForEventTriggerCommandHandlerTests
 {
     private readonly EnqueueAgentsForEventTriggerCommandHandler _handler;
     private readonly IAgentRepository _agentRepositoryMock;
-    private readonly IAgentExecutionQueueRepository _queueRepositoryMock;
+    private readonly IAgentExecutionRepository _executionRepositoryMock;
 
     public EnqueueAgentsForEventTriggerCommandHandlerTests()
     {
         _agentRepositoryMock = Substitute.For<IAgentRepository>();
-        _queueRepositoryMock = Substitute.For<IAgentExecutionQueueRepository>();
-        _handler = new EnqueueAgentsForEventTriggerCommandHandler(_agentRepositoryMock, _queueRepositoryMock);
+        _executionRepositoryMock = Substitute.For<IAgentExecutionRepository>();
+        _handler = new EnqueueAgentsForEventTriggerCommandHandler(_agentRepositoryMock, _executionRepositoryMock);
     }
 
     [Fact]
@@ -43,8 +43,8 @@ public class EnqueueAgentsForEventTriggerCommandHandlerTests
         await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        await _queueRepositoryMock.Received(2).AddAsync(Arg.Any<AgentExecutionQueue>(), Arg.Any<CancellationToken>());
-        await _queueRepositoryMock.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _executionRepositoryMock.Received(2).AddAsync(Arg.Any<AgentExecution>(), Arg.Any<CancellationToken>());
+        await _executionRepositoryMock.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -60,8 +60,8 @@ public class EnqueueAgentsForEventTriggerCommandHandlerTests
         await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        await _queueRepositoryMock.DidNotReceive().AddAsync(Arg.Any<AgentExecutionQueue>(), Arg.Any<CancellationToken>());
-        await _queueRepositoryMock.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _executionRepositoryMock.DidNotReceive().AddAsync(Arg.Any<AgentExecution>(), Arg.Any<CancellationToken>());
+        await _executionRepositoryMock.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -75,9 +75,9 @@ public class EnqueueAgentsForEventTriggerCommandHandlerTests
         _agentRepositoryMock.GetByEventTriggerAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns(agents);
 
-        AgentExecutionQueue? capturedEntry = null;
-        await _queueRepositoryMock.AddAsync(
-            Arg.Do<AgentExecutionQueue>(entry => capturedEntry = entry),
+        AgentExecution? capturedEntry = null;
+        await _executionRepositoryMock.AddAsync(
+            Arg.Do<AgentExecution>(entry => capturedEntry = entry),
             Arg.Any<CancellationToken>());
 
         // Act
@@ -85,7 +85,7 @@ public class EnqueueAgentsForEventTriggerCommandHandlerTests
 
         // Assert
         capturedEntry.Should().NotBeNull();
-        capturedEntry!.Status.Should().Be(QueueStatus.Pending);
+        capturedEntry!.Status.Should().Be(ExecutionStatus.Pending);
         capturedEntry.Payload.Should().Be("{\"chatId\":\"abc\"}");
         capturedEntry.Id.Should().NotBe(Guid.Empty);
     }
@@ -105,7 +105,7 @@ public class EnqueueAgentsForEventTriggerCommandHandlerTests
         await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        await _queueRepositoryMock.Received(1).AddAsync(Arg.Any<AgentExecutionQueue>(), Arg.Any<CancellationToken>());
-        await _queueRepositoryMock.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _executionRepositoryMock.Received(1).AddAsync(Arg.Any<AgentExecution>(), Arg.Any<CancellationToken>());
+        await _executionRepositoryMock.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 }

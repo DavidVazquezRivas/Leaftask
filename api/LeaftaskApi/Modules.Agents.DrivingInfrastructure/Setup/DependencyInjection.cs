@@ -1,9 +1,13 @@
+using BuildingBlocks.Application.Abstractions;
 using BuildingBlocks.Application.Behaviors;
 using BuildingBlocks.DrivingInfrastructure.Jobs.Outbox;
 using BuildingBlocks.DrivingInfrastructure.Jobs.Quartz;
+using BuildingBlocks.DrivingInfrastructure.Tools;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Modules.Agents.DrivingInfrastructure.Authentication;
 using Modules.Agents.Application.Agents;
 using Modules.Agents.Application.Bootstrap;
 using Modules.Agents.Application.Events;
@@ -20,6 +24,7 @@ using Modules.Agents.DrivingInfrastructure.Scheduling;
 using Modules.Agents.DrivingInfrastructure.Subscribers.Chats;
 using Modules.Agents.DrivingInfrastructure.Subscribers.Projects;
 using Modules.Agents.DrivingInfrastructure.Subscribers.WorkItems;
+using Modules.Agents.DrivingInfrastructure.Tools;
 using Quartz;
 
 namespace Modules.Agents.DrivingInfrastructure.Setup;
@@ -105,7 +110,9 @@ public static class DependencyInjection
         services.AddScoped<IAgentRepository, AgentRepository>();
         services.AddScoped<IModelRepository, ModelRepository>();
         services.AddScoped<IProjectReadModelRepository, ProjectReadModelRepository>();
-        services.AddScoped<IAgentExecutionQueueRepository, AgentExecutionQueueRepository>();
+        services.AddScoped<IAgentExecutionRepository, AgentExecutionRepository>();
+        services.AddScoped<IAgentExecutionMessageRepository, AgentExecutionMessageRepository>();
+        services.AddScoped<IAgentExecutionPendingEventRepository, AgentExecutionPendingEventRepository>();
 
         return services;
     }
@@ -116,7 +123,12 @@ public static class DependencyInjection
         services.AddScoped<IBootstrapAgentService, BootstrapAgentService>();
         services.AddScoped<IAgentScheduler>(sp =>
             new QuartzAgentScheduler(sp.GetRequiredService<ISchedulerFactory>()));
+        services.AddScoped<AgentExecutionContext>();
+        services.AddScoped<AgentSuspensionContext>();
+        services.AddScoped<IAiTool, SuspendWorkflowTool>();
         services.AddScoped<AgentOrchestrator>();
+        services.AddHttpContextAccessor();
+        services.AddScoped<IUserContext, AgentAwareUserContext>();
 
         return services;
     }

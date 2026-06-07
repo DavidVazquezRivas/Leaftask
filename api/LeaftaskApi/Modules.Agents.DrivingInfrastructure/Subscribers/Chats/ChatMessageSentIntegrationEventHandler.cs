@@ -2,6 +2,7 @@ using System.Text.Json;
 using BuildingBlocks.DrivingInfrastructure.Events;
 using MediatR;
 using Modules.Agents.Application.Agents.EnqueueForEvent;
+using Modules.Agents.Application.Agents.Resume;
 using Modules.Agents.Domain;
 using Modules.Agents.DrivenInfrastructure.Persistence;
 using Modules.Chats.Integration;
@@ -24,6 +25,13 @@ public sealed class ChatMessageSentIntegrationEventHandler(
             new EnqueueAgentsForEventTriggerCommand(
                 AgentEventTypes.ChatMessageSent,
                 JsonSerializer.Serialize(notification)),
+            cancellationToken);
+
+        await sender.Send(
+            new TryResumeAgentExecutionsCommand(
+                AgentEventTypes.ChatMessageSent,
+                notification.ChatId.ToString(),
+                notification.Content),
             cancellationToken);
     }
 

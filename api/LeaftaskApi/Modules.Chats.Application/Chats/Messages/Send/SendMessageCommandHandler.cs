@@ -13,6 +13,7 @@ public sealed class SendMessageCommandHandler(
     IChatRepository chatRepository,
     IChatMessageRepository messageRepository,
     IUserReadModelRepository userReadModelRepository,
+    IAgentReadModelRepository agentReadModelRepository,
     IUserContext userContext) : ICommandHandler<SendMessageCommand, Result<ChatMessageDto>>
 {
     public async Task<Result<ChatMessageDto>> Handle(SendMessageCommand command, CancellationToken cancellationToken)
@@ -38,7 +39,9 @@ public sealed class SendMessageCommandHandler(
 
         if (senderParticipant.ParticipantType == ParticipantType.Agent)
         {
-            senderName = "AI Assistant";
+            AgentReadModel? agentReadModel = await agentReadModelRepository.GetByIdAsync(
+                senderParticipant.ParticipantId, cancellationToken);
+            senderName = agentReadModel?.Name ?? "AI Assistant";
             senderType = "agent";
         }
         else

@@ -17,6 +17,7 @@ public class SendMessageCommandHandlerTests
     private readonly IChatRepository _chatRepositoryMock;
     private readonly IChatMessageRepository _messageRepositoryMock;
     private readonly IUserReadModelRepository _userReadModelRepositoryMock;
+    private readonly IAgentReadModelRepository _agentReadModelRepositoryMock;
     private readonly IUserContext _userContextMock;
 
     public SendMessageCommandHandlerTests()
@@ -24,12 +25,14 @@ public class SendMessageCommandHandlerTests
         _chatRepositoryMock = Substitute.For<IChatRepository>();
         _messageRepositoryMock = Substitute.For<IChatMessageRepository>();
         _userReadModelRepositoryMock = Substitute.For<IUserReadModelRepository>();
+        _agentReadModelRepositoryMock = Substitute.For<IAgentReadModelRepository>();
         _userContextMock = Substitute.For<IUserContext>();
 
         _handler = new SendMessageCommandHandler(
             _chatRepositoryMock,
             _messageRepositoryMock,
             _userReadModelRepositoryMock,
+            _agentReadModelRepositoryMock,
             _userContextMock);
     }
 

@@ -14,6 +14,7 @@ using Modules.Chats.DrivenInfrastructure.Persistence;
 using Modules.Chats.DrivenInfrastructure.Queries;
 using Modules.Chats.DrivenInfrastructure.Repositories;
 using Modules.Chats.DrivingInfrastructure.Jobs;
+using Modules.Chats.DrivingInfrastructure.Subscribers.Agents;
 using Modules.Chats.DrivingInfrastructure.Subscribers.Users;
 using Quartz;
 
@@ -58,6 +59,7 @@ public static class DependencyInjection
         {
             config.RegisterServicesFromAssembly(typeof(CreateUserReadModelOnUserCreatedCommand).Assembly);
             config.RegisterServicesFromAssembly(typeof(UserCreatedIntegrationEventHandler).Assembly);
+            config.RegisterServicesFromAssembly(typeof(AgentCreatedIntegrationEventHandler).Assembly);
 
             config.AddOpenBehavior(typeof(LoggingBehavior<,>));
             config.AddOpenBehavior(typeof(ValidationBehavior<,>));
@@ -73,6 +75,7 @@ public static class DependencyInjection
         services.AddScoped<IChatRepository, ChatRepository>();
         services.AddScoped<IUserReadModelRepository, UserReadModelRepository>();
         services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
+        services.AddScoped<IAgentReadModelRepository, AgentReadModelRepository>();
 
         return services;
     }

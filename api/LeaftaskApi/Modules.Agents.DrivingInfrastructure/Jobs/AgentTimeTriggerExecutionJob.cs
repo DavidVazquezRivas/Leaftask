@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Modules.Agents.Domain.Entities.Queue;
+using Modules.Agents.Domain.Entities.Execution;
 using Modules.Agents.DrivenInfrastructure.Persistence;
 using Quartz;
 
@@ -37,8 +37,8 @@ public sealed class AgentTimeTriggerExecutionJob(
         }
 
         DateTime now = DateTime.UtcNow;
-        AgentExecutionQueue entry = new(Guid.NewGuid(), "{}", QueueStatus.Pending, now, now, agent);
-        await dbContext.AgentExecutionQueues.AddAsync(entry, context.CancellationToken);
+        AgentExecution entry = new(Guid.NewGuid(), "{}", ExecutionStatus.Pending, now, now, agent);
+        await dbContext.AgentExecutions.AddAsync(entry, context.CancellationToken);
         await dbContext.SaveChangesAsync(context.CancellationToken);
 
         logger.LogInformation("Enqueued time-triggered execution for agent {AgentId} (trigger {TriggerId})",

@@ -17,6 +17,7 @@
     <ProjectReference Include="..\BuildingBlocks.DrivingInfrastructure\BuildingBlocks.DrivingInfrastructure.csproj" />
     <ProjectReference Include="..\Modules.Chats.DrivenInfrastructure\Modules.Chats.DrivenInfrastructure.csproj" />
     <ProjectReference Include="..\Modules.User.Integration\Modules.Users.Integration.csproj" />
+    <ProjectReference Include="..\Modules.Agents.Integration\Modules.Agents.Integration.csproj" />
   </ItemGroup>
 
 </Project>

@@ -19,6 +19,7 @@ using Modules.Projects.Application.Organizations.Create;
 using Modules.Projects.Application.Organizations.Delete;
 using Modules.Projects.Application.Permissions.GetPermissions;
 using Modules.Projects.Application.Permissions.GetRoles;
+using Modules.Projects.Application.Agents.Create;
 using Modules.Projects.Application.Users.Create;
 using Modules.Projects.Domain.Repositories;
 using Modules.Projects.DrivenInfrastructure.Authorization;
@@ -27,6 +28,7 @@ using Modules.Projects.DrivenInfrastructure.Queries;
 using Modules.Projects.DrivenInfrastructure.Repositories;
 using Modules.Projects.DrivingInfrastructure.Jobs;
 using Modules.Projects.DrivingInfrastructure.Services;
+using Modules.Projects.DrivingInfrastructure.Subscribers.Agents;
 using Modules.Projects.DrivingInfrastructure.Subscribers.Organizations;
 using Modules.Projects.DrivingInfrastructure.Subscribers.Users;
 using Modules.Projects.DrivingInfrastructure.Tools;
@@ -84,6 +86,7 @@ public static class DependencyInjection
             config.RegisterServicesFromAssembly(typeof(UserCreatedIntegrationEventHandler).Assembly);
             config.RegisterServicesFromAssembly(typeof(OrganizationCreatedIntegrationEventHandler).Assembly);
             config.RegisterServicesFromAssembly(typeof(OrganizationDeletedIntegrationEventHandler).Assembly);
+            config.RegisterServicesFromAssembly(typeof(AgentCreatedIntegrationEventHandler).Assembly);
 
             config.AddOpenBehavior(typeof(LoggingBehavior<,>));
             config.AddOpenBehavior(typeof(ValidationBehavior<,>));
@@ -114,6 +117,7 @@ public static class DependencyInjection
         services.AddScoped<IProjectPermissionService, ProjectPermissionService>();
         services.AddScoped<IProjectRoleRepository, ProjectRoleRepository>();
         services.AddScoped<IProjectFieldRepository, ProjectFieldRepository>();
+        services.AddScoped<IAgentReadModelRepository, AgentReadModelRepository>();
 
         return services;
     }

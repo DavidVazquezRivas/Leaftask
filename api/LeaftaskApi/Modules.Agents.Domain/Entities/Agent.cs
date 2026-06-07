@@ -1,6 +1,7 @@
 using BuildingBlocks.Domain.Entities;
 using Modules.Agents.Domain.Entities.AgentTriggers;
 using Modules.Agents.Domain.Entities.Model;
+using Modules.Agents.Domain.Events;
 
 namespace Modules.Agents.Domain.Entities;
 
@@ -52,6 +53,7 @@ public sealed class Agent : Entity
         ModelConfig modelConfig,
         Guid? templateId,
         DateTime createdAt,
+        Guid roleId,
         IEnumerable<(string EventType, string UserPrompt)> eventTriggers,
         IEnumerable<(string Name, string CronExpression, string TimeZone)> timeTriggers)
     {
@@ -62,6 +64,8 @@ public sealed class Agent : Entity
 
         foreach ((string triggerName, string cron, string tz) in timeTriggers)
             agent._timeTriggers.Add(new AgentTimeTrigger(Guid.NewGuid(), triggerName, cron, tz, true, agent));
+
+        agent.Raise(new AgentCreatedDomainEvent(agent.Id, agent.Name, agent.ProjectId, roleId));
 
         return agent;
     }

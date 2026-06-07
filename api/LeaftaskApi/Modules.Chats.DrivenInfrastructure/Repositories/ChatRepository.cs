@@ -32,8 +32,7 @@ public sealed class ChatRepository(ChatsDbContext dbContext) : IChatRepository
         await dbContext.ChatParticipants
             .FirstOrDefaultAsync(
                 p => EF.Property<Guid>(p, "chat_id") == chatId
-                     && p.ParticipantId == userId
-                     && p.ParticipantType == ParticipantType.User,
+                     && p.ParticipantId == userId,
                 cancellationToken);
 
     public async Task<bool> ExistsBetweenParticipantsAsync(

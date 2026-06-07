@@ -7,6 +7,7 @@ namespace Modules.Projects.DrivenInfrastructure.Authorization;
 
 public sealed class ProjectPermissionChecker(
     IProjectRepository projectRepository,
+    IProjectMemberRepository memberRepository,
     IOrganizationPermissionChecker organizationPermissionChecker)
     : IProjectPermissionChecker
 {
@@ -16,20 +17,30 @@ public sealed class ProjectPermissionChecker(
         string permissionName,
         CancellationToken cancellationToken = default)
     {
+        if (userId == Guid.Empty)
+            return ProjectPermissionCheckStatus.Denied;
+
         Project? project = await projectRepository.GetByIdAsync(projectId, cancellationToken);
         if (project is null)
-        {
             return ProjectPermissionCheckStatus.ProjectNotFound;
-        }
 
+        // Direct project membership covers both regular users and agents
+        bool isDirectMember = await memberRepository.ExistsByMemberIdAsync(projectId, userId, cancellationToken);
+        if (isDirectMember)
+            return ProjectPermissionCheckStatus.Full;
+
+        // Project owner (personal projects)
+        if (project.OwnerType == OwnerType.User && project.OwnerId == userId)
+            return ProjectPermissionCheckStatus.Full;
+
+        // Organization membership (org-owned projects)
         if (project.OwnerType == OwnerType.Organization)
         {
-            bool isMember = await organizationPermissionChecker.IsMemberAsync(project.OwnerId, userId, cancellationToken);
-            return isMember ? ProjectPermissionCheckStatus.Full : ProjectPermissionCheckStatus.Denied;
+            bool isOrgMember = await organizationPermissionChecker.IsMemberAsync(
+                project.OwnerId, userId, cancellationToken);
+            return isOrgMember ? ProjectPermissionCheckStatus.Full : ProjectPermissionCheckStatus.Denied;
         }
 
-        return project.OwnerId == userId
-            ? ProjectPermissionCheckStatus.Full
-            : ProjectPermissionCheckStatus.Denied;
+        return ProjectPermissionCheckStatus.Denied;
     }
 }

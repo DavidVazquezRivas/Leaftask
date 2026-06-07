@@ -17,6 +17,7 @@ public sealed class ChatsDbContext(
     public DbSet<ChatMessage> ChatMessages { get; set; }
     public DbSet<ChatParticipant> ChatParticipants { get; set; }
     public DbSet<UserReadModel> UserReadModels { get; set; }
+    public DbSet<AgentReadModel> AgentReadModels { get; set; }
     public DbSet<InboxMessage> InboxMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
