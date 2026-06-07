@@ -47,6 +47,7 @@ WebApplication app = builder.Build();
 // --- Database migration and seeding ---
 await app.ApplyAllMigrationsAsync();
 await app.SeedAllDataAsync();
+await app.RestoreSchedulesAsync();
 
 // --- HTTP pipeline configuration ---
 if (app.Environment.IsDevelopment())

@@ -1,19 +1,15 @@
 using BuildingBlocks.DrivingInfrastructure.Tools;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Modules.Agents.Application.Kernel;
 using Modules.Agents.Application.Services;
 using Modules.Agents.Domain.Entities;
-using Modules.Agents.DrivenInfrastructure.KernelFactory;
 
 namespace Modules.Agents.DrivenInfrastructure.KernelFactory;
 
-public sealed class SemanticKernelProvider(
-    IServiceProvider serviceProvider,
-    PromptInjectionDetector injectionDetector,
-    ILogger<LlmLoggingFilter> loggingFilterLogger,
-    ILogger<LlmPromptInjectionFilter> securityFilterLogger) : IAgentKernelFactory
+public sealed class SemanticKernelProvider(IServiceProvider serviceProvider) : IAgentKernelFactory
 {
     internal static readonly HttpClient AnthropicHttpClient = CreateAnthropicClient();
 
@@ -25,18 +21,19 @@ public sealed class SemanticKernelProvider(
         string modelId = agent.ModelConfig.Model.Name;
         string apiKey = agent.ModelConfig.Model.Provider.Token;
 
-        switch (providerName.ToUpperInvariant())
+        IChatCompletionService baseService = providerName.ToUpperInvariant() switch
         {
-            case "OPENAI":
-                builder.AddOpenAIChatCompletion(modelId, apiKey);
-                break;
-            case "ANTHROPIC":
-                builder.AddOpenAIChatCompletion(modelId, apiKey, httpClient: AnthropicHttpClient);
-                break;
-            default:
-                throw new InvalidOperationException(
-                    $"Unsupported model provider: '{providerName}'. Supported values are 'OpenAI' and 'Anthropic'.");
-        }
+            "OPENAI" => new OpenAIChatCompletionService(modelId, apiKey),
+            "ANTHROPIC" => new OpenAIChatCompletionService(modelId, apiKey, httpClient: AnthropicHttpClient),
+            _ => throw new InvalidOperationException(
+                $"Unsupported model provider: '{providerName}'. Supported values are 'OpenAI' and 'Anthropic'.")
+        };
+
+        // Build the LLM call pipeline from all registered behaviors (same pattern as MediatR)
+        IEnumerable<ILlmCallBehavior> behaviors = serviceProvider.GetServices<ILlmCallBehavior>();
+        IChatCompletionService pipeline = LlmCallPipelineBuilder.Build(baseService, behaviors);
+
+        builder.Services.AddSingleton(pipeline);
 
         IEnumerable<IAiTool> allTools = serviceProvider.GetServices<IAiTool>();
         foreach (IAiTool tool in allTools)
@@ -44,12 +41,7 @@ public sealed class SemanticKernelProvider(
             builder.Plugins.AddFromObject(tool);
         }
 
-        Kernel kernel = builder.Build();
-
-        kernel.FunctionInvocationFilters.Add(new LlmPromptInjectionFilter(injectionDetector, securityFilterLogger));
-        kernel.FunctionInvocationFilters.Add(new LlmLoggingFilter(loggingFilterLogger));
-
-        return kernel;
+        return builder.Build();
     }
 
     private static HttpClient CreateAnthropicClient()

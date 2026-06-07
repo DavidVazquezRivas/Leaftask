@@ -17,6 +17,7 @@ using Modules.Agents.Application.Services;
 using Modules.Agents.Domain.Repositories;
 using Modules.Agents.DrivenInfrastructure.Bootstrap;
 using Modules.Agents.DrivenInfrastructure.KernelFactory;
+#pragma warning disable CA1506
 using Modules.Agents.DrivenInfrastructure.Persistence;
 using Modules.Agents.DrivenInfrastructure.Repositories;
 using Modules.Agents.DrivingInfrastructure.Jobs;
@@ -120,6 +121,9 @@ public static class DependencyInjection
     private static IServiceCollection AddModelProvider(this IServiceCollection services)
     {
         services.AddScoped<PromptInjectionDetector>();
+        // LLM call behaviors — applied in registration order (first = outermost, same pattern as MediatR)
+        services.AddScoped<ILlmCallBehavior, LlmLoggingBehavior>();
+        services.AddScoped<ILlmCallBehavior, LlmPromptInjectionBehavior>();
         services.AddScoped<IAgentKernelFactory, SemanticKernelProvider>();
         services.AddScoped<IBootstrapAgentService, BootstrapAgentService>();
         services.AddScoped<IAgentScheduler>(sp =>
