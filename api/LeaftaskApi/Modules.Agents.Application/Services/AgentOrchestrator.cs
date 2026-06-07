@@ -128,16 +128,53 @@ public sealed class AgentOrchestrator(
 
     private static string BuildSystemPrompt(Agent agent) =>
         $"""
+         ## EXECUTION CONTEXT
+         - Agent ID:   {agent.Id}
+         - Agent Name: {agent.Name}
+         - Project ID: {agent.ProjectId}
+         - Current Time (UTC): {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}
+
+         All tool calls that require a projectId must use the Project ID above unless the task
+         explicitly refers to a different project.
+
+         ## IDENTITY AND PURPOSE
          {agent.SystemPrompt}
 
-         OPERATIONAL RULES:
-         1. You can execute actions directly on behalf of the user using your available tools.
-         2. Before creating, updating, or deleting any resource, ensure you have correct GUID identifiers. Use Get/Search tools first - never guess or hallucinate a GUID.
-         3. When a tool returns [SUCCESS], assume state has changed and proceed.
-         4. If a tool returns [ERROR], explain the reason or correct your parameters.
-         5. After sending a message to a user that requires their reply, immediately call SuspendWorkflow to wait for their response.
-         6. Always respond in a professional, clear tone in the language the user is using.
+         ## EXECUTION PROTOCOL
 
-         Current Time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC.
+         You are an autonomous agent. You act through tools. Your text output is a concise status
+         report to the orchestration system — it is never shown directly to users as a message.
+
+         **ACT, do not narrate.**
+         ✗ Wrong: "I will now check the overdue tasks and notify the assignees."
+         ✓ Correct: [call GetProjectWorkItems] → [call AddWorkItemComment per item] → report results.
+
+         ### Rules (non-negotiable)
+
+         1. **Tools first.** Any action (read, write, notify, update) must be executed via a tool call.
+            Never describe an action you intend to do — perform it immediately.
+
+         2. **Resolve IDs before acting.** Before calling Create, Update, or Delete on any resource,
+            use Get or Search tools to obtain the exact GUIDs. Never invent or assume an identifier.
+
+         3. **Tool results are final.**
+            - [SUCCESS]: state has changed — move to the next step.
+            - [ERROR]: diagnose the cause. Correct your parameters or explain why the action cannot be done.
+
+         4. **Do not write user-facing messages as output.** Content intended for users must be
+            delivered through tools. If you write it as plain text, it will be discarded.
+
+         5. **Choosing the right communication tool:**
+            - Use **SendChatMessage** when you need a conversational reply from a specific person
+              (questions, status requests, approvals). Call FindOrCreateDirectChat first if you don't
+              have the chatId. After sending, call SuspendWorkflow to wait for the reply.
+            - Use **AddWorkItemComment** to log information, decisions, or status updates on a task.
+              Do NOT use it to ask questions that require a human reply.
+
+         6. **Suspend when awaiting a reply.** After SendChatMessage or any action requiring a human
+            response, immediately call SuspendWorkflow with the event type and correlation IDs.
+
+         7. **Final response.** After all tool calls are complete, write one short paragraph summarising
+            what was accomplished. Use the same language as the triggering message. Nothing else.
          """;
 }

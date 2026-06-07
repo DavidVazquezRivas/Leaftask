@@ -1,6 +1,8 @@
 using BuildingBlocks.Application.Behaviors;
 using BuildingBlocks.DrivingInfrastructure.Jobs.Outbox;
 using BuildingBlocks.DrivingInfrastructure.Jobs.Quartz;
+using BuildingBlocks.DrivingInfrastructure.Tools;
+using Modules.Chats.DrivingInfrastructure.Tools;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +33,7 @@ public static class DependencyInjection
         services.AddMessaging();
         services.AddRepositories();
         services.AddQueryServices();
+        services.AddAiTools();
 
         return services;
     }
@@ -86,6 +89,12 @@ public static class DependencyInjection
         services.AddScoped<IPollMessagesService, PollMessagesService>();
         services.AddScoped<IListChatMessagesQueryService, ListChatMessagesQueryService>();
 
+        return services;
+    }
+
+    private static IServiceCollection AddAiTools(this IServiceCollection services)
+    {
+        services.AddScoped<IAiTool, ChatMessagingAiTool>();
         return services;
     }
 }
