@@ -132,6 +132,9 @@ export const ApiRoutes = {
       Statuses: 'api/v1/workitems/statuses',
     },
   },
+  Agent: {
+    Create: 'api/v1/agents',
+  },
   Chat: {
     List: 'api/v1/chats',
     Create: 'api/v1/chats',

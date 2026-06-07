@@ -48,6 +48,7 @@ import {
   getMemberInitials,
   getRoleAccentClassName,
 } from '@/modules/project/pages/settings/utils/projectMembers.utils'
+import { CreateAgentDialog } from '@/modules/chat/components/CreateAgentDialog'
 
 interface ProjectSettingsMembersProps {
   projectId: string
@@ -199,16 +200,22 @@ export function ProjectSettingsMembers({
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            data-icon="inline-start"
-            disabled
-            title="Coming soon"
-          >
-            <Bot />
-            {t('management.members.actions.createAgent')}
-          </Button>
+          <CreateAgentDialog
+            projectId={projectId}
+            onCreated={() => toast.success(t('management.members.actions.agentCreated', { defaultValue: 'Agente creado correctamente' }))}
+            trigger={
+              <Button
+                type="button"
+                variant="outline"
+                data-icon="inline-start"
+                disabled={!canManageMembers}
+                title={!canManageMembers ? t('management.members.permissions.noInvite') : undefined}
+              >
+                <Bot />
+                {t('management.members.actions.createAgent')}
+              </Button>
+            }
+          />
 
           <Button
             type="button"
