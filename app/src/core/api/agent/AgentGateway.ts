@@ -29,4 +29,18 @@ export class AgentGateway {
 
     return payload.data
   }
+
+  static async delete(agentId: string, projectId: string): Promise<void> {
+    const response = await apiClient.delete<{ error?: { code: string; message: string } }>(
+      `${ApiRoutes.Agent.Delete(agentId)}?projectId=${projectId}`
+    )
+    const payload = response.data
+
+    if (isApiErrorResponse(payload)) {
+      throw new ApiError(payload.error.code, {
+        message: payload.error.message,
+        status: response.status,
+      })
+    }
+  }
 }

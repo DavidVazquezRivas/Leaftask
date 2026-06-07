@@ -44,6 +44,8 @@ public static class ProjectPermissionsSeeder
             "Modificar avance y dedicación (ajenas)", WorkItemsGroupId),
         (new Guid("b1c2d3e4-0014-0000-0000-000000000001"), "work-items.comment", "Añadir comentario", WorkItemsGroupId),
         (new Guid("b1c2d3e4-0015-0000-0000-000000000001"), "agents.create", "Crear Agentes sobre el proyecto",
+            WorkItemsGroupId),
+        (new Guid("b1c2d3e4-0016-0000-0000-000000000001"), "agents.delete", "Eliminar Agentes del proyecto",
             WorkItemsGroupId)
     ];
 
@@ -54,6 +56,7 @@ public static class ProjectPermissionsSeeder
 
         if (alreadySeeded)
         {
+            await SeedMissingPermissionsAsync(dbContext, cancellationToken);
             return;
         }
 
@@ -73,5 +76,49 @@ public static class ProjectPermissionsSeeder
 
         await dbContext.ProjectPermissions.AddRangeAsync(permissions, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    private static async Task SeedMissingPermissionsAsync(ProjectsDbContext dbContext, CancellationToken cancellationToken)
+    {
+        HashSet<string> existingNames = (await dbContext.ProjectPermissions
+            .AsNoTracking()
+            .Select(p => p.Name)
+            .ToListAsync(cancellationToken))
+            .ToHashSet();
+
+        HashSet<Guid> existingGroupIds = (await dbContext.ProjectPermissionGroups
+            .AsNoTracking()
+            .Select(g => g.Id)
+            .ToListAsync(cancellationToken))
+            .ToHashSet();
+
+        ProjectPermissionGroup[] missingGroups = Groups
+            .Where(g => !existingGroupIds.Contains(g.Id))
+            .ToArray();
+
+        if (missingGroups.Length > 0)
+        {
+            await dbContext.ProjectPermissionGroups.AddRangeAsync(missingGroups, cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        IReadOnlyList<ProjectPermissionGroup> allGroups = await dbContext.ProjectPermissionGroups
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
+        ProjectPermission[] missingPermissions = PermissionData
+            .Where(p => !existingNames.Contains(p.Name))
+            .Select(p =>
+            {
+                ProjectPermissionGroup group = allGroups.First(g => g.Id == p.GroupId);
+                return new ProjectPermission(p.Id, p.Name, p.Description, group);
+            })
+            .ToArray();
+
+        if (missingPermissions.Length > 0)
+        {
+            await dbContext.ProjectPermissions.AddRangeAsync(missingPermissions, cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
     }
 }

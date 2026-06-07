@@ -44,6 +44,9 @@ public sealed class Agent : Entity
     public IReadOnlyList<AgentEventTrigger> EventTriggers => _eventTriggers;
     public IReadOnlyList<AgentTimeTrigger> TimeTriggers => _timeTriggers;
 
+    public void Delete() =>
+        Raise(new AgentDeletedDomainEvent(Id, ProjectId));
+
     public static Agent Create(
         Guid id,
         Guid projectId,

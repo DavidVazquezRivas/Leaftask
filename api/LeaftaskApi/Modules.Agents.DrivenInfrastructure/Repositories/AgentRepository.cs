@@ -27,6 +27,16 @@ public sealed class AgentRepository(AgentsDbContext dbContext) : IAgentRepositor
     public async Task AddAsync(Agent agent, CancellationToken cancellationToken = default) =>
         await dbContext.Agents.AddAsync(agent, cancellationToken);
 
+    public async Task RemoveAsync(Agent agent, CancellationToken cancellationToken = default)
+    {
+        await dbContext.AgentExecutions
+            .Where(e => EF.Property<Guid>(e, "agent_id") == agent.Id)
+            .ExecuteDeleteAsync(cancellationToken);
+
+        dbContext.Agents.Remove(agent);
+        dbContext.ModelConfigs.Remove(agent.ModelConfig);
+    }
+
     public async Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
         await dbContext.SaveChangesAsync(cancellationToken);
 

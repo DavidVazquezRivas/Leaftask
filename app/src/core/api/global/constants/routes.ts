@@ -134,6 +134,7 @@ export const ApiRoutes = {
   },
   Agent: {
     Create: 'api/v1/agents',
+    Delete: (agentId: string) => `api/v1/agents/${agentId}`,
   },
   Chat: {
     List: 'api/v1/chats',

@@ -12,6 +12,7 @@ public sealed class AgentsModuleEventMapper : IIntegrationEventMapper
         domainEvent switch
         {
             AgentCreatedDomainEvent e => new AgentCreatedIntegrationEvent(e.AgentId, e.Name, e.ProjectId, e.RoleId),
+            AgentDeletedDomainEvent e => new AgentDeletedIntegrationEvent(e.AgentId, e.ProjectId),
             _ => null
         };
 }

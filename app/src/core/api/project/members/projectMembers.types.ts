@@ -8,6 +8,7 @@ export interface ProjectMemberData {
   name: string
   email: string | null
   role: string
+  type: 'person' | 'agent'
 }
 
 export interface ProjectPendingInvitationData {

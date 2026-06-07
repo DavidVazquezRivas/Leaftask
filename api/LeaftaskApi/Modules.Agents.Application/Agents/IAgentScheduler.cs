@@ -8,4 +8,6 @@ public interface IAgentScheduler
         string cronExpression,
         string timeZone,
         CancellationToken cancellationToken = default);
+
+    Task UnscheduleTimeTriggerAsync(Guid triggerId, CancellationToken cancellationToken = default);
 }

@@ -16,6 +16,11 @@ public sealed class AgentReadModelRepository(ProjectsDbContext dbContext) : IAge
     public async Task AddAsync(AgentReadModel model, CancellationToken cancellationToken = default) =>
         await dbContext.AgentReadModels.AddAsync(model, cancellationToken);
 
+    public async Task RemoveByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
+        await dbContext.AgentReadModels
+            .Where(a => a.Id == id)
+            .ExecuteDeleteAsync(cancellationToken);
+
     public async Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
         await dbContext.SaveChangesAsync(cancellationToken);
 }

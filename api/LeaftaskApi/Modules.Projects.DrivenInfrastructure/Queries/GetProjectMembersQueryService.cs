@@ -47,8 +47,8 @@ public sealed class GetProjectMembersQueryService(ProjectsDbContext dbContext) :
             .ToListAsync(cancellationToken);
 
         List<MemberRow> members = rawRows.Select(r => r.MemberType == MemberType.Agent
-            ? new MemberRow(r.Id, r.AgentName ?? "Agent", string.Empty, null, r.RoleId)
-            : new MemberRow(r.Id, r.UserFirstName ?? string.Empty, r.UserLastName ?? string.Empty, r.UserEmail, r.RoleId))
+            ? new MemberRow(r.Id, r.AgentName ?? "Agent", string.Empty, null, r.RoleId, MemberType.Agent)
+            : new MemberRow(r.Id, r.UserFirstName ?? string.Empty, r.UserLastName ?? string.Empty, r.UserEmail, r.RoleId, MemberType.User))
             .ToList();
 
         IReadOnlyCollection<string> effectiveSort = NormalizeSort(sort);
@@ -60,7 +60,7 @@ public sealed class GetProjectMembersQueryService(ProjectsDbContext dbContext) :
             effectiveSort,
             SortFields,
             DefaultSort,
-            row => new ProjectMemberDto(row.Id, row.DisplayName, row.Email, row.RoleId));
+            row => new ProjectMemberDto(row.Id, row.DisplayName, row.Email, row.RoleId, row.MemberType == MemberType.Agent ? "agent" : "person"));
     }
 
     private static IReadOnlyCollection<string> NormalizeSort(IReadOnlyCollection<string> sort) =>
@@ -77,7 +77,7 @@ public sealed class GetProjectMembersQueryService(ProjectsDbContext dbContext) :
         string? AgentName,
         Guid RoleId);
 
-    private sealed record MemberRow(Guid Id, string FirstName, string LastName, string? Email, Guid RoleId)
+    private sealed record MemberRow(Guid Id, string FirstName, string LastName, string? Email, Guid RoleId, MemberType MemberType)
     {
         public string DisplayName => string.IsNullOrWhiteSpace(LastName)
             ? FirstName

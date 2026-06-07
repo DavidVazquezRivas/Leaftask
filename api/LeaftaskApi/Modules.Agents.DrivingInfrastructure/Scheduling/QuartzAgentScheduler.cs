@@ -42,4 +42,10 @@ public sealed class QuartzAgentScheduler(ISchedulerFactory schedulerFactory) : I
             await scheduler.ScheduleJob(job, trigger, cancellationToken);
         }
     }
+
+    public async Task UnscheduleTimeTriggerAsync(Guid triggerId, CancellationToken cancellationToken = default)
+    {
+        IScheduler scheduler = await schedulerFactory.GetScheduler(cancellationToken);
+        await scheduler.DeleteJob(new JobKey($"agent-time-{triggerId}", "agent-triggers"), cancellationToken);
+    }
 }

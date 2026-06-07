@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Modules.Agents.Application.Agents;
 using Modules.Agents.Application.Agents.Create;
+using Modules.Agents.Application.Agents.Delete;
 using Modules.Agents.DrivingInfrastructure.Models.Requests;
 
 namespace Modules.Agents.DrivingInfrastructure.Controllers;
@@ -28,5 +29,18 @@ public sealed class AgentManagementController : ApiBaseController
             cancellationToken);
 
         return HandleResult(result, StatusCodes.Status201Created);
+    }
+
+    [HttpDelete("{agentId:guid}")]
+    public async Task<IActionResult> DeleteAgent(
+        [FromRoute] Guid agentId,
+        [FromQuery] Guid projectId,
+        CancellationToken cancellationToken = default)
+    {
+        Result result = await Sender.Send(
+            new DeleteAgentCommand(agentId, projectId),
+            cancellationToken);
+
+        return HandleResult(result);
     }
 }
