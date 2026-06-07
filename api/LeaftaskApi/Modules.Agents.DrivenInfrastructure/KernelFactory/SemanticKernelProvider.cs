@@ -1,12 +1,19 @@
 using BuildingBlocks.DrivingInfrastructure.Tools;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Modules.Agents.Application.Kernel;
+using Modules.Agents.Application.Services;
 using Modules.Agents.Domain.Entities;
+using Modules.Agents.DrivenInfrastructure.KernelFactory;
 
 namespace Modules.Agents.DrivenInfrastructure.KernelFactory;
 
-public sealed class SemanticKernelProvider(IServiceProvider serviceProvider) : IAgentKernelFactory
+public sealed class SemanticKernelProvider(
+    IServiceProvider serviceProvider,
+    PromptInjectionDetector injectionDetector,
+    ILogger<LlmLoggingFilter> loggingFilterLogger,
+    ILogger<LlmPromptInjectionFilter> securityFilterLogger) : IAgentKernelFactory
 {
     internal static readonly HttpClient AnthropicHttpClient = CreateAnthropicClient();
 
@@ -37,7 +44,12 @@ public sealed class SemanticKernelProvider(IServiceProvider serviceProvider) : I
             builder.Plugins.AddFromObject(tool);
         }
 
-        return builder.Build();
+        Kernel kernel = builder.Build();
+
+        kernel.FunctionInvocationFilters.Add(new LlmPromptInjectionFilter(injectionDetector, securityFilterLogger));
+        kernel.FunctionInvocationFilters.Add(new LlmLoggingFilter(loggingFilterLogger));
+
+        return kernel;
     }
 
     private static HttpClient CreateAnthropicClient()

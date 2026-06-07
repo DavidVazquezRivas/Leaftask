@@ -119,6 +119,7 @@ public static class DependencyInjection
 
     private static IServiceCollection AddModelProvider(this IServiceCollection services)
     {
+        services.AddScoped<PromptInjectionDetector>();
         services.AddScoped<IAgentKernelFactory, SemanticKernelProvider>();
         services.AddScoped<IBootstrapAgentService, BootstrapAgentService>();
         services.AddScoped<IAgentScheduler>(sp =>
