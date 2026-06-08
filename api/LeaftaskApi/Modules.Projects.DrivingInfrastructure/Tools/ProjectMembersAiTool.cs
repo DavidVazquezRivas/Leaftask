@@ -34,7 +34,9 @@ public class ProjectMembersAiTool(ISender sender, IAiResponseFormatter formatter
 
     [KernelFunction("GetProjectMembers")]
     [Description(
-        "Retrieves a list of members belonging to a specific project. Useful for finding who is working on Leaftask projects and checking their current roles.")]
+        "Retrieves the list of members (users and agents) in a project. " +
+        "Each entry includes a 'userId' field — this is the global user/agent ID to use when calling " +
+        "FindOrCreateDirectChat, UpdateProjectMemberRole, or RemoveProjectMember.")]
     public async Task<string> GetMembersAsync(
         [Description(
             "The unique identifier (GUID) of the project. If you only have the project name, resolve it first using 'GetOrganizationProjects' or 'GetMyProjects'.")]
@@ -54,11 +56,16 @@ public class ProjectMembersAiTool(ISender sender, IAiResponseFormatter formatter
         Result<PaginatedResult<ProjectMemberDto>> result = await sender.Send(query, cancellationToken);
 
         if (result.IsFailure)
-        {
             return formatter.FormatFailure(nameof(GetMembersAsync), result.Error.Description);
-        }
 
-        return formatter.FormatResponse(result.Value.Items);
+        // Expose the ID explicitly as 'userId' to avoid ambiguity when passing it to other tools
+        return formatter.FormatResponse(result.Value.Items.Select(m => new
+        {
+            userId = m.Id,
+            m.Name,
+            m.Email,
+            m.Type
+        }));
     }
 
     [KernelFunction("UpdateProjectMemberRole")]
@@ -68,7 +75,7 @@ public class ProjectMembersAiTool(ISender sender, IAiResponseFormatter formatter
         [Description("The unique identifier (GUID) of the project.")]
         Guid projectId,
         [Description(
-            "The unique identifier (GUID) of the member whose role needs to change. Do NOT pass a global User ID. Find this ID first using 'GetProjectMembers'.")]
+            "The userId of the member whose role needs to change. Use the 'userId' field returned by 'GetProjectMembers'.")]
         Guid memberId,
         [Description(
             "The unique identifier (GUID) of the new role. Resolve semantic names to a GUID using 'GetOrganizationRoles' before calling this tool.")]
@@ -94,7 +101,7 @@ public class ProjectMembersAiTool(ISender sender, IAiResponseFormatter formatter
         [Description("The unique identifier (GUID) of the project.")]
         Guid projectId,
         [Description(
-            "The unique identifier (GUID) of the member to be removed. Do NOT pass a global User ID. Find this ID first using 'GetProjectMembers'.")]
+            "The userId of the member to remove. Use the 'userId' field returned by 'GetProjectMembers'.")]
         Guid memberId,
         CancellationToken cancellationToken = default)
     {

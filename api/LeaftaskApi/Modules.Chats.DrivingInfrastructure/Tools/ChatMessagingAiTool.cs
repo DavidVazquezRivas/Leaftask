@@ -85,10 +85,12 @@ public sealed class ChatMessagingAiTool(ISender sender, IAiResponseFormatter for
     [KernelFunction("FindOrCreateDirectChat")]
     [Description(
         "Finds an existing direct chat with a user or creates one if it doesn't exist. " +
-        "Returns the chatId to use with SendChatMessage. Use this when you need to message a user " +
-        "but don't know their chatId yet.")]
+        "Returns the chatId to use with SendChatMessage. " +
+        "Pass the 'userId' field from GetProjectMembers or SearchUsers as the userId parameter.")]
     public async Task<string> FindOrCreateDirectChatAsync(
-        [Description("The unique identifier (GUID) of the user to chat with.")]
+        [Description(
+            "The global user ID to start a chat with. " +
+            "Use the 'userId' field from GetProjectMembers, or the 'id' field from SearchUsers.")]
         Guid userId,
         CancellationToken cancellationToken = default)
     {

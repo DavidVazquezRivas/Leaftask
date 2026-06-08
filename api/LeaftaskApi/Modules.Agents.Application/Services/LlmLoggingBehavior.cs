@@ -20,8 +20,8 @@ public sealed class LlmLoggingBehavior(ILogger<LlmLoggingBehavior> logger) : ILl
         if (!string.IsNullOrEmpty(lastUserMessage))
         {
             logger.LogInformation(
-                "LLM Request | Messages: {Count}, Preview: {Preview}",
-                chatHistory.Count, Truncate(lastUserMessage));
+                "[LLM Request] | Messages: {Count}, Preview: {Preview}",
+                chatHistory.Count, lastUserMessage);
         }
 
         Stopwatch sw = Stopwatch.StartNew();
@@ -32,13 +32,10 @@ public sealed class LlmLoggingBehavior(ILogger<LlmLoggingBehavior> logger) : ILl
         if (!string.IsNullOrEmpty(firstContent))
         {
             logger.LogInformation(
-                "LLM Response | Duration: {Duration}ms, Preview: {Preview}",
-                sw.ElapsedMilliseconds, Truncate(firstContent));
+                "[LLM Response] | Duration: {Duration}ms, Preview: {Preview}",
+                sw.ElapsedMilliseconds, firstContent);
         }
 
         return response;
     }
-
-    private static string Truncate(string s, int max = 150)
-        => s.Length > max ? $"{s[..max]}..." : s;
 }

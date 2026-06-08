@@ -18,7 +18,7 @@ public static class DependencyInjection
         services.AddScoped<IUserContext, UserContext>();
         services.AddScoped<IIntegrationEventContextAccessor, IntegrationEventContextAccessor>();
 
-        services.AddSingleton<IAiResponseFormatter, ToonResponseFormatter>();
+        services.AddSingleton<IAiResponseFormatter, JsonResponseFormatter>();
 
         return services;
     }
