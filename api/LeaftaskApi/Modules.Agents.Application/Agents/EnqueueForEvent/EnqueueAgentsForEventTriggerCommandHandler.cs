@@ -27,7 +27,7 @@ public sealed class EnqueueAgentsForEventTriggerCommandHandler(
                 ExecutionStatus.Pending,
                 now,
                 now,
-                agent);
+                agent.Id);
 
             await executionRepository.AddAsync(entry, cancellationToken);
         }

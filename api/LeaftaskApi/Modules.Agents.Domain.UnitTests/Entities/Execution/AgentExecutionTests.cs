@@ -10,7 +10,7 @@ public class AgentExecutionTests
     {
         Domain.Entities.Agent agent = AgentTestBuilder.AnAgent().Build();
         DateTime now = DateTime.UtcNow;
-        return new AgentExecution(Guid.NewGuid(), "{}", status, now, now, agent);
+        return new AgentExecution(Guid.NewGuid(), "{}", status, now, now, agent.Id);
     }
 
     [Fact]
@@ -125,11 +125,11 @@ public class AgentExecutionTests
         const string payload = "{\"workItemId\":\"abc\"}";
 
         // Act
-        AgentExecution execution = new(Guid.NewGuid(), payload, ExecutionStatus.Pending, now, now, agent);
+        AgentExecution execution = new(Guid.NewGuid(), payload, ExecutionStatus.Pending, now, now, agent.Id);
 
         // Assert
         execution.Payload.Should().Be(payload);
         execution.CreatedAt.Should().Be(now);
-        execution.Agent.Should().Be(agent);
+        execution.AgentId.Should().Be(agent.Id);
     }
 }

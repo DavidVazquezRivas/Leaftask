@@ -31,7 +31,7 @@ public class TryResumeAgentExecutionsCommandHandlerTests
     {
         Domain.Entities.Agent agent = AgentTestBuilder.AnAgent().Build();
         DateTime now = DateTime.UtcNow;
-        AgentExecution execution = new(Guid.NewGuid(), "{}", ExecutionStatus.Suspended, now, now, agent);
+        AgentExecution execution = new(Guid.NewGuid(), "{}", ExecutionStatus.Suspended, now, now, agent.Id);
         execution.Suspend();
         return execution;
     }

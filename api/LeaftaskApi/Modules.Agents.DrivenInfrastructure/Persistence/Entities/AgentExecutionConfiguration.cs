@@ -15,10 +15,11 @@ public sealed class AgentExecutionConfiguration : IEntityTypeConfiguration<Agent
         builder.Property(e => e.Status).HasColumnName("status");
         builder.Property(e => e.CreatedAt).HasColumnName("created_at");
         builder.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+        builder.Property(e => e.AgentId).HasColumnName("agent_id");
 
         builder.HasOne(e => e.Agent)
             .WithMany()
-            .HasForeignKey("agent_id")
+            .HasForeignKey(e => e.AgentId)
             .IsRequired();
 
         builder.HasMany(e => e.PendingEvents)

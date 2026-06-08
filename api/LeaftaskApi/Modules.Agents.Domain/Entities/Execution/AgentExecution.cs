@@ -9,22 +9,23 @@ public sealed class AgentExecution : Entity
     private AgentExecution() { }
 
     public AgentExecution(Guid id, string payload, ExecutionStatus status, DateTime createdAt, DateTime updatedAt,
-        Agent agent)
+        Guid agentId)
     {
         Id = id;
         Payload = payload;
         Status = status;
         CreatedAt = createdAt;
         UpdatedAt = updatedAt;
-        Agent = agent;
+        AgentId = agentId;
     }
 
     public Guid Id { get; }
+    public Guid AgentId { get; }
     public string Payload { get; }
     public ExecutionStatus Status { get; private set; }
     public DateTime CreatedAt { get; }
     public DateTime UpdatedAt { get; private set; }
-    public Agent Agent { get; } = null!;
+    public Agent Agent { get; private set; } = null!;
 
     public IReadOnlyList<AgentExecutionPendingEvent> PendingEvents => _pendingEvents;
 

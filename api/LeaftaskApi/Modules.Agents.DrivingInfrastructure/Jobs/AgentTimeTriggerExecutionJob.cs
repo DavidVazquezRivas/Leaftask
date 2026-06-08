@@ -37,7 +37,7 @@ public sealed class AgentTimeTriggerExecutionJob(
         }
 
         DateTime now = DateTime.UtcNow;
-        AgentExecution entry = new(Guid.NewGuid(), "{}", ExecutionStatus.Pending, now, now, agent);
+        AgentExecution entry = new(Guid.NewGuid(), "{}", ExecutionStatus.Pending, now, now, agent.Id);
         await dbContext.AgentExecutions.AddAsync(entry, context.CancellationToken);
         await dbContext.SaveChangesAsync(context.CancellationToken);
 
