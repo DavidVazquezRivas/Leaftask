@@ -37,10 +37,11 @@ public sealed class ChatMessage : Entity
     }
 
     public static ChatMessage Create(Guid id, string content, DateTime createdAt, MessageStatus status, Chat chat,
-        ChatParticipant sender)
+        ChatParticipant sender, IReadOnlyList<Guid> agentRecipientIds)
     {
         ChatMessage message = new(id, content, createdAt, status, chat, sender);
-        message.Raise(new MessageCreatedDomainEvent(id, chat.Id, sender.Id, content));
+        message.Raise(new MessageCreatedDomainEvent(id, chat.Id, sender.ParticipantId, content, agentRecipientIds,
+            SenderIsAgent: sender.ParticipantType == ParticipantType.Agent));
         return message;
     }
 }

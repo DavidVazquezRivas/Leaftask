@@ -81,6 +81,15 @@ public static class DependencyInjection
             q.AddJob<AgentTimeTriggerExecutionJob>(opts => opts
                 .WithIdentity(nameof(AgentTimeTriggerExecutionJob))
                 .StoreDurably());
+
+            JobKey timeoutKey = new(nameof(AgentExecutionTimeoutJob));
+            q.AddJob<AgentExecutionTimeoutJob>(opts => opts
+                .WithIdentity(timeoutKey)
+                .UsingJobData("ThresholdHours", 2));
+            q.AddTrigger(opts => opts
+                .ForJob(timeoutKey)
+                .WithIdentity($"{nameof(AgentExecutionTimeoutJob)}-trigger")
+                .WithCronSchedule("0 0/30 * * * ?"));
         });
 
         return services;

@@ -12,7 +12,7 @@ public sealed class ChatsModuleEventMapper : IIntegrationEventMapper
         domainEvent switch
         {
             MessageCreatedDomainEvent e =>
-                new ChatMessageSentIntegrationEvent(e.ChatId, e.MessageId, e.SenderId, e.Content),
+                new ChatMessageSentIntegrationEvent(e.ChatId, e.MessageId, e.SenderId, e.Content, e.AgentRecipientIds, e.SenderIsAgent),
             _ => null
         };
 }

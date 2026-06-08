@@ -6,4 +6,5 @@ namespace Modules.Chats.Application.Chats.Create;
 
 public sealed record CreateChatCommand(
     Guid OtherParticipantId,
-    string OtherParticipantType) : ICommand<Result<ChatDto>>;
+    string OtherParticipantType,
+    string SelfParticipantType = "person") : ICommand<Result<ChatDto>>;

@@ -40,7 +40,9 @@ public sealed class GetProjectWorkItemsQueryService(WorkItemsDbContext dbContext
                 wi.Estimation,
                 wi.Progress,
                 wi.Status.Id,
+                wi.Status.Name,
                 wi.Type.Id,
+                wi.Type.Name,
                 wi.Asignee != null ? wi.Asignee.Id : (Guid?)null,
                 wi.Asignee != null ? wi.Asignee.FirstName : null,
                 wi.Asignee != null ? wi.Asignee.LastName : null,
@@ -74,7 +76,9 @@ public sealed class GetProjectWorkItemsQueryService(WorkItemsDbContext dbContext
                     : null,
                 dedicationByItem.TryGetValue(row.Id, out decimal hours) ? (float?)hours : null,
                 row.TypeId,
+                row.TypeName,
                 row.StatusId,
+                row.StatusName,
                 row.ParentId));
     }
 
@@ -91,7 +95,9 @@ public sealed class GetProjectWorkItemsQueryService(WorkItemsDbContext dbContext
         decimal Estimation,
         int Progress,
         Guid StatusId,
+        string StatusName,
         Guid TypeId,
+        string TypeName,
         Guid? AssigneeId,
         string? AssigneeFirstName,
         string? AssigneeLastName,

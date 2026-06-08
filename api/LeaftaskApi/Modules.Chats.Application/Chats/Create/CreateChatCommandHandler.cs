@@ -12,10 +12,15 @@ namespace Modules.Chats.Application.Chats.Create;
 public sealed class CreateChatCommandHandler(
     IChatRepository chatRepository,
     IUserReadModelRepository userReadModelRepository,
+    IAgentReadModelRepository agentReadModelRepository,
     IUserContext userContext) : ICommandHandler<CreateChatCommand, Result<ChatDto>>
 {
     public async Task<Result<ChatDto>> Handle(CreateChatCommand command, CancellationToken cancellationToken)
     {
+        ParticipantType selfType = command.SelfParticipantType == "agent"
+            ? ParticipantType.Agent
+            : ParticipantType.User;
+
         ParticipantType otherType = command.OtherParticipantType == "agent"
             ? ParticipantType.Agent
             : ParticipantType.User;
@@ -36,14 +41,14 @@ public sealed class CreateChatCommandHandler(
         DateTime now = DateTime.UtcNow;
         Chat chat = Chat.Create(Guid.NewGuid(), now);
 
-        ChatParticipant userParticipant = new(
-            Guid.NewGuid(), userContext.UserId, ParticipantType.User, now, chat);
+        ChatParticipant selfParticipant = new(
+            Guid.NewGuid(), userContext.UserId, selfType, now, chat);
 
         ChatParticipant otherParticipant = new(
             Guid.NewGuid(), command.OtherParticipantId, otherType, now, chat);
 
         await chatRepository.AddAsync(chat, cancellationToken);
-        await chatRepository.AddParticipantAsync(userParticipant, cancellationToken);
+        await chatRepository.AddParticipantAsync(selfParticipant, cancellationToken);
         await chatRepository.AddParticipantAsync(otherParticipant, cancellationToken);
         await chatRepository.SaveChangesAsync(cancellationToken);
 
@@ -52,7 +57,9 @@ public sealed class CreateChatCommandHandler(
 
         if (otherType == ParticipantType.Agent)
         {
-            name = "AI Assistant";
+            AgentReadModel? agent = await agentReadModelRepository.GetByIdAsync(
+                command.OtherParticipantId, cancellationToken);
+            name = agent?.Name ?? "AI Assistant";
             type = "agent";
         }
         else
@@ -63,6 +70,8 @@ public sealed class CreateChatCommandHandler(
             type = "person";
         }
 
-        return Result.Success(new ChatDto(chat.Id, name, null, type, null, command.OtherParticipantId, 0));
+        Guid? otherParticipantId = command.OtherParticipantId;
+
+        return Result.Success(new ChatDto(chat.Id, name, null, type, null, otherParticipantId, 0));
     }
 }

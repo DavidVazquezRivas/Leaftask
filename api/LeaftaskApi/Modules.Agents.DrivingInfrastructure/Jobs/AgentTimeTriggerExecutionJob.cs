@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Modules.Agents.Domain.Entities.Execution;
+using Modules.Agents.Domain.Repositories;
 using Modules.Agents.DrivenInfrastructure.Persistence;
 using Quartz;
 
@@ -25,6 +26,15 @@ public sealed class AgentTimeTriggerExecutionJob(
 
         using IServiceScope scope = scopeFactory.CreateScope();
         AgentsDbContext dbContext = scope.ServiceProvider.GetRequiredService<AgentsDbContext>();
+        IAgentExecutionRepository executionRepository =
+            scope.ServiceProvider.GetRequiredService<IAgentExecutionRepository>();
+
+        if (await executionRepository.HasActiveRegularExecutionAsync(agentId, context.CancellationToken))
+        {
+            logger.LogInformation(
+                "AgentTimeTriggerExecutionJob: skipping agent {AgentId} — already has an active execution", agentId);
+            return;
+        }
 
         Domain.Entities.Agent? agent = await dbContext.Agents
             .Include(a => a.TimeTriggers)

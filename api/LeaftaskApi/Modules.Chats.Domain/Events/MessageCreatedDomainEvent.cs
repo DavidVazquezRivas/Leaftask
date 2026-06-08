@@ -6,4 +6,6 @@ public sealed record MessageCreatedDomainEvent(
     Guid MessageId,
     Guid ChatId,
     Guid SenderId,
-    string Content) : IDomainEvent;
+    string Content,
+    IReadOnlyList<Guid> AgentRecipientIds,
+    bool SenderIsAgent) : IDomainEvent;

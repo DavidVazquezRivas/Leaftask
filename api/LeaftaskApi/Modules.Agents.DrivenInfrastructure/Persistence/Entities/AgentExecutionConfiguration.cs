@@ -16,6 +16,7 @@ public sealed class AgentExecutionConfiguration : IEntityTypeConfiguration<Agent
         builder.Property(e => e.CreatedAt).HasColumnName("created_at");
         builder.Property(e => e.UpdatedAt).HasColumnName("updated_at");
         builder.Property(e => e.AgentId).HasColumnName("agent_id");
+        builder.Property(e => e.Mode).HasColumnName("mode");
 
         builder.HasOne(e => e.Agent)
             .WithMany()

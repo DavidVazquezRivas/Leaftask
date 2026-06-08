@@ -16,17 +16,20 @@ public class CreateChatCommandHandlerTests
     private readonly CreateChatCommandHandler _handler;
     private readonly IChatRepository _chatRepositoryMock;
     private readonly IUserReadModelRepository _userReadModelRepositoryMock;
+    private readonly IAgentReadModelRepository _agentReadModelRepositoryMock;
     private readonly IUserContext _userContextMock;
 
     public CreateChatCommandHandlerTests()
     {
         _chatRepositoryMock = Substitute.For<IChatRepository>();
         _userReadModelRepositoryMock = Substitute.For<IUserReadModelRepository>();
+        _agentReadModelRepositoryMock = Substitute.For<IAgentReadModelRepository>();
         _userContextMock = Substitute.For<IUserContext>();
 
         _handler = new CreateChatCommandHandler(
             _chatRepositoryMock,
             _userReadModelRepositoryMock,
+            _agentReadModelRepositoryMock,
             _userContextMock);
     }
 

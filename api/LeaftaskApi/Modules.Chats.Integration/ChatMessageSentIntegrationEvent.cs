@@ -6,4 +6,6 @@ public sealed record ChatMessageSentIntegrationEvent(
     Guid ChatId,
     Guid MessageId,
     Guid SenderId,
-    string Content) : IIntegrationEvent;
+    string Content,
+    IReadOnlyList<Guid> AgentRecipientIds,
+    bool SenderIsAgent) : IIntegrationEvent;

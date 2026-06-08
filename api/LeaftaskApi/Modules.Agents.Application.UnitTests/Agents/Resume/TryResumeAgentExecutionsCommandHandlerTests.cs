@@ -74,8 +74,8 @@ public class TryResumeAgentExecutionsCommandHandlerTests
             .GetByExecutionIdAsync(executionId, Arg.Any<CancellationToken>())
             .Returns(new List<AgentExecutionMessage>());
         _pendingEventRepositoryMock
-            .HasUnresolvedAsync(executionId, Arg.Any<CancellationToken>())
-            .Returns(false);
+            .GetAllUnresolvedByExecutionAsync(executionId, Arg.Any<CancellationToken>())
+            .Returns(new List<AgentExecutionPendingEvent> { pendingEvent });
 
         // Act
         await _handler.Handle(command, CancellationToken.None);
@@ -85,7 +85,7 @@ public class TryResumeAgentExecutionsCommandHandlerTests
             Arg.Is<AgentExecutionMessage>(m =>
                 m.ExecutionId == executionId
                 && m.Role == MessageRole.User
-                && m.Content == "Here is my status update"),
+                && m.Content.Contains("Here is my status update")),
             Arg.Any<CancellationToken>());
     }
 
@@ -107,8 +107,8 @@ public class TryResumeAgentExecutionsCommandHandlerTests
             .GetByExecutionIdAsync(executionId, Arg.Any<CancellationToken>())
             .Returns(new List<AgentExecutionMessage>());
         _pendingEventRepositoryMock
-            .HasUnresolvedAsync(executionId, Arg.Any<CancellationToken>())
-            .Returns(false);
+            .GetAllUnresolvedByExecutionAsync(executionId, Arg.Any<CancellationToken>())
+            .Returns(new List<AgentExecutionPendingEvent> { pendingEvent });
 
         // Act
         await _handler.Handle(new TryResumeAgentExecutionsCommand(AgentEventTypes.ChatMessageSent, "chat-123", "OK"), CancellationToken.None);
@@ -135,8 +135,8 @@ public class TryResumeAgentExecutionsCommandHandlerTests
             .GetByExecutionIdAsync(executionId, Arg.Any<CancellationToken>())
             .Returns(new List<AgentExecutionMessage>());
         _pendingEventRepositoryMock
-            .HasUnresolvedAsync(executionId, Arg.Any<CancellationToken>())
-            .Returns(false);  // no more unresolved
+            .GetAllUnresolvedByExecutionAsync(executionId, Arg.Any<CancellationToken>())
+            .Returns(new List<AgentExecutionPendingEvent> { pendingEvent }); // single event — resolves to all-done
 
         // Act
         await _handler.Handle(new TryResumeAgentExecutionsCommand(AgentEventTypes.ChatMessageSent, "chat-123", "Ready"), CancellationToken.None);
@@ -152,6 +152,7 @@ public class TryResumeAgentExecutionsCommandHandlerTests
         Guid executionId = Guid.NewGuid();
         AgentExecution execution = CreateSuspendedExecution();
         AgentExecutionPendingEvent pendingEvent = new(Guid.NewGuid(), executionId, AgentEventTypes.ChatMessageSent, "chat-123");
+        AgentExecutionPendingEvent otherPendingEvent = new(Guid.NewGuid(), executionId, AgentEventTypes.ChatMessageSent, "chat-456");
 
         _pendingEventRepositoryMock
             .GetUnresolvedAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
@@ -163,8 +164,8 @@ public class TryResumeAgentExecutionsCommandHandlerTests
             .GetByExecutionIdAsync(executionId, Arg.Any<CancellationToken>())
             .Returns(new List<AgentExecutionMessage>());
         _pendingEventRepositoryMock
-            .HasUnresolvedAsync(executionId, Arg.Any<CancellationToken>())
-            .Returns(true);  // still waiting for other members
+            .GetAllUnresolvedByExecutionAsync(executionId, Arg.Any<CancellationToken>())
+            .Returns(new List<AgentExecutionPendingEvent> { pendingEvent, otherPendingEvent }); // two events — one still unresolved
 
         // Act
         await _handler.Handle(new TryResumeAgentExecutionsCommand(AgentEventTypes.ChatMessageSent, "chat-123", "I replied"), CancellationToken.None);
@@ -219,8 +220,8 @@ public class TryResumeAgentExecutionsCommandHandlerTests
             .GetByExecutionIdAsync(executionId, Arg.Any<CancellationToken>())
             .Returns(existingMessages);
         _pendingEventRepositoryMock
-            .HasUnresolvedAsync(executionId, Arg.Any<CancellationToken>())
-            .Returns(false);
+            .GetAllUnresolvedByExecutionAsync(executionId, Arg.Any<CancellationToken>())
+            .Returns(new List<AgentExecutionPendingEvent> { pendingEvent });
 
         // Act
         await _handler.Handle(new TryResumeAgentExecutionsCommand(AgentEventTypes.ChatMessageSent, "chat-id", "Here's my update"), CancellationToken.None);
@@ -251,7 +252,12 @@ public class TryResumeAgentExecutionsCommandHandlerTests
         _messageRepositoryMock
             .GetByExecutionIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(new List<AgentExecutionMessage>());
-        _pendingEventRepositoryMock.HasUnresolvedAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(false);
+        _pendingEventRepositoryMock
+            .GetAllUnresolvedByExecutionAsync(executionId1, Arg.Any<CancellationToken>())
+            .Returns(new List<AgentExecutionPendingEvent> { pending1 });
+        _pendingEventRepositoryMock
+            .GetAllUnresolvedByExecutionAsync(executionId2, Arg.Any<CancellationToken>())
+            .Returns(new List<AgentExecutionPendingEvent> { pending2 });
 
         // Act
         await _handler.Handle(new TryResumeAgentExecutionsCommand(AgentEventTypes.WorkItemCreated, "project-xyz", "{}"), CancellationToken.None);
@@ -261,5 +267,34 @@ public class TryResumeAgentExecutionsCommandHandlerTests
         execution1.Status.Should().Be(ExecutionStatus.Pending);
         execution2.Status.Should().Be(ExecutionStatus.Pending);
         await _executionRepositoryMock.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_Should_Return_ResumedAgentIds()
+    {
+        // Arrange
+        Guid executionId = Guid.NewGuid();
+        AgentExecution execution = CreateSuspendedExecution();
+        AgentExecutionPendingEvent pendingEvent = new(Guid.NewGuid(), executionId, AgentEventTypes.ChatMessageSent, "chat-123");
+
+        _pendingEventRepositoryMock
+            .GetUnresolvedAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(new List<AgentExecutionPendingEvent> { pendingEvent });
+        _executionRepositoryMock
+            .GetByIdTrackedAsync(executionId, Arg.Any<CancellationToken>())
+            .Returns(execution);
+        _messageRepositoryMock
+            .GetByExecutionIdAsync(executionId, Arg.Any<CancellationToken>())
+            .Returns(new List<AgentExecutionMessage>());
+        _pendingEventRepositoryMock
+            .GetAllUnresolvedByExecutionAsync(executionId, Arg.Any<CancellationToken>())
+            .Returns(new List<AgentExecutionPendingEvent> { pendingEvent });
+
+        // Act
+        HashSet<Guid> result = await _handler.Handle(
+            new TryResumeAgentExecutionsCommand(AgentEventTypes.ChatMessageSent, "chat-123", "Done"), CancellationToken.None);
+
+        // Assert
+        result.Should().ContainSingle().Which.Should().Be(execution.AgentId);
     }
 }

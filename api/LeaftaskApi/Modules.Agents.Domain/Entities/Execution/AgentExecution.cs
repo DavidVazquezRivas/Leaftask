@@ -9,7 +9,7 @@ public sealed class AgentExecution : Entity
     private AgentExecution() { }
 
     public AgentExecution(Guid id, string payload, ExecutionStatus status, DateTime createdAt, DateTime updatedAt,
-        Guid agentId)
+        Guid agentId, ExecutionMode mode = ExecutionMode.Regular)
     {
         Id = id;
         Payload = payload;
@@ -17,10 +17,12 @@ public sealed class AgentExecution : Entity
         CreatedAt = createdAt;
         UpdatedAt = updatedAt;
         AgentId = agentId;
+        Mode = mode;
     }
 
     public Guid Id { get; }
     public Guid AgentId { get; }
+    public ExecutionMode Mode { get; }
     public string Payload { get; }
     public ExecutionStatus Status { get; private set; }
     public DateTime CreatedAt { get; }

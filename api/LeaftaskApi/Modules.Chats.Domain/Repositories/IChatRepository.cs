@@ -10,6 +10,7 @@ public interface IChatRepository
     Task<ChatParticipant?> GetParticipantAsync(Guid chatId, Guid userId, CancellationToken cancellationToken = default);
     Task<ChatParticipant?> GetParticipantTrackedAsync(Guid chatId, Guid userId, CancellationToken cancellationToken = default);
     Task<bool> ExistsBetweenParticipantsAsync(Guid userId, Guid otherParticipantId, ParticipantType otherType, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Guid>> GetAgentParticipantIdsAsync(Guid chatId, CancellationToken cancellationToken = default);
     Task AddAsync(Chat chat, CancellationToken cancellationToken = default);
     Task AddParticipantAsync(ChatParticipant participant, CancellationToken cancellationToken = default);
     void Remove(Chat chat);

@@ -9,7 +9,9 @@ public sealed record WorkItemListDto(
     WorkItemAssigneeDto? Assignee,
     float? Dedication,
     Guid TypeId,
+    string TypeName,
     Guid StatusId,
+    string StatusName,
     Guid? ParentId);
 
 public sealed record WorkItemAssigneeDto(Guid Id, string FirstName, string LastName);

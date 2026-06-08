@@ -16,9 +16,21 @@ public sealed class AgentExecutionPendingEventRepository(AgentsDbContext dbConte
                          && !pe.IsResolved)
             .ToListAsync(cancellationToken);
 
+    public async Task<List<AgentExecutionPendingEvent>> GetAllUnresolvedByExecutionAsync(Guid executionId,
+        CancellationToken cancellationToken = default) =>
+        await dbContext.AgentExecutionPendingEvents
+            .Where(pe => pe.ExecutionId == executionId && !pe.IsResolved)
+            .ToListAsync(cancellationToken);
+
     public async Task<bool> HasUnresolvedAsync(Guid executionId, CancellationToken cancellationToken = default) =>
         await dbContext.AgentExecutionPendingEvents
             .AnyAsync(pe => pe.ExecutionId == executionId && !pe.IsResolved, cancellationToken);
+
+    public async Task ResolveAllForExecutionAsync(Guid executionId,
+        CancellationToken cancellationToken = default) =>
+        await dbContext.AgentExecutionPendingEvents
+            .Where(pe => pe.ExecutionId == executionId && !pe.IsResolved)
+            .ExecuteUpdateAsync(s => s.SetProperty(pe => pe.IsResolved, true), cancellationToken);
 
     public async Task AddRangeAsync(IEnumerable<AgentExecutionPendingEvent> events,
         CancellationToken cancellationToken = default) =>

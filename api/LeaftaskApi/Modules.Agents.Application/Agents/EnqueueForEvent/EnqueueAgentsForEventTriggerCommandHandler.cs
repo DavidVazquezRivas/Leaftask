@@ -19,15 +19,18 @@ public sealed class EnqueueAgentsForEventTriggerCommandHandler(
 
         DateTime now = DateTime.UtcNow;
 
-        foreach (Agent agent in agents)
+        foreach (Guid agentId in agents.Select(a => a.Id))
         {
+            if (await executionRepository.HasActiveRegularExecutionAsync(agentId, cancellationToken))
+                continue;
+
             AgentExecution entry = new(
                 Guid.NewGuid(),
                 command.Payload,
                 ExecutionStatus.Pending,
                 now,
                 now,
-                agent.Id);
+                agentId);
 
             await executionRepository.AddAsync(entry, cancellationToken);
         }

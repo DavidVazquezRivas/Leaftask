@@ -23,8 +23,7 @@ public sealed class ChatRepository(ChatsDbContext dbContext) : IChatRepository
             .AsNoTracking()
             .FirstOrDefaultAsync(
                 p => EF.Property<Guid>(p, "chat_id") == chatId
-                     && p.ParticipantId == userId
-                     && p.ParticipantType == ParticipantType.User,
+                     && p.ParticipantId == userId,
                 cancellationToken);
 
     public async Task<ChatParticipant?> GetParticipantTrackedAsync(
@@ -40,7 +39,7 @@ public sealed class ChatRepository(ChatsDbContext dbContext) : IChatRepository
         CancellationToken cancellationToken = default)
     {
         IQueryable<Guid> userChatIds = dbContext.ChatParticipants
-            .Where(p => p.ParticipantId == userId && p.ParticipantType == ParticipantType.User)
+            .Where(p => p.ParticipantId == userId)
             .Select(p => EF.Property<Guid>(p, "chat_id"));
 
         return await dbContext.ChatParticipants
@@ -49,6 +48,15 @@ public sealed class ChatRepository(ChatsDbContext dbContext) : IChatRepository
                         && p.ParticipantType == otherType)
             .AnyAsync(cancellationToken);
     }
+
+    public async Task<IReadOnlyList<Guid>> GetAgentParticipantIdsAsync(Guid chatId,
+        CancellationToken cancellationToken = default) =>
+        await dbContext.ChatParticipants
+            .AsNoTracking()
+            .Where(p => EF.Property<Guid>(p, "chat_id") == chatId
+                        && p.ParticipantType == ParticipantType.Agent)
+            .Select(p => p.ParticipantId)
+            .ToListAsync(cancellationToken);
 
     public async Task AddAsync(Chat chat, CancellationToken cancellationToken = default) =>
         await dbContext.Chats.AddAsync(chat, cancellationToken);

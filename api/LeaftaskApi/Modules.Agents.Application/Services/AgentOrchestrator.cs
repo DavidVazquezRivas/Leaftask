@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Modules.Agents.Application.Kernel;
@@ -31,12 +32,13 @@ public sealed class AgentOrchestrator(
 
         try
         {
-            IReadOnlyList<AgentExecutionMessage> existingMessages =
-                await messageRepository.GetByExecutionIdAsync(executionId, cancellationToken);
+            IReadOnlyList<AgentExecutionMessage> existingMessages = execution.Mode == ExecutionMode.DirectQuery
+                ? []
+                : await messageRepository.GetByExecutionIdAsync(executionId, cancellationToken);
 
-            ChatHistory chatHistory = BuildChatHistory(agent, initialPayload, existingMessages);
+            ChatHistory chatHistory = BuildChatHistory(agent, execution, initialPayload, existingMessages);
 
-            if (existingMessages.Count == 0)
+            if (execution.Mode != ExecutionMode.DirectQuery && existingMessages.Count == 0)
                 await PersistInitialMessages(executionId, agent, initialPayload, cancellationToken);
 
             Microsoft.SemanticKernel.Kernel kernel = kernelFactory.CreateKernel(agent);
@@ -52,13 +54,19 @@ public sealed class AgentOrchestrator(
 
             string content = response.Content ?? string.Empty;
 
-            int nextSequence = existingMessages.Count == 0 ? 3 : existingMessages.Count + 1;
-            await messageRepository.AddAsync(
-                new AgentExecutionMessage(Guid.NewGuid(), executionId, MessageRole.Assistant, content, null, nextSequence),
-                cancellationToken);
-            await messageRepository.SaveChangesAsync(cancellationToken);
+            // DirectQuery executions don't persist messages — they are ephemeral by design
+            if (execution.Mode != ExecutionMode.DirectQuery)
+            {
+                int nextSequence = existingMessages.Count == 0 ? 3 : existingMessages.Count + 1;
+                await messageRepository.AddAsync(
+                    new AgentExecutionMessage(Guid.NewGuid(), executionId, MessageRole.Assistant, content, null,
+                        nextSequence),
+                    cancellationToken);
+                await messageRepository.SaveChangesAsync(cancellationToken);
+            }
 
-            if (suspensionContext.ShouldSuspend)
+            // DirectQuery executions always complete — suspension is not allowed
+            if (execution.Mode != ExecutionMode.DirectQuery && suspensionContext.ShouldSuspend)
             {
                 List<AgentExecutionPendingEvent> pendingEvents = suspensionContext.CorrelationIds
                     .Select(correlationId => new AgentExecutionPendingEvent(
@@ -83,9 +91,12 @@ public sealed class AgentOrchestrator(
         }
     }
 
-    private static ChatHistory BuildChatHistory(Agent agent, string initialPayload,
-        IReadOnlyList<AgentExecutionMessage> existingMessages)
+    private static ChatHistory BuildChatHistory(Agent agent, AgentExecution execution,
+        string initialPayload, IReadOnlyList<AgentExecutionMessage> existingMessages)
     {
+        if (execution.Mode == ExecutionMode.DirectQuery)
+            return BuildDirectQueryChatHistory(agent, execution.Payload);
+
         ChatHistory history = [];
 
         if (existingMessages.Count == 0)
@@ -111,6 +122,27 @@ public sealed class AgentOrchestrator(
             }
         }
 
+        return history;
+    }
+
+    private static ChatHistory BuildDirectQueryChatHistory(Agent agent, string payload)
+    {
+        using JsonDocument doc = JsonDocument.Parse(payload);
+        JsonElement root = doc.RootElement;
+
+        Guid chatId = root.TryGetProperty("chatId", out JsonElement chatIdEl)
+            ? chatIdEl.GetGuid()
+            : Guid.Empty;
+        string question = root.TryGetProperty("question", out JsonElement questionEl)
+            ? questionEl.GetString() ?? string.Empty
+            : string.Empty;
+        string executionContext = root.TryGetProperty("executionContext", out JsonElement contextEl)
+            ? contextEl.GetString() ?? string.Empty
+            : string.Empty;
+
+        ChatHistory history = [];
+        history.AddSystemMessage(BuildDirectQuerySystemPrompt(agent, chatId, executionContext));
+        history.AddUserMessage(question);
         return history;
     }
 
@@ -173,8 +205,41 @@ public sealed class AgentOrchestrator(
 
          6. **Suspend when awaiting a reply.** After SendChatMessage or any action requiring a human
             response, immediately call SuspendWorkflow with the event type and correlation IDs.
+            In your final text output, document: the chatId used, what you asked, and what action
+            to take when the reply arrives.
 
-         7. **Final response.** After all tool calls are complete, write one short paragraph summarising
+         7. **On resume.** When the last user message starts with "[RESUME — event: ..., id: CHAT_ID]",
+            your SuspendWorkflow completed and the user has replied.
+            a. Extract the chatId from the "id:" field in the resume tag.
+            b. Immediately call **SendChatMessage(chatId, "brief acknowledgment")** so the user
+               knows their reply was received (e.g. "Got it, I'll proceed now.").
+            c. Look at your previous text summary (last assistant message) to determine the
+               pending action, and execute it using tools.
+            d. Do NOT re-do work already completed.
+
+         8. **Final response.** After all tool calls are complete, write one short paragraph summarising
             what was accomplished. Use the same language as the triggering message. Nothing else.
+         """;
+
+    private static string BuildDirectQuerySystemPrompt(Agent agent, Guid chatId, string executionContext) =>
+        $"""
+         ## QUERY MODE
+         You received a direct message from a user and must respond to it.
+
+         ## INSTRUCTIONS
+         1. Reply to the user using **SendChatMessage** with chatId="{chatId}".
+         2. Be concise and helpful. Explain your current state if relevant.
+         3. Do NOT call SuspendWorkflow — this is a single-turn response.
+         4. Complete immediately after sending the reply.
+
+         ## YOUR CURRENT STATE
+         {executionContext}
+
+         ## YOUR IDENTITY AND PURPOSE
+         Agent ID:   {agent.Id}
+         Agent Name: {agent.Name}
+         Project ID: {agent.ProjectId}
+
+         {agent.SystemPrompt}
          """;
 }

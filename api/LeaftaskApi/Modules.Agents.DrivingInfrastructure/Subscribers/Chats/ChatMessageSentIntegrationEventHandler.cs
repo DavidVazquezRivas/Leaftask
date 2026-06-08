@@ -1,6 +1,7 @@
 using System.Text.Json;
 using BuildingBlocks.DrivingInfrastructure.Events;
 using MediatR;
+using Modules.Agents.Application.Agents.DirectQuery;
 using Modules.Agents.Application.Agents.EnqueueForEvent;
 using Modules.Agents.Application.Agents.Resume;
 using Modules.Agents.Domain;
@@ -27,12 +28,28 @@ public sealed class ChatMessageSentIntegrationEventHandler(
                 JsonSerializer.Serialize(notification)),
             cancellationToken);
 
-        await sender.Send(
-            new TryResumeAgentExecutionsCommand(
-                AgentEventTypes.ChatMessageSent,
-                notification.ChatId.ToString(),
-                notification.Content),
-            cancellationToken);
+        HashSet<Guid> resumedAgentIds = [];
+
+        // Skip resume when an agent is the sender — agents must not re-queue themselves via their own messages
+        if (!notification.SenderIsAgent)
+        {
+            resumedAgentIds = await sender.Send(
+                new TryResumeAgentExecutionsCommand(
+                    AgentEventTypes.ChatMessageSent,
+                    notification.ChatId.ToString(),
+                    notification.Content),
+                cancellationToken);
+        }
+
+        foreach (Guid agentId in notification.AgentRecipientIds)
+        {
+            if (notification.SenderId == agentId) continue;
+            if (resumedAgentIds.Contains(agentId)) continue;
+
+            await sender.Send(
+                new HandleDirectAgentQueryCommand(agentId, notification.ChatId, notification.Content),
+                cancellationToken);
+        }
     }
 
     protected override Guid GetFallbackMessageId(ChatMessageSentIntegrationEvent notification) =>

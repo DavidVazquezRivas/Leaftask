@@ -27,9 +27,17 @@ public sealed class SendMessageCommandHandler(
         if (senderParticipant is null)
             return Result.Failure<ChatMessageDto>(ChatErrors.NotParticipant);
 
+        IReadOnlyList<Guid> agentRecipientIds = await chatRepository.GetAgentParticipantIdsAsync(
+            command.ChatId, cancellationToken);
+
+        // Exclude the sender themselves (prevents an agent from querying itself)
+        agentRecipientIds = agentRecipientIds
+            .Where(id => id != senderParticipant.ParticipantId)
+            .ToList();
+
         ChatMessage message = ChatMessage.Create(
             Guid.NewGuid(), command.Content, DateTime.UtcNow,
-            MessageStatus.Pending, chat, senderParticipant);
+            MessageStatus.Pending, chat, senderParticipant, agentRecipientIds);
 
         await messageRepository.AddAsync(message, cancellationToken);
         await messageRepository.SaveChangesAsync(cancellationToken);

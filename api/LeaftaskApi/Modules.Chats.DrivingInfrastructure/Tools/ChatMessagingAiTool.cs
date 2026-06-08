@@ -100,14 +100,14 @@ public sealed class ChatMessagingAiTool(ISender sender, IAiResponseFormatter for
             return formatter.FormatFailure(nameof(FindOrCreateDirectChatAsync), listResult.Error.Description);
 
         ChatDto? existing = listResult.Value.FirstOrDefault(c =>
-            c.Type == "Direct" && c.OtherParticipantId == userId);
+            c.Type == "person" && c.OtherParticipantId == userId);
 
         if (existing is not null)
             return formatter.FormatResponse(new { ChatId = existing.Id, existing.Name, Status = "existing" });
 
-        // Create a new direct chat
+        // Create a new direct chat (agent is the self, human user is the other)
         Result<ChatDto> createResult = await sender.Send(
-            new CreateChatCommand(userId, "User"),
+            new CreateChatCommand(userId, "person", "agent"),
             cancellationToken);
 
         if (createResult.IsFailure)

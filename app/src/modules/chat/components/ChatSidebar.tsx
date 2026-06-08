@@ -1,18 +1,14 @@
 import { useState } from 'react'
-import { Bot, MessageSquare, Search, Settings } from 'lucide-react'
+import { MessageSquare, Search, Settings } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import type { ChatData } from '@/core/api/chat'
-import type { AgentData } from '@/core/api/agent'
-import { ApiGateway } from '@/core/api/ApiGateway'
 import { AppPaths } from '@/core/router/paths'
 import { useAppTranslation } from '@/core/i18n'
 import { usePrivateLayoutSession } from '@/shared/components/layouts/hooks/usePrivateLayoutSession'
-import { QueryKeys } from '@/core/query/QueryKeys'
-import { queryClient } from '@/core/query/queryClient'
 import { Button } from '@/shared/components/ui/button'
 import { ChatListItem } from './ChatListItem'
 import { NewChatDialog } from './NewChatDialog'
-import { CreateAgentDialog } from './CreateAgentDialog'
+import { NewAgentChatDialog } from './NewAgentChatDialog'
 
 interface ChatSidebarProps {
   chats: ChatData[]
@@ -53,13 +49,8 @@ export function ChatSidebar({ chats, activeChatId }: ChatSidebarProps) {
     navigate(AppPaths.chatDetail(chatId))
   }
 
-  const handleAgentCreated = async (agent: AgentData) => {
-    const chat = await ApiGateway.chat.create({
-      otherParticipantId: agent.id,
-      otherParticipantType: 'agent',
-    })
-    queryClient.invalidateQueries({ queryKey: QueryKeys.chat.list() })
-    navigate(AppPaths.chatDetail(chat.id))
+  const handleAgentChatCreated = (chatId: string) => {
+    navigate(AppPaths.chatDetail(chatId))
   }
 
   return (
@@ -107,13 +98,9 @@ export function ChatSidebar({ chats, activeChatId }: ChatSidebarProps) {
             <SectionHeader
               label="Agentes"
               action={
-                <CreateAgentDialog
-                  onCreated={handleAgentCreated}
-                  trigger={
-                    <Button size="icon-sm" variant="ghost" className="size-6 shrink-0" title="Crear agente">
-                      <Bot size={13} />
-                    </Button>
-                  }
+                <NewAgentChatDialog
+                  existingChats={chats}
+                  onCreated={handleAgentChatCreated}
                 />
               }
             />

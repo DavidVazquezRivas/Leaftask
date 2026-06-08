@@ -13,7 +13,7 @@ public sealed class ListChatsQueryService(ChatsDbContext dbContext) : IListChats
     {
         List<Guid> chatIds = await dbContext.ChatParticipants
             .AsNoTracking()
-            .Where(p => p.ParticipantId == userId && p.ParticipantType == ParticipantType.User)
+            .Where(p => p.ParticipantId == userId)
             .Select(p => EF.Property<Guid>(p, "chat_id"))
             .ToListAsync(cancellationToken);
 
@@ -42,7 +42,7 @@ public sealed class ListChatsQueryService(ChatsDbContext dbContext) : IListChats
         Dictionary<Guid, int> unreadCountByChat = await dbContext.ChatMessages
             .AsNoTracking()
             .Where(m => chatIds.Contains(EF.Property<Guid>(m, "chat_id"))
-                        && !(m.Sender.ParticipantId == userId && m.Sender.ParticipantType == ParticipantType.User)
+                        && m.Sender.ParticipantId != userId
                         && m.Status != MessageStatus.Read)
             .GroupBy(m => EF.Property<Guid>(m, "chat_id"))
             .Select(g => new { ChatId = g.Key, Count = g.Count() })
@@ -53,14 +53,22 @@ public sealed class ListChatsQueryService(ChatsDbContext dbContext) : IListChats
             .ToDictionary(g => g.Key, g => g.MaxBy(m => m.Timestamp)!);
 
         Dictionary<Guid, ParticipantRow> otherParticipantByChat = participants
-            .Where(p => !(p.ParticipantId == userId && p.ParticipantType == ParticipantType.User))
+            .Where(p => p.ParticipantId != userId)
             .GroupBy(p => p.ChatId)
             .ToDictionary(g => g.Key, g => g.First());
 
-        List<Guid> personOtherIds = otherParticipantByChat.Values
-            .Where(p => p.ParticipantType == ParticipantType.User)
+        List<Guid> otherParticipantIds = otherParticipantByChat.Values
             .Select(p => p.ParticipantId)
             .Distinct()
+            .ToList();
+
+        Dictionary<Guid, string> agentNames = await dbContext.AgentReadModels
+            .AsNoTracking()
+            .Where(a => otherParticipantIds.Contains(a.Id))
+            .ToDictionaryAsync(a => a.Id, a => a.Name, cancellationToken);
+
+        List<Guid> personOtherIds = otherParticipantIds
+            .Where(id => !agentNames.ContainsKey(id))
             .ToList();
 
         Dictionary<Guid, (string FirstName, string LastName)> userNames = await dbContext.UserReadModels
@@ -75,17 +83,22 @@ public sealed class ListChatsQueryService(ChatsDbContext dbContext) : IListChats
                 lastMessageByChat.TryGetValue(id, out MessageRow? lastMsg);
                 otherParticipantByChat.TryGetValue(id, out ParticipantRow? other);
 
+                bool isAgent = other is null
+                    || other.ParticipantType == ParticipantType.Agent
+                    || agentNames.ContainsKey(other.ParticipantId);
+
                 string name;
                 string type;
 
-                if (other is null || other.ParticipantType == ParticipantType.Agent)
+                if (isAgent)
                 {
-                    name = "AI Assistant";
+                    agentNames.TryGetValue(other?.ParticipantId ?? Guid.Empty, out string? agentName);
+                    name = agentName ?? "AI Assistant";
                     type = "agent";
                 }
                 else
                 {
-                    userNames.TryGetValue(other.ParticipantId, out (string FirstName, string LastName) info);
+                    userNames.TryGetValue(other!.ParticipantId, out (string FirstName, string LastName) info);
                     name = $"{info.FirstName} {info.LastName}".Trim();
                     type = "person";
                 }
@@ -94,9 +107,7 @@ public sealed class ListChatsQueryService(ChatsDbContext dbContext) : IListChats
                     ? null
                     : new ChatLastMessageDto(lastMsg.Content, lastMsg.Timestamp, MapStatus(lastMsg.Status));
 
-                Guid? otherParticipantId = other?.ParticipantType == ParticipantType.User
-                    ? other.ParticipantId
-                    : null;
+                Guid? otherParticipantId = other?.ParticipantId;
 
                 int unreadCount = unreadCountByChat.TryGetValue(id, out int count) ? count : 0;
 

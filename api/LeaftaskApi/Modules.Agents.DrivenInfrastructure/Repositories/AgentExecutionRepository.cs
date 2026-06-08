@@ -32,6 +32,38 @@ public sealed class AgentExecutionRepository(AgentsDbContext dbContext) : IAgent
                 .ThenInclude(a => a.EventTriggers)
             .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
 
+    public async Task<bool> HasActiveRegularExecutionAsync(Guid agentId,
+        CancellationToken cancellationToken = default) =>
+        await dbContext.AgentExecutions
+            .AnyAsync(e => e.AgentId == agentId
+                && e.Mode == ExecutionMode.Regular
+                && (e.Status == ExecutionStatus.Pending
+                    || e.Status == ExecutionStatus.Processing
+                    || e.Status == ExecutionStatus.Suspended), cancellationToken);
+
+    public async Task<AgentExecution?> GetActiveRegularForAgentAsync(Guid agentId,
+        CancellationToken cancellationToken = default) =>
+        await dbContext.AgentExecutions
+            .Include(e => e.PendingEvents)
+            .Where(e => e.AgentId == agentId
+                && e.Mode == ExecutionMode.Regular
+                && (e.Status == ExecutionStatus.Pending
+                    || e.Status == ExecutionStatus.Processing
+                    || e.Status == ExecutionStatus.Suspended))
+            .OrderByDescending(e => e.UpdatedAt)
+            .FirstOrDefaultAsync(cancellationToken);
+
+    public async Task<List<AgentExecution>> GetTimedOutSuspendedAsync(TimeSpan threshold,
+        CancellationToken cancellationToken = default)
+    {
+        DateTime cutoff = DateTime.UtcNow - threshold;
+        return await dbContext.AgentExecutions
+            .Where(e => e.Mode == ExecutionMode.Regular
+                && e.Status == ExecutionStatus.Suspended
+                && e.UpdatedAt < cutoff)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task AddAsync(AgentExecution entry, CancellationToken cancellationToken = default) =>
         await dbContext.AgentExecutions.AddAsync(entry, cancellationToken);
 
