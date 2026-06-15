@@ -11,11 +11,13 @@ import {
   usePrivateLayoutSession,
 } from '@/shared/components/layouts/hooks'
 import { useChatsQuery, useChatPollingQuery } from '@/core/query/chat'
+import { useNotificationsQuery } from '@/core/query/notification'
 
 export function PrivateLayout() {
   const navigate = useNavigate()
   const location = useLocation()
   const isChatActive = location.pathname.startsWith('/app/chats')
+  const isNotificationsActive = location.pathname.startsWith('/app/notifications')
 
   const {
     isOrganizationContext,
@@ -42,6 +44,11 @@ export function PrivateLayout() {
 
   const totalUnread = (chatsQuery.data ?? []).reduce((sum, c) => sum + c.unreadCount, 0)
 
+  const notificationsQuery = useNotificationsQuery('unread')
+  const totalUnreadNotifications = (notificationsQuery.data?.pages ?? [])
+    .flatMap((p) => p.data)
+    .length
+
   const projectsEmptyLabel = isOrganizationContext
     ? tGlobal('organizationPanel.projectsEmpty')
     : tGlobal('privatePanel.projectsEmpty')
@@ -60,11 +67,14 @@ export function PrivateLayout() {
           onOrganizationsLabel={organizationSidebarLabel}
           isLoading={organizationsQuery.isLoading}
           isChatActive={isChatActive}
+          isNotificationsActive={isNotificationsActive}
           onChatClick={() => navigate(AppPaths.chat())}
+          onNotificationsClick={() => navigate(AppPaths.notifications())}
           unreadChatCount={totalUnread}
+          unreadNotificationCount={totalUnreadNotifications}
         />
 
-        {!isChatActive && (
+        {!isChatActive && !isNotificationsActive && (
           <PrivateContextPanel
             title={panelTitle}
             subtitle={panelSubtitle}

@@ -14,6 +14,7 @@ import { ProjectTreePage } from '@/modules/project/pages/tree'
 import { ProjectSettingsPage } from '@/modules/project/pages/settings'
 import { ProfilePage } from '@/modules/user/pages/profile'
 import { ChatPage } from '@/modules/chat'
+import { NotificationsPage } from '@/modules/notification'
 import { NotFoundPage } from '@/shared/pages/not-found'
 
 const router = createBrowserRouter([
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
       {
         path: AppPaths.APP_PROJECT_SETTINGS,
         element: <ProjectSettingsPage />,
+      },
+      {
+        path: AppPaths.APP_NOTIFICATIONS,
+        element: <NotificationsPage />,
       },
       {
         path: AppPaths.APP_CHAT,

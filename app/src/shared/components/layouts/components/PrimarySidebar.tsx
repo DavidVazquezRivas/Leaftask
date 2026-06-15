@@ -18,8 +18,11 @@ interface PrimarySidebarProps {
   onOrganizationsLabel: string
   isLoading: boolean
   isChatActive?: boolean
+  isNotificationsActive?: boolean
   onChatClick?: () => void
+  onNotificationsClick?: () => void
   unreadChatCount?: number
+  unreadNotificationCount?: number
 }
 
 export function PrimarySidebar({
@@ -33,8 +36,11 @@ export function PrimarySidebar({
   onOrganizationsLabel,
   isLoading,
   isChatActive,
+  isNotificationsActive,
   onChatClick,
+  onNotificationsClick,
   unreadChatCount = 0,
+  unreadNotificationCount = 0,
 }: PrimarySidebarProps) {
   return (
     <aside className="flex h-full w-16 shrink-0 flex-col items-center border-r bg-card/60 py-4 backdrop-blur-sm">
@@ -84,14 +90,22 @@ export function PrimarySidebar({
         <PrivateLanguageSwitcher />
         <PrivateThemeToggle />
 
-        <Button
-          size="icon-sm"
-          variant="ghost"
-          aria-label={onNotificationsLabel}
-          title={onNotificationsLabel}
-        >
-          <Bell />
-        </Button>
+        <div className="relative">
+          <Button
+            size="icon-sm"
+            variant={isNotificationsActive ? 'default' : 'ghost'}
+            aria-label={onNotificationsLabel}
+            title={onNotificationsLabel}
+            onClick={onNotificationsClick}
+          >
+            <Bell />
+          </Button>
+          {!isNotificationsActive && unreadNotificationCount > 0 && (
+            <span className="pointer-events-none absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold leading-none text-white">
+              {unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}
+            </span>
+          )}
+        </div>
 
         <div className="relative">
           <Button
