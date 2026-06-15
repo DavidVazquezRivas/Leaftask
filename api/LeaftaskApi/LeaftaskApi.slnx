@@ -32,6 +32,13 @@
     <Project Path="Modules.Chats.DrivingInfrastructure/Modules.Chats.DrivingInfrastructure.csproj" Id="38f924fc-8f04-4492-a974-1aa0e4a988d9" />
     <Project Path="Modules.Chats.Integration/Modules.Chats.Integration.csproj" Id="2ec708a7-0d0b-4403-ad36-69f1d50053d3" />
   </Folder>
+  <Folder Name="/src/Modules/Notification/">
+    <Project Path="Modules.Notification.Application/Modules.Notification.Application.csproj" Id="55235933-3fb7-4b47-a85b-e9ce3af73de5" />
+    <Project Path="Modules.Notification.Domain/Modules.Notification.Domain.csproj" Id="7428190b-1ff0-4de3-83f1-65fcbc17046a" />
+    <Project Path="Modules.Notification.DrivenInfrastructure/Modules.Notification.DrivenInfrastructure.csproj" Id="00276512-454c-489b-bc39-5621acec1f6f" />
+    <Project Path="Modules.Notification.DrivingInfrastructure/Modules.Notification.DrivingInfrastructure.csproj" Id="b3478d47-39d2-4286-92a4-0727b1318387" />
+    <Project Path="Modules.Notifications.Integration/Modules.Notifications.Integration.csproj" Id="52bee744-eb56-489d-9481-88b0f9326abb" />
+  </Folder>
   <Folder Name="/src/Modules/Organizations/">
     <Project Path="Modules.Organizations.Application/Modules.Organizations.Application.csproj" Id="15f9ba06-4dea-4e39-84a7-70a30ceee5a3" />
     <Project Path="Modules.Organizations.Domain/Modules.Organizations.Domain.csproj" Id="53000f7a-4bc8-4141-8ef8-65dff4a6407f" />
@@ -73,6 +80,10 @@
   <Folder Name="/tests/Modules/Chats/">
     <Project Path="Modules.Chats.Application.UnitTests/Modules.Chats.Application.UnitTests.csproj" Id="526f3d21-ffcf-4fbe-ae15-8762d09887b1" />
     <Project Path="Modules.Chats.Domain.UnitTests/Modules.Chats.Domain.UnitTests.csproj" Id="929ea91e-ade2-4460-824f-05152516d05f" />
+  </Folder>
+  <Folder Name="/tests/Modules/Notification/">
+    <Project Path="Modules.Notification.Application.UnitTests/Modules.Notification.Application.UnitTests.csproj" Id="71992e66-3861-4e7c-9e6c-b24f8b00442e" />
+    <Project Path="Modules.Notification.Domain.UnitTests/Modules.Notification.Domain.UnitTests.csproj" Id="e9f6bdda-f9c9-4c2d-882c-24618d21e9c6" />
   </Folder>
   <Folder Name="/tests/Modules/Organizations/">
     <Project Path="Modules.Organizations.Application.UnitTests/Modules.Organizations.Application.UnitTests.csproj" Id="c7733e47-ec53-49a2-a411-3fe016bf2c40" />

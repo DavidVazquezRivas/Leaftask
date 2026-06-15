@@ -8,6 +8,7 @@ using Modules.Projects.DrivingInfrastructure.Setup;
 using Modules.Users.DrivingInfrastructure.Setup;
 using Modules.Agents.DrivingInfrastructure.Setup;
 using Modules.Chats.DrivingInfrastructure.Setup;
+using Modules.Notification.DrivingInfrastructure.Setup;
 using Modules.WorkItems.DrivingInfrastructure.Setup;
 using Serilog;
 
@@ -37,6 +38,7 @@ builder.Services.AddProjectsModule(builder.Configuration);
 builder.Services.AddWorkItemsModule(builder.Configuration);
 builder.Services.AddChatsModule(builder.Configuration);
 builder.Services.AddAgentsModule(builder.Configuration);
+builder.Services.AddNotificationsModule(builder.Configuration);
 
 // --- Authentication and authorization configuration ---
 builder.Services.AddAuthenticationConfig(builder.Configuration);

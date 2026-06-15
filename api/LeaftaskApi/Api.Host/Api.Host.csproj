@@ -28,6 +28,7 @@
 	  <ProjectReference Include="..\Modules.WorkItems.DrivingInfrastructure\Modules.WorkItems.DrivingInfrastructure.csproj" />
 	  <ProjectReference Include="..\Modules.Chats.DrivingInfrastructure\Modules.Chats.DrivingInfrastructure.csproj" />
 	  <ProjectReference Include="..\Modules.Agents.DrivingInfrastructure\Modules.Agents.DrivingInfrastructure.csproj" />
+	  <ProjectReference Include="..\Modules.Notification.DrivingInfrastructure\Modules.Notification.DrivingInfrastructure.csproj" />
 	</ItemGroup>
 
 </Project>

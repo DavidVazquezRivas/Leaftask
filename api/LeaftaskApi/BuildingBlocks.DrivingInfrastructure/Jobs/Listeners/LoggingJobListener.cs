@@ -10,17 +10,20 @@ public sealed class LoggingJobListener(ILogger<LoggingJobListener> logger) : IJo
 
     public Task JobToBeExecuted(IJobExecutionContext context, CancellationToken cancellationToken = default)
     {
-        string jobName = context.JobDetail.Key.Name;
 
-        logger.LogInformation(
-            "[{Listener}] Executing Job: {JobName} (Group: {JobGroup})",
-            Name,
-            jobName,
-            context.JobDetail.Key.Group);
+#pragma warning disable S125 // Sections of code should not be commented out
+                            // string jobName = context.JobDetail.Key.Name;
 
-        context.Put("Stopwatch", Stopwatch.StartNew());
+        // logger.LogInformation(
+        //     "[{Listener}] Executing Job: {JobName} (Group: {JobGroup})",
+        //     Name,
+        //     jobName,
+        //     context.JobDetail.Key.Group);
+
+        // context.Put("Stopwatch", Stopwatch.StartNew());
 
         return Task.CompletedTask;
+#pragma warning restore S125 // Sections of code should not be commented out
     }
 
     public Task JobExecutionVetoed(IJobExecutionContext context, CancellationToken cancellationToken = default)
@@ -36,33 +39,36 @@ public sealed class LoggingJobListener(ILogger<LoggingJobListener> logger) : IJo
     public Task JobWasExecuted(IJobExecutionContext context, JobExecutionException? jobException,
         CancellationToken cancellationToken = default)
     {
-        string jobName = context.JobDetail.Key.Name;
-        long elapsedMilliseconds = 0;
 
-        if (context.Get("Stopwatch") is Stopwatch stopwatch)
-        {
-            stopwatch.Stop();
-            elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
-        }
+#pragma warning disable S125 // Sections of code should not be commented out
+                            // string jobName = context.JobDetail.Key.Name;
+                            // long elapsedMilliseconds = 0;
 
-        if (jobException is not null)
-        {
-            logger.LogError(
-                jobException,
-                "[{Listener}] Job {JobName} FAILED after {ElapsedMilliseconds}ms",
-                Name,
-                jobName,
-                elapsedMilliseconds);
-        }
-        else
-        {
-            logger.LogInformation(
-                "[{Listener}] Job {JobName} completed successfully in {ElapsedMilliseconds}ms",
-                Name,
-                jobName,
-                elapsedMilliseconds);
-        }
+        // if (context.Get("Stopwatch") is Stopwatch stopwatch)
+        // {
+        //     stopwatch.Stop();
+        //     elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+        // }
+
+        // if (jobException is not null)
+        // {
+        //     logger.LogError(
+        //         jobException,
+        //         "[{Listener}] Job {JobName} FAILED after {ElapsedMilliseconds}ms",
+        //         Name,
+        //         jobName,
+        //         elapsedMilliseconds);
+        // }
+        // else
+        // {
+        //     logger.LogInformation(
+        //         "[{Listener}] Job {JobName} completed successfully in {ElapsedMilliseconds}ms",
+        //         Name,
+        //         jobName,
+        //         elapsedMilliseconds);
+        // }
 
         return Task.CompletedTask;
+#pragma warning restore S125 // Sections of code should not be commented out
     }
 }
