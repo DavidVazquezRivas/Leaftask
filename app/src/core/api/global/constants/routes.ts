@@ -136,6 +136,16 @@ export const ApiRoutes = {
     Create: 'api/v1/agents',
     Delete: (agentId: string) => `api/v1/agents/${agentId}`,
   },
+  Notification: {
+    List: 'api/v1/notifications',
+    MarkAsRead: (notificationId: string) => `api/v1/notifications/${notificationId}/read`,
+    MarkAllAsRead: 'api/v1/notifications/read-all',
+  },
+  Approval: {
+    List: 'api/v1/approvals',
+    Update: (approvalId: string) => `api/v1/approvals/${approvalId}`,
+    AddComment: (approvalId: string) => `api/v1/approvals/${approvalId}/comments`,
+  },
   Chat: {
     List: 'api/v1/chats',
     Create: 'api/v1/chats',

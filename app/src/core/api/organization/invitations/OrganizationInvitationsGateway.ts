@@ -75,6 +75,35 @@ export class OrganizationInvitationsGateway {
     return payloadResponse
   }
 
+  static async respondToInvitation(
+    organizationId: string,
+    invitationId: string,
+    status: 'accepted' | 'rejected'
+  ): Promise<CancelOrganizationInvitationSuccessResponse> {
+    const response = await apiClient.patch<CancelOrganizationInvitationApiResponse>(
+      ApiRoutes.Organization.Invitations.Update(organizationId, invitationId),
+      { status }
+    )
+
+    const payloadResponse = response.data
+
+    if (isApiErrorResponse(payloadResponse)) {
+      throw new ApiError(payloadResponse.error.code, {
+        message: payloadResponse.error.message,
+        status: response.status,
+        meta: payloadResponse.meta,
+      })
+    }
+
+    if (!isApiSuccessResponse(payloadResponse)) {
+      throw new ApiError('OrganizationInvitations.Respond.InvalidResponse', {
+        message: 'Organization invitation respond response is invalid',
+      })
+    }
+
+    return payloadResponse
+  }
+
   static async createInvitation(
     organizationId: string,
     payload: CreateOrganizationInvitationRequest
