@@ -3,6 +3,7 @@ using BuildingBlocks.Application.Commands;
 using BuildingBlocks.Domain.Result;
 using Modules.Organizations.Domain.Entities;
 using Modules.Organizations.Domain.Errors;
+using Modules.Organizations.Domain.Events;
 using Modules.Organizations.Domain.Repositories;
 
 namespace Modules.Organizations.Application.Invitations.Respond;
@@ -36,6 +37,9 @@ public sealed class RespondOrganizationInvitationCommandHandler(
             return Result.Failure<OrganizationInvitationResponse>(OrganizationErrors.InvalidInvitationStatus);
         }
 
+        IReadOnlyCollection<OrganizationPermission> availablePermissions =
+            await organizationPermissionRepository.GetAllAsync(cancellationToken);
+
         InvitationStatus desiredStatus = ParseStatus(request.Status);
         if (desiredStatus is InvitationStatus.Accepted or InvitationStatus.Rejected)
         {
@@ -46,9 +50,6 @@ public sealed class RespondOrganizationInvitationCommandHandler(
         }
         else if (desiredStatus == InvitationStatus.Canceled)
         {
-            IReadOnlyCollection<OrganizationPermission> availablePermissions =
-                await organizationPermissionRepository.GetAllAsync(cancellationToken);
-
             OrganizationPermission? inviteMembersPermission = availablePermissions.FirstOrDefault(permission =>
                 permission.Name.Equals(InviteMembersPermissionName, StringComparison.OrdinalIgnoreCase));
 
@@ -74,6 +75,20 @@ public sealed class RespondOrganizationInvitationCommandHandler(
         if (result.IsFailure)
         {
             return Result.Failure<OrganizationInvitationResponse>(result.Error);
+        }
+
+        if (desiredStatus == InvitationStatus.Accepted)
+        {
+            OrganizationRole? joinedRole = organization.Roles.FirstOrDefault(r => r.Id == invitation.OrganizationRoleId);
+            if (joinedRole is not null)
+            {
+                IReadOnlyCollection<OrganizationPermissionEntry> permissions = joinedRole.Permissions
+                    .Select(rp => new OrganizationPermissionEntry(
+                        availablePermissions.First(p => p.Id == rp.OrganizationPermissionId).Name,
+                        (int)rp.Level))
+                    .ToArray();
+                organization.Raise(new OrganizationMemberJoinedDomainEvent(organization.Id, invitation.UserId, permissions));
+            }
         }
 
         await organizationRepository.SaveChangesAsync(cancellationToken);

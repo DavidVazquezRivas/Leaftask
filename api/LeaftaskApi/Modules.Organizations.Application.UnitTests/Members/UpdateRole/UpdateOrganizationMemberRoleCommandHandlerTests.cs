@@ -21,7 +21,7 @@ public class UpdateOrganizationMemberRoleCommandHandlerTests
         _repositoryMock = Substitute.For<IOrganizationRepository>();
         _permissionRepositoryMock = Substitute.For<IOrganizationPermissionRepository>();
         _userContextMock = Substitute.For<IUserContext>();
-        _handler = new UpdateOrganizationMemberRoleCommandHandler(_repositoryMock);
+        _handler = new UpdateOrganizationMemberRoleCommandHandler(_repositoryMock, _permissionRepositoryMock);
     }
 
     [Fact]
