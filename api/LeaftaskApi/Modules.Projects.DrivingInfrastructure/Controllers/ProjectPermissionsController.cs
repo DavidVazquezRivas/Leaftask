@@ -3,6 +3,7 @@ using BuildingBlocks.DrivingInfrastructure.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Modules.Projects.Application.Permissions.CreateRole;
 using Modules.Projects.Application.Permissions.DeleteRole;
+using Modules.Projects.Application.Permissions.GetMyPermissions;
 using Modules.Projects.Application.Permissions.GetPermissions;
 using Modules.Projects.Application.Permissions.GetRoles;
 using Modules.Projects.Application.Permissions.PatchRole;
@@ -13,6 +14,18 @@ namespace Modules.Projects.DrivingInfrastructure.Controllers;
 [Route("api/v1/projects")]
 public sealed class ProjectPermissionsController : ApiBaseController
 {
+    [HttpGet("{projectId:guid}/my-permissions")]
+    public async Task<IActionResult> GetMyPermissions(
+        [FromRoute] Guid projectId,
+        CancellationToken cancellationToken = default)
+    {
+        GetMyProjectPermissionsQuery query = new(projectId);
+
+        Result<IReadOnlyList<ProjectPermissionLevelDto>> result = await Sender.Send(query, cancellationToken);
+
+        return HandleResult(result);
+    }
+
     [HttpGet("{projectId:guid}/permissions")]
     public async Task<IActionResult> GetPermissions(
         [FromRoute] Guid projectId,

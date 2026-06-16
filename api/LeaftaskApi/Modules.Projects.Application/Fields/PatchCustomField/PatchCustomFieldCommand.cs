@@ -1,6 +1,6 @@
 using BuildingBlocks.Application.Commands;
 using BuildingBlocks.Domain.Result;
-using Modules.Projects.Application.Authorization;
+using BuildingBlocks.Application.Authorization;
 using Modules.Projects.Application.Fields.GetProjectCustomFields;
 
 namespace Modules.Projects.Application.Fields.PatchCustomField;

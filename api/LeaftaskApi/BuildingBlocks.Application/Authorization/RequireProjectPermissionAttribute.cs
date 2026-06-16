@@ -1,4 +1,4 @@
-namespace Modules.Agents.Application.Authorization;
+namespace BuildingBlocks.Application.Authorization;
 
 [AttributeUsage(AttributeTargets.Class)]
 public sealed class RequireProjectPermissionAttribute(string permissionName) : Attribute

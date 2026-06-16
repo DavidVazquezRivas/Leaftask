@@ -1,4 +1,5 @@
 using BuildingBlocks.Application.Abstractions;
+using BuildingBlocks.Application.Authorization;
 using BuildingBlocks.Application.Behaviors;
 using BuildingBlocks.DrivingInfrastructure.Jobs.Outbox;
 using BuildingBlocks.DrivingInfrastructure.Jobs.Quartz;
@@ -107,7 +108,7 @@ public static class DependencyInjection
 
             config.AddOpenBehavior(typeof(LoggingBehavior<,>));
             config.AddOpenBehavior(typeof(ValidationBehavior<,>));
-            config.AddOpenBehavior(typeof(Modules.Agents.Application.Authorization.ProjectPermissionBehavior<,>));
+            config.AddOpenBehavior(typeof(ProjectPermissionBehavior<,>));
         });
 
         services.AddSingleton<AgentsModuleEventMapper>();
@@ -117,6 +118,7 @@ public static class DependencyInjection
 
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
+        services.AddScoped<IProjectPermissionReplayContext, ProjectPermissionReplayContext>();
         services.AddScoped<IAgentRepository, AgentRepository>();
         services.AddScoped<IModelRepository, ModelRepository>();
         services.AddScoped<IProjectReadModelRepository, ProjectReadModelRepository>();

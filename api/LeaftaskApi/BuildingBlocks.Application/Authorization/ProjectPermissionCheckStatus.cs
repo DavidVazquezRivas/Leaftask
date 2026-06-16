@@ -1,4 +1,4 @@
-namespace Modules.Projects.Application.Authorization;
+namespace BuildingBlocks.Application.Authorization;
 
 public enum ProjectPermissionCheckStatus
 {

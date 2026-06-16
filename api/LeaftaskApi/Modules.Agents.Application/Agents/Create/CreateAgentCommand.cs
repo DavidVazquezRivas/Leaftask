@@ -1,6 +1,6 @@
 using BuildingBlocks.Application.Commands;
 using BuildingBlocks.Domain.Result;
-using Modules.Agents.Application.Authorization;
+using BuildingBlocks.Application.Authorization;
 
 namespace Modules.Agents.Application.Agents.Create;
 

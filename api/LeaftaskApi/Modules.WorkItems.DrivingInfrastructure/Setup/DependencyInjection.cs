@@ -1,4 +1,5 @@
 using BuildingBlocks.Application.Abstractions;
+using BuildingBlocks.Application.Authorization;
 using BuildingBlocks.Application.Behaviors;
 using BuildingBlocks.DrivenInfrastructure.Storage;
 using BuildingBlocks.DrivingInfrastructure.Jobs.Outbox;
@@ -8,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Minio;
-using Modules.WorkItems.Application.Authorization;
 using Modules.WorkItems.Application.Comments.List;
 using Modules.WorkItems.Application.Configuration.GetWorkItemStatuses;
 using Modules.WorkItems.Application.Configuration.GetWorkItemTypes;
@@ -83,6 +83,7 @@ public static class DependencyInjection
 
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
+        services.AddScoped<IProjectPermissionReplayContext, ProjectPermissionReplayContext>();
         services.AddScoped<IWorkItemRepository, WorkItemRepository>();
         services.AddScoped<IProjectReadModelRepository, ProjectReadModelRepository>();
         services.AddScoped<IUserReadModelRepository, UserReadModelRepository>();

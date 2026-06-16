@@ -1,4 +1,4 @@
-namespace Modules.WorkItems.Application.Authorization;
+namespace BuildingBlocks.Application.Authorization;
 
 public interface IProjectPermissionRequest
 {

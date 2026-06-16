@@ -1,11 +1,11 @@
 using BuildingBlocks.Application.Commands;
 using BuildingBlocks.Domain.Result;
-using Modules.WorkItems.Application.Authorization;
+using BuildingBlocks.Application.Authorization;
 using Modules.WorkItems.Application.Comments;
 
 namespace Modules.WorkItems.Application.Comments.Add;
 
-[RequireProjectPermission("Access Project")]
+[RequireProjectPermission("work-items.comment")]
 public sealed record AddCommentCommand(
     Guid ProjectId,
     Guid WorkItemId,
