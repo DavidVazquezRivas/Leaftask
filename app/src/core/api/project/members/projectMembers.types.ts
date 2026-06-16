@@ -44,8 +44,7 @@ export type GetProjectPendingInvitationsSuccessResponse =
 export type GetProjectPendingInvitationsApiResponse =
   ApiResponse<ProjectPendingInvitationData[]>
 
-export type PatchProjectMemberRoleSuccessResponse =
-  ApiSuccessResponse<ProjectMemberData>
+export type PatchProjectMemberRoleSuccessResponse = void
 
 export type PatchProjectMemberRoleApiResponse =
   ApiResponse<ProjectMemberData>

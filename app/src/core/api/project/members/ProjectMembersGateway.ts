@@ -102,6 +102,8 @@ export class ProjectMembersGateway {
         payload
       )
 
+    if (response.status === 204) return
+
     const payloadResponse = response.data
 
     if (isApiErrorResponse(payloadResponse)) {
@@ -111,14 +113,6 @@ export class ProjectMembersGateway {
         meta: payloadResponse.meta,
       })
     }
-
-    if (!isApiSuccessResponse(payloadResponse)) {
-      throw new ApiError('ProjectMembers.Update.InvalidResponse', {
-        message: 'Project member update response is invalid',
-      })
-    }
-
-    return payloadResponse
   }
 
   static async createInvitation(

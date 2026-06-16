@@ -129,7 +129,7 @@ export function NotificationsPage() {
           ) : (
             <>
               {approvals.map((a) => (
-                <ApprovalItem key={a.id} approval={a} />
+                <ApprovalItem key={a.id} approval={a} orgMap={orgMap} projectMap={projectMap} />
               ))}
               {approvalsQuery.hasNextPage && (
                 <div className="flex justify-center pt-2">

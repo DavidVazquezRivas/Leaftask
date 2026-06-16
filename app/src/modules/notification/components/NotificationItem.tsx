@@ -1,5 +1,7 @@
+import { useNavigate } from 'react-router-dom'
 import { AtSign, Bell, Check, FolderOpen, Mail, X } from 'lucide-react'
 import type { NotificationData } from '@/core/api/notification'
+import { AppPaths } from '@/core/router'
 import { Button } from '@/shared/components/ui/button'
 import {
   useRespondInvitationMutation,
@@ -79,7 +81,31 @@ function getNotificationText(
   }
 }
 
+function getNavigationPath(
+  notification: NotificationData,
+  orgMap: Record<string, string>,
+  projectMap: Record<string, string>
+): string | null {
+  const contextId = notification.context.id
+  switch (notification.type) {
+    case 'Assignment':
+    case 'Mention':
+      return AppPaths.projectWorkItem(contextId, notification.target.id)
+    case 'Invitation':
+      return orgMap[contextId] ? AppPaths.organization(contextId) : null
+    case 'ProjectInvitation':
+      return projectMap[contextId] ? AppPaths.project(contextId) : null
+    case 'Request':
+      if (orgMap[contextId]) return AppPaths.organization(contextId)
+      if (projectMap[contextId]) return AppPaths.project(contextId)
+      return null
+    default:
+      return null
+  }
+}
+
 export function NotificationItem({ notification, orgMap, projectMap }: NotificationItemProps) {
+  const navigate = useNavigate()
   const orgRespondMutation = useRespondInvitationMutation()
   const projectRespondMutation = useRespondProjectInvitationMutation()
   const markAsReadMutation = useMarkNotificationAsReadMutation()
@@ -95,6 +121,8 @@ export function NotificationItem({ notification, orgMap, projectMap }: Notificat
   )
 
   const isPending = orgRespondMutation.isPending || projectRespondMutation.isPending
+
+  const navigationPath = getNavigationPath(notification, orgMap, projectMap)
 
   const handleRespond = (e: React.MouseEvent, status: 'accepted' | 'rejected') => {
     e.stopPropagation()
@@ -112,20 +140,20 @@ export function NotificationItem({ notification, orgMap, projectMap }: Notificat
     }
   }
 
-  const handleMarkAsRead = () => {
-    if (!notification.read) {
-      markAsReadMutation.mutate(notification.id)
-    }
+  const handleClick = () => {
+    if (!notification.read) markAsReadMutation.mutate(notification.id)
+    if (navigationPath) navigate(navigationPath)
   }
 
   return (
     <div
       role="button"
       tabIndex={0}
-      onClick={handleMarkAsRead}
-      onKeyDown={(e) => e.key === 'Enter' && handleMarkAsRead()}
+      onClick={handleClick}
+      onKeyDown={(e) => e.key === 'Enter' && handleClick()}
       className={cn(
-        'flex cursor-pointer gap-3 rounded-lg border bg-card p-4 transition-colors',
+        'flex gap-3 rounded-lg border bg-card p-4 transition-colors',
+        navigationPath ? 'cursor-pointer' : 'cursor-default',
         !notification.read
           ? 'border-primary/20 bg-primary/5 hover:bg-primary/10'
           : 'hover:bg-muted/50'
