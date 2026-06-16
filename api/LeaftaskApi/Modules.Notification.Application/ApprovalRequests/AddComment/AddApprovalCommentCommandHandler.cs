@@ -32,6 +32,7 @@ public sealed class AddApprovalCommentCommandHandler(
 
         RequestComment comment = approvalRequest.AddComment(author, request.Content);
 
+        await approvalRequestRepository.AddCommentAsync(comment, cancellationToken);
         await approvalRequestRepository.SaveChangesAsync(cancellationToken);
 
         return Result.Success(new ApprovalCommentDto(

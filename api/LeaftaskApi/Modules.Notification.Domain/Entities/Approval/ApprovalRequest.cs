@@ -8,7 +8,8 @@ public sealed class ApprovalRequest : Entity
     private ApprovalRequest() { }
 
     private ApprovalRequest(Guid id, RequestStatus status, ContextType contextType, Guid contextId, Guid targetId,
-        string permissionName, DateTime createdAt, UserReadModel requester, UserReadModel? approverRejecter)
+        string permissionName, DateTime createdAt, UserReadModel requester, UserReadModel? approverRejecter,
+        string? actionType, string? actionPayload)
     {
         Id = id;
         Status = status;
@@ -19,6 +20,8 @@ public sealed class ApprovalRequest : Entity
         CreatedAt = createdAt;
         Requester = requester;
         ApproverRejecter = approverRejecter;
+        ActionType = actionType;
+        ActionPayload = actionPayload;
     }
 
     private readonly List<RequestComment> _comments = [];
@@ -29,16 +32,18 @@ public sealed class ApprovalRequest : Entity
     public Guid ContextId { get; set; }
     public Guid TargetId { get; set; }
     public string PermissionName { get; set; } = string.Empty;
+    public string? ActionType { get; set; }
+    public string? ActionPayload { get; set; }
     public DateTime CreatedAt { get; set; }
     public UserReadModel Requester { get; set; } = null!;
     public UserReadModel? ApproverRejecter { get; set; }
     public IReadOnlyCollection<RequestComment> Comments => _comments.AsReadOnly();
 
     public static ApprovalRequest Create(ContextType contextType, Guid contextId, Guid targetId,
-        string permissionName, UserReadModel requester)
+        string permissionName, UserReadModel requester, string? actionType = null, string? actionPayload = null)
     {
         return new ApprovalRequest(Guid.NewGuid(), RequestStatus.Pending, contextType, contextId, targetId,
-            permissionName, DateTime.UtcNow, requester, null);
+            permissionName, DateTime.UtcNow, requester, null, actionType, actionPayload);
     }
 
     public RequestComment AddComment(UserReadModel author, string content)
@@ -52,13 +57,13 @@ public sealed class ApprovalRequest : Entity
     {
         Status = RequestStatus.Approved;
         ApproverRejecter = approver;
-        Raise(new ApprovalRequestResolvedDomainEvent(Id, ContextType, ContextId, TargetId, RequestStatus.Approved));
+        Raise(new ApprovalRequestResolvedDomainEvent(Id, ContextType, ContextId, TargetId, RequestStatus.Approved, ActionType, ActionPayload));
     }
 
     public void Reject(UserReadModel rejecter)
     {
         Status = RequestStatus.Rejected;
         ApproverRejecter = rejecter;
-        Raise(new ApprovalRequestResolvedDomainEvent(Id, ContextType, ContextId, TargetId, RequestStatus.Rejected));
+        Raise(new ApprovalRequestResolvedDomainEvent(Id, ContextType, ContextId, TargetId, RequestStatus.Rejected, null, null));
     }
 }

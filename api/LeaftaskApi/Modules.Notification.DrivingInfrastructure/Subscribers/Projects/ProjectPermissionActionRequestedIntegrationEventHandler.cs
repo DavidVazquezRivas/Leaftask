@@ -4,33 +4,35 @@ using MediatR;
 using Modules.Notification.Application.ApprovalRequests.Create;
 using Modules.Notification.Domain.Entities.Approval;
 using Modules.Notification.DrivenInfrastructure.Persistence;
-using Modules.Organizations.Integration;
+using Modules.Projects.Integration;
 
-namespace Modules.Notification.DrivingInfrastructure.Subscribers.Organizations;
+namespace Modules.Notification.DrivingInfrastructure.Subscribers.Projects;
 
-public sealed class OrganizationPermissionActionRequestedIntegrationEventHandler(
+public sealed class ProjectPermissionActionRequestedIntegrationEventHandler(
     NotificationsDbContext dbContext,
     IIntegrationEventContextAccessor integrationEventContextAccessor,
     ISender sender)
-    : IntegrationEventHandler<OrganizationPermissionActionRequestedIntegrationEvent, NotificationsDbContext>(
+    : IntegrationEventHandler<ProjectPermissionActionRequestedIntegrationEvent, NotificationsDbContext>(
         dbContext,
         integrationEventContextAccessor)
 {
     protected override async Task HandleIntegrationEvent(
-        OrganizationPermissionActionRequestedIntegrationEvent notification,
+        ProjectPermissionActionRequestedIntegrationEvent notification,
         CancellationToken cancellationToken)
     {
         Result<Guid> result = await sender.Send(new CreateApprovalRequestCommand(
-            ContextType.Organization,
-            notification.OrganizationId,
+            ContextType.Project,
+            notification.ProjectId,
             notification.RequestedByUserId,
-            notification.PermissionName), cancellationToken);
+            notification.PermissionName,
+            notification.ActionName,
+            notification.ActionPayload), cancellationToken);
 
         if (result.IsFailure)
             throw new InvalidOperationException(
-                $"Failed to create approval request: {result.Error.Code} — {result.Error.Description}");
+                $"Failed to create project approval request: {result.Error.Code} — {result.Error.Description}");
     }
 
-    protected override Guid GetFallbackMessageId(OrganizationPermissionActionRequestedIntegrationEvent notification) =>
+    protected override Guid GetFallbackMessageId(ProjectPermissionActionRequestedIntegrationEvent notification) =>
         notification.RequestedByUserId;
 }

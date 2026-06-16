@@ -10,6 +10,9 @@ public sealed class ApprovalRequestRepository(NotificationsDbContext dbContext) 
     public async Task AddAsync(ApprovalRequest request, CancellationToken ct = default) =>
         await dbContext.ApprovalRequests.AddAsync(request, ct);
 
+    public async Task AddCommentAsync(RequestComment comment, CancellationToken ct = default) =>
+        await dbContext.RequestComments.AddAsync(comment, ct);
+
     public async Task<ApprovalRequest?> GetByIdAsync(Guid id, CancellationToken ct = default) =>
         await dbContext.ApprovalRequests
             .Include(a => a.Requester)

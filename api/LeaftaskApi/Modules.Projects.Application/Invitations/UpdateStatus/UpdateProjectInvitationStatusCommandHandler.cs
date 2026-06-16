@@ -1,4 +1,5 @@
 using BuildingBlocks.Application.Abstractions;
+using BuildingBlocks.Application.Authorization;
 using BuildingBlocks.Application.Commands;
 using BuildingBlocks.Domain.Result;
 using Modules.Projects.Application.Authorization;
@@ -7,6 +8,7 @@ using Modules.Projects.Domain.Entities.Invitation;
 using Modules.Projects.Domain.Entities.Member;
 using Modules.Projects.Domain.Entities.Role;
 using Modules.Projects.Domain.Errors;
+using Modules.Projects.Domain.Events;
 using Modules.Projects.Domain.Repositories;
 
 namespace Modules.Projects.Application.Invitations.UpdateStatus;
@@ -64,13 +66,12 @@ public sealed class UpdateProjectInvitationStatusCommandHandler(
         {
             Result memberResult = await AddMemberAsync(projectId, invitation, cancellationToken);
             if (memberResult.IsFailure)
-            {
                 return memberResult;
-            }
         }
 
         await invitationRepository.SaveChangesAsync(cancellationToken);
         return Result.Success();
+
     }
 
     private async Task<Result> HandleCancelAsync(
@@ -103,18 +104,23 @@ public sealed class UpdateProjectInvitationStatusCommandHandler(
     {
         Project? project = await projectRepository.GetByIdTrackedAsync(projectId, cancellationToken);
         if (project is null)
-        {
             return Result.Failure(ProjectErrors.ProjectNotFound);
-        }
 
         ProjectRole? role = await roleRepository.GetByIdTrackedAsync(projectId, invitation.RoleId, cancellationToken);
         if (role is null)
-        {
             return Result.Failure(ProjectErrors.RoleNotFound);
-        }
 
         ProjectMember member = new(Guid.NewGuid(), invitation.InviteeId, MemberType.User, role, project);
         await memberRepository.AddAsync(member, cancellationToken);
+
+        List<ProjectRolePermission> rolePermissions =
+            await roleRepository.GetRolePermissionsTrackedAsync(role.Id, cancellationToken);
+
+        IReadOnlyCollection<ProjectPermissionEntry> permissions = rolePermissions
+            .Select(rp => new ProjectPermissionEntry(rp.Permission.Name, (int)rp.PermissionLevel))
+            .ToArray();
+
+        project.Raise(new ProjectMemberJoinedDomainEvent(projectId, invitation.InviteeId, permissions));
 
         return Result.Success();
     }

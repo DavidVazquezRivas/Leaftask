@@ -17,6 +17,11 @@ public sealed class ProjectModuleEventMapper : IIntegrationEventMapper
         FieldDeletedDomainEvent e => new FieldDeletedIntegrationEvent(e.FieldId),
         ProjectInvitationCreatedDomainEvent e => new ProjectInvitationCreatedIntegrationEvent(e.InvitationId, e.ProjectId, e.InviteeId),
         ProjectInvitationCancelledDomainEvent e => new ProjectInvitationCancelledIntegrationEvent(e.InvitationId, e.ProjectId, e.InviteeId),
+        ProjectMemberJoinedDomainEvent e => new ProjectMemberJoinedIntegrationEvent(
+            e.ProjectId, e.UserId,
+            e.Permissions.Select(p => new ProjectPermissionEntryDto(p.PermissionName, p.Level)).ToArray()),
+        ProjectPermissionActionRequestedDomainEvent e => new ProjectPermissionActionRequestedIntegrationEvent(
+            e.ProjectId, e.RequestedByUserId, e.PermissionName, e.ActionName, e.ActionPayload),
         _ => null
     };
 }
