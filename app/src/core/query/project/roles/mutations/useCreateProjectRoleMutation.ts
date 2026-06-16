@@ -5,7 +5,7 @@ import { ApiGateway } from '@/core/api/ApiGateway'
 import type { CreateProjectRoleRequest } from '@/core/api/project/roles'
 import { i18n } from '@/core/i18n'
 import { QueryKeys } from '@/core/query/QueryKeys'
-import { isForbiddenError, useApiErrorHandler } from '@/core/query/hooks'
+import { useApiErrorHandler } from '@/core/query/hooks'
 import { queryClient } from '@/core/query/queryClient'
 
 export const useCreateProjectRoleMutation = (projectId: string) => {
@@ -33,16 +33,6 @@ export const useCreateProjectRoleMutation = (projectId: string) => {
       )
     },
     onError: (error) => {
-      if (isForbiddenError(error)) {
-        toast.info(
-          i18n.t(
-            'management.rolesPermissions.feedback.supervisedAction',
-            { ns: 'projects' }
-          )
-        )
-        return
-      }
-
       handleApiError(error)
     },
   })

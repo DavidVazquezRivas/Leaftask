@@ -6,7 +6,7 @@ import { ApiError } from '@/core/api/global/errors/ApiError'
 import type { CreateOrganizationInvitationRequest } from '@/core/api/organization/invitations'
 import { i18n } from '@/core/i18n'
 import { QueryKeys } from '@/core/query/QueryKeys'
-import { isForbiddenError, useApiErrorHandler } from '@/core/query/hooks'
+import { useApiErrorHandler } from '@/core/query/hooks'
 import { queryClient } from '@/core/query/queryClient'
 
 export const useCreateOrganizationInvitationMutation = (
@@ -43,16 +43,6 @@ export const useCreateOrganizationInvitationMutation = (
       )
     },
     onError: (error) => {
-      if (isForbiddenError(error)) {
-        toast.info(
-          i18n.t('management.settings.members.permissions.noInvite', {
-            ns: 'organizations',
-            defaultValue: "You don't have permission to invite members.",
-          })
-        )
-        return
-      }
-
       if (error instanceof ApiError && error.status === 409) {
         const parts = error.code.split('.')
         if (parts[0] === 'Organization' && parts[1] === 'Invitation') {

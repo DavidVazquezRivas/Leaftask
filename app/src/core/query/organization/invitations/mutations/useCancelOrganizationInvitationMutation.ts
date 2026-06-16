@@ -5,7 +5,7 @@ import { ApiGateway } from '@/core/api/ApiGateway'
 import type { CancelOrganizationInvitationRequest } from '@/core/api/organization/invitations'
 import { i18n } from '@/core/i18n'
 import { QueryKeys } from '@/core/query/QueryKeys'
-import { isForbiddenError, useApiErrorHandler } from '@/core/query/hooks'
+import { useApiErrorHandler } from '@/core/query/hooks'
 import { queryClient } from '@/core/query/queryClient'
 
 export const useCancelOrganizationInvitationMutation = (
@@ -42,16 +42,6 @@ export const useCancelOrganizationInvitationMutation = (
       )
     },
     onError: (error) => {
-      if (isForbiddenError(error)) {
-        toast.info(
-          i18n.t('management.settings.members.permissions.noCancelInvitation', {
-            ns: 'organizations',
-            defaultValue: "You don't have permission to cancel invitations.",
-          })
-        )
-        return
-      }
-
       handleApiError(error)
     },
   })

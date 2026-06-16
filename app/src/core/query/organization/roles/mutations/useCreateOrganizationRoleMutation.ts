@@ -5,7 +5,7 @@ import { ApiGateway } from '@/core/api/ApiGateway'
 import type { CreateOrganizationRoleRequest } from '@/core/api/organization/roles'
 import { i18n } from '@/core/i18n'
 import { QueryKeys } from '@/core/query/QueryKeys'
-import { isForbiddenError, useApiErrorHandler } from '@/core/query/hooks'
+import { useApiErrorHandler } from '@/core/query/hooks'
 import { queryClient } from '@/core/query/queryClient'
 
 export const useCreateOrganizationRoleMutation = (organizationId: string) => {
@@ -37,18 +37,6 @@ export const useCreateOrganizationRoleMutation = (organizationId: string) => {
       )
     },
     onError: (error) => {
-      if (isForbiddenError(error)) {
-        toast.info(
-          i18n.t(
-            'management.settings.rolesPermissions.feedback.supervisedAction',
-            {
-              ns: 'organizations',
-            }
-          )
-        )
-        return
-      }
-
       handleApiError(error)
     },
   })

@@ -5,7 +5,7 @@ import { ApiGateway } from '@/core/api/ApiGateway'
 import type { CreateCustomFieldRequest } from '@/core/api/project/customFields'
 import { i18n } from '@/core/i18n'
 import { QueryKeys } from '@/core/query/QueryKeys'
-import { isForbiddenError, useApiErrorHandler } from '@/core/query/hooks'
+import { useApiErrorHandler } from '@/core/query/hooks'
 import { queryClient } from '@/core/query/queryClient'
 
 export const useCreateProjectCustomFieldMutation = (projectId: string) => {
@@ -28,16 +28,6 @@ export const useCreateProjectCustomFieldMutation = (projectId: string) => {
       )
     },
     onError: (error) => {
-      if (isForbiddenError(error)) {
-        toast.info(
-          i18n.t('management.customFields.permissions.noManage', {
-            ns: 'projects',
-            defaultValue: "You don't have permission to manage custom fields.",
-          })
-        )
-        return
-      }
-
       handleApiError(error)
     },
   })
