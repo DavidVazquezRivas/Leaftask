@@ -1,8 +1,8 @@
 paths:
   /:
     get:
-      summary: List All Chats
-      description: Retrieves a list of all active chats (conversations with users or AI agents) for the authenticated user, ordered by the latest message.
+      summary: List Chats
+      description: Retrieves all active chats for the authenticated user, ordered by latest message.
       tags:
         - Chat Management
       responses:
@@ -21,21 +21,137 @@ paths:
         '500':
           $ref: '../../../shared/responses/InternalServerError.yaml'
 
+    post:
+      summary: Create Chat
+      description: Opens a new direct conversation with a user or an AI agent. If a chat with the given participant already exists it will be returned instead of creating a duplicate.
+      tags:
+        - Chat Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/requests/CreateChatRequest.yaml'
+      responses:
+        '201':
+          description: Chat created (or existing chat returned).
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/responses/ChatResponse.yaml'
+        '400':
+          description: Bad Request. Missing or invalid participant data.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '401':
+          description: Unauthorized. Missing or invalid access token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
   /polling:
     get:
       summary: Poll New Messages
-      description: Retrieves all new messages across all chats since the user's last fetch. The server automatically tracks the timestamp of the last fetch for the current user session. Messages returned will automatically transition from 'pending' to 'delivered'.
+      description: |
+        Retrieves all new messages across all chats since the user's last fetch.
+        The server automatically tracks the last-fetch timestamp per user session.
+        Returned messages transition from `pending` to `delivered` automatically.
+        Intended to be polled periodically (e.g. every 5–30 s) by clients that do not use WebSockets.
       tags:
         - Chat Management
       responses:
         '200':
-          description: Successfully retrieved new messages.
+          description: New messages since the last poll. Empty array if none.
           content:
             application/json:
               schema:
                 $ref: '../schemas/responses/ChatMessageListResponse.yaml'
         '401':
           description: Unauthorized. Missing or invalid access token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+  /{chatId}:
+    parameters:
+      - name: chatId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+    delete:
+      summary: Delete Chat
+      description: Permanently deletes the chat and all its messages. Only participants of the chat may perform this action.
+      tags:
+        - Chat Management
+      responses:
+        '200':
+          description: Chat deleted successfully.
+        '401':
+          description: Unauthorized. Missing or invalid access token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. User is not a participant in this chat.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Chat not found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '500':
+          $ref: '../../../shared/responses/InternalServerError.yaml'
+
+  /{chatId}/read:
+    parameters:
+      - name: chatId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+    post:
+      summary: Mark Chat as Read
+      description: |
+        Marks all messages in the specified chat as `read` for the current user.
+        Only messages sent by other participants are affected — own messages are not modified.
+        The `unreadCount` on the chat will drop to `0` after this call.
+      tags:
+        - Chat Management
+      responses:
+        '200':
+          description: All messages marked as read.
+        '401':
+          description: Unauthorized. Missing or invalid access token.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '403':
+          description: Forbidden. User is not a participant in this chat.
+          content:
+            application/json:
+              schema:
+                $ref: '../../../shared/schemas/GlobalErrorResponse.yaml'
+        '404':
+          description: Chat not found.
           content:
             application/json:
               schema:

@@ -2,6 +2,7 @@ using System.Globalization;
 using BuildingBlocks.Application.Queries;
 using Microsoft.EntityFrameworkCore;
 using Modules.Projects.Application.Management.GetMyProjects;
+using Modules.Projects.Domain.Entities.Member;
 using Modules.Projects.Domain.Entities.Owner;
 using Modules.Projects.DrivenInfrastructure.Persistence;
 
@@ -33,7 +34,12 @@ public sealed class GetMyProjectsQueryService(ProjectsDbContext dbContext) : IGe
     {
         List<ProjectRow> projects = await dbContext.Projects
             .AsNoTracking()
-            .Where(project => project.OwnerType == OwnerType.User && project.OwnerId == userId)
+            .Where(project =>
+                project.OwnerType == OwnerType.User && project.OwnerId == userId ||
+                dbContext.ProjectMembers.Any(m =>
+                    EF.Property<Guid>(m, "project_id") == project.Id &&
+                    m.MemberId == userId &&
+                    m.MemberType == MemberType.User))
             .Select(project => new ProjectRow(project.Id, project.Name, project.Abbreviation, project.CreatedAt))
             .ToListAsync(cancellationToken);
 

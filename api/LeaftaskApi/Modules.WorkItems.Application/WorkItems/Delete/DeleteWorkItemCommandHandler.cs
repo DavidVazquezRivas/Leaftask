@@ -19,6 +19,7 @@ public sealed class DeleteWorkItemCommandHandler(IWorkItemRepository workItemRep
             return Result.Failure(WorkItemErrors.WorkItemNotFound);
         }
 
+        workItem.Delete();
         workItemRepository.Remove(workItem);
         await workItemRepository.SaveChangesAsync(cancellationToken);
 

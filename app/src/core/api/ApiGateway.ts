@@ -9,6 +9,9 @@ import { ProjectManagementGateway } from '@/core/api/project/management'
 import { ProjectMembersGateway } from '@/core/api/project/members'
 import { ProjectRolesGateway } from '@/core/api/project/roles'
 import { WorkItemsGateway, WorkLogGateway, AttachmentGateway, CommentGateway } from '@/core/api/workitems'
+import { AgentGateway } from '@/core/api/agent'
+import { ChatGateway } from '@/core/api/chat'
+import { NotificationGateway } from '@/core/api/notification'
 
 export const ApiGateway = {
   organization: {
@@ -33,4 +36,7 @@ export const ApiGateway = {
     session: SessionGateway,
     users: UsersGateway,
   },
+  agent: AgentGateway,
+  chat: ChatGateway,
+  notification: NotificationGateway,
 } as const

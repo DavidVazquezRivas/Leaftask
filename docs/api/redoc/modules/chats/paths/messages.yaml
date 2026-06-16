@@ -9,7 +9,9 @@ paths:
           format: uuid
     get:
       summary: List Chat Messages
-      description: Retrieves the paginated history of messages for a specific chat. Messages fetched will transition from 'pending' to 'delivered' or 'read'.
+      description: |
+        Retrieves the cursor-paginated history of messages for a specific chat, sorted ascending by `createdAt` by default.
+        Results are wrapped in a `data.items` array. Use `data.nextCursor` or `meta.pagination.nextCursor` to fetch older pages.
       tags:
         - Chat Messaging
       parameters:
@@ -22,7 +24,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schemas/responses/ChatMessageListResponse.yaml'
+                $ref: '../schemas/responses/ChatMessagePaginatedResponse.yaml'
         '401':
           description: Unauthorized. Missing or invalid access token.
           content:

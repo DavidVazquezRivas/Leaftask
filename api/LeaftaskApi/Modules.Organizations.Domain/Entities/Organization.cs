@@ -102,7 +102,13 @@ public sealed class Organization : Entity
             return Result.Failure(OrganizationErrors.OrganizationMemberNotFound);
         }
 
-        return invitation.Abandon();
+        Result result = invitation.Abandon();
+        if (result.IsSuccess)
+        {
+            Raise(new OrganizationMemberRemovedDomainEvent(Id, memberId));
+        }
+
+        return result;
     }
 
     public Result RemoveRole(Guid roleId)

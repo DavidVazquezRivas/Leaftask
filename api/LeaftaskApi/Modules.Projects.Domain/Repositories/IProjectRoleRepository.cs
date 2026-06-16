@@ -5,6 +5,7 @@ namespace Modules.Projects.Domain.Repositories;
 public interface IProjectRoleRepository
 {
     Task<ProjectRole?> GetByIdTrackedAsync(Guid projectId, Guid roleId, CancellationToken cancellationToken = default);
+    Task<ProjectRole?> GetDefaultMemberRoleAsync(Guid projectId, CancellationToken cancellationToken = default);
     Task<bool> ExistsByNameAsync(Guid projectId, string name, Guid? excludeRoleId = null, CancellationToken cancellationToken = default);
     Task<ProjectPermission?> GetPermissionByIdAsync(Guid permissionId, CancellationToken cancellationToken = default);
     Task<List<ProjectRolePermission>> GetRolePermissionsTrackedAsync(Guid roleId, CancellationToken cancellationToken = default);

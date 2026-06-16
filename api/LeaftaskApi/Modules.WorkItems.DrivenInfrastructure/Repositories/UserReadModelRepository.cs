@@ -17,4 +17,7 @@ public sealed class UserReadModelRepository(WorkItemsDbContext dbContext) : IUse
 
     public async Task AddAsync(UserReadModel userReadModel, CancellationToken cancellationToken = default) =>
         await dbContext.UserReadModels.AddAsync(userReadModel, cancellationToken);
+
+    public void Remove(UserReadModel userReadModel) =>
+        dbContext.UserReadModels.Remove(userReadModel);
 }

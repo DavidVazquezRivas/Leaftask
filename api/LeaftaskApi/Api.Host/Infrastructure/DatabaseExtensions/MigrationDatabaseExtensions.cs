@@ -1,4 +1,7 @@
 ﻿using System.Net.Sockets;
+using Modules.Agents.DrivingInfrastructure.Setup;
+using Modules.Chats.DrivingInfrastructure.Setup;
+using Modules.Notification.DrivingInfrastructure.Setup;
 using Modules.Organizations.DrivingInfrastructure.Setup;
 using Modules.Projects.DrivingInfrastructure.Setup;
 using Modules.Users.DrivingInfrastructure.Setup;
@@ -19,9 +22,12 @@ internal static class MigrationDatabaseExtensions
             try
             {
                 await UsersModuleInitialization.ApplyMigrationsAsync(app.Services);
-                await OrganizationModuleInitialization.ApplyMigrationsAsync(app.Services);
+                await OrganizationsModuleInitialization.ApplyMigrationsAsync(app.Services);
                 await ProjectsModuleInitialization.ApplyMigrationsAsync(app.Services);
                 await WorkItemsModuleInitialization.ApplyMigrationsAsync(app.Services);
+                await ChatsModuleInitialization.ApplyMigrationsAsync(app.Services);
+                await AgentsModuleInitialization.ApplyMigrationsAsync(app.Services);
+                await NotificationsModuleInitialization.ApplyMigrationsAsync(app.Services);
                 return;
             }
             catch (Exception ex) when (attempt < maxAttempts && IsDatabaseUnavailable(ex))
@@ -49,12 +55,16 @@ internal static class MigrationDatabaseExtensions
         while (current is not null)
         {
             if (current is SocketException)
+            {
                 return true;
+            }
 
             // PostgresException SqlState 57P03 = "the database system is starting up"
             string? sqlState = current.GetType().GetProperty("SqlState")?.GetValue(current) as string;
             if (sqlState is "57P03")
+            {
                 return true;
+            }
 
             current = current.InnerException;
         }

@@ -20,7 +20,8 @@ public static class OrganizationsModuleInitialization
         using IServiceScope scope = serviceProvider.CreateScope();
 
         OrganizationDbContext dbContext = scope.ServiceProvider.GetRequiredService<OrganizationDbContext>();
-        IOrganizationSeederStrategy seederStrategy = scope.ServiceProvider.GetRequiredService<IOrganizationSeederStrategy>();
+        IOrganizationSeederStrategy seederStrategy =
+            scope.ServiceProvider.GetRequiredService<IOrganizationSeederStrategy>();
 
         await seederStrategy.SeedAsync(dbContext);
     }

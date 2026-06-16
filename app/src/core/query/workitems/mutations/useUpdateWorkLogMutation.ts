@@ -20,6 +20,9 @@ export const useUpdateWorkLogMutation = (projectId: string, itemId: string) => {
       queryClient.invalidateQueries({
         queryKey: QueryKeys.workItem.management.detail(projectId, itemId),
       })
+      queryClient.invalidateQueries({
+        queryKey: QueryKeys.workItem.management.list(projectId),
+      })
     },
     onError: (error) => handleApiError(error),
   })

@@ -1,6 +1,7 @@
 using BuildingBlocks.Application.Queries;
 using Microsoft.EntityFrameworkCore;
 using Modules.Projects.Application.Members.GetMembers;
+using Modules.Projects.Domain.Entities.Member;
 using Modules.Projects.DrivenInfrastructure.Persistence;
 
 namespace Modules.Projects.DrivenInfrastructure.Queries;
@@ -13,7 +14,7 @@ public sealed class GetProjectMembersQueryService(ProjectsDbContext dbContext) :
         new Dictionary<string, CursorSortFieldDefinition<MemberRow>>(StringComparer.OrdinalIgnoreCase)
         {
             ["id"] = new("id", row => row.Id, value => Guid.Parse(value), value => ((Guid)value).ToString("D")),
-            ["firstName"] = new("firstName", row => row.FirstName, value => value, value => (string)value),
+            ["firstName"] = new("firstName", row => row.DisplayName, value => value, value => (string)value),
             ["email"] = new("email", row => row.Email ?? string.Empty, value => value, value => (string)value)
         };
 
@@ -26,18 +27,29 @@ public sealed class GetProjectMembersQueryService(ProjectsDbContext dbContext) :
         IReadOnlyCollection<string> sort,
         CancellationToken cancellationToken = default)
     {
-        List<MemberRow> members = await (
+        List<RawMemberRow> rawRows = await (
             from m in dbContext.ProjectMembers.AsNoTracking()
-            join u in dbContext.UserReadModels.AsNoTracking() on m.MemberId equals u.Id into userGroup
+            join u in dbContext.UserReadModels.AsNoTracking()
+                on m.MemberId equals u.Id into userGroup
             from u in userGroup.DefaultIfEmpty()
+            join a in dbContext.AgentReadModels.AsNoTracking()
+                on m.MemberId equals a.Id into agentGroup
+            from a in agentGroup.DefaultIfEmpty()
             where EF.Property<Guid>(m, "project_id") == projectId
-            select new MemberRow(
+            select new RawMemberRow(
                 m.MemberId,
-                u != null ? u.FirstName : "Agent",
-                u != null ? u.LastName : string.Empty,
+                m.MemberType,
+                u != null ? u.FirstName : null,
+                u != null ? u.LastName : null,
                 u != null ? u.Email : null,
+                a != null ? a.Name : null,
                 EF.Property<Guid>(m, "project_role_id")))
             .ToListAsync(cancellationToken);
+
+        List<MemberRow> members = rawRows.Select(r => r.MemberType == MemberType.Agent
+            ? new MemberRow(r.Id, r.AgentName ?? "Agent", string.Empty, null, r.RoleId, MemberType.Agent)
+            : new MemberRow(r.Id, r.UserFirstName ?? string.Empty, r.UserLastName ?? string.Empty, r.UserEmail, r.RoleId, MemberType.User))
+            .ToList();
 
         IReadOnlyCollection<string> effectiveSort = NormalizeSort(sort);
 
@@ -48,7 +60,7 @@ public sealed class GetProjectMembersQueryService(ProjectsDbContext dbContext) :
             effectiveSort,
             SortFields,
             DefaultSort,
-            row => new ProjectMemberDto(row.Id, $"{row.FirstName} {row.LastName}".Trim(), row.Email, row.RoleId));
+            row => new ProjectMemberDto(row.Id, row.DisplayName, row.Email, row.RoleId, row.MemberType == MemberType.Agent ? "agent" : "person"));
     }
 
     private static IReadOnlyCollection<string> NormalizeSort(IReadOnlyCollection<string> sort) =>
@@ -56,5 +68,19 @@ public sealed class GetProjectMembersQueryService(ProjectsDbContext dbContext) :
             ? sort
             : [.. sort, IdSort];
 
-    private sealed record MemberRow(Guid Id, string FirstName, string LastName, string? Email, Guid RoleId);
+    private sealed record RawMemberRow(
+        Guid Id,
+        MemberType MemberType,
+        string? UserFirstName,
+        string? UserLastName,
+        string? UserEmail,
+        string? AgentName,
+        Guid RoleId);
+
+    private sealed record MemberRow(Guid Id, string FirstName, string LastName, string? Email, Guid RoleId, MemberType MemberType)
+    {
+        public string DisplayName => string.IsNullOrWhiteSpace(LastName)
+            ? FirstName
+            : $"{FirstName} {LastName}".Trim();
+    }
 }

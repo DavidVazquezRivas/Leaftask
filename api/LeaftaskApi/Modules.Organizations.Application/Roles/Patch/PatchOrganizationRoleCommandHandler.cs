@@ -4,6 +4,7 @@ using BuildingBlocks.Domain.Result;
 using Modules.Organizations.Application.Roles.Create;
 using Modules.Organizations.Domain.Entities;
 using Modules.Organizations.Domain.Errors;
+using Modules.Organizations.Domain.Events;
 using Modules.Organizations.Domain.Repositories;
 
 namespace Modules.Organizations.Application.Roles.Patch;
@@ -48,6 +49,26 @@ public sealed class PatchOrganizationRoleCommandHandler(
         if (updateResult.IsFailure)
         {
             return Result.Failure<OrganizationRoleResponse>(updateResult.Error);
+        }
+
+        if (request.Permissions is not null)
+        {
+            OrganizationRole updatedRole = organization.Roles.Single(r => r.Id == request.RoleId);
+            IReadOnlyCollection<OrganizationPermissionEntry> newPermissions = updatedRole.Permissions
+                .Select(rp => new OrganizationPermissionEntry(
+                    availablePermissions.First(p => p.Id == rp.OrganizationPermissionId).Name,
+                    (int)rp.Level))
+                .ToArray();
+
+            List<AffectedMemberPermissions> affectedMembers = organization.Invitations
+                .Where(inv => inv.OrganizationRoleId == request.RoleId && inv.Status == InvitationStatus.Accepted)
+                .Select(inv => new AffectedMemberPermissions(inv.UserId, newPermissions))
+                .ToList();
+
+            if (affectedMembers.Count > 0)
+            {
+                organization.Raise(new OrganizationRolePermissionsUpdatedDomainEvent(organization.Id, affectedMembers));
+            }
         }
 
         await organizationRepository.SaveChangesAsync(cancellationToken);

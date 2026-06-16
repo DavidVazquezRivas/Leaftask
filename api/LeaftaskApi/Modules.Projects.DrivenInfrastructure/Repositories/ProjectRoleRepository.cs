@@ -41,6 +41,13 @@ public sealed class ProjectRoleRepository(ProjectsDbContext dbContext) : IProjec
         await dbContext.ProjectPermissions
             .ToListAsync(cancellationToken);
 
+    public async Task<ProjectRole?> GetDefaultMemberRoleAsync(Guid projectId, CancellationToken cancellationToken = default) =>
+        await dbContext.ProjectRoles
+            .AsNoTracking()
+            .Where(r => EF.Property<Guid>(r, "project_id") == projectId && !r.IsOwnerRole)
+            .OrderBy(r => r.Name)
+            .FirstOrDefaultAsync(cancellationToken);
+
     public async Task AddAsync(ProjectRole role, CancellationToken cancellationToken = default) =>
         await dbContext.ProjectRoles.AddAsync(role, cancellationToken);
 

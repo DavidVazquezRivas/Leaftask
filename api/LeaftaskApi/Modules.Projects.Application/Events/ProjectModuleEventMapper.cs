@@ -15,6 +15,8 @@ public sealed class ProjectModuleEventMapper : IIntegrationEventMapper
         FieldCreatedDomainEvent e => new FieldCreatedIntegrationEvent(e.FieldId, e.Name, e.IsOptional, e.FieldTypeId, e.WorkItemTypeIds),
         FieldUpdatedDomainEvent e => new FieldUpdatedIntegrationEvent(e.FieldId, e.Name, e.IsOptional, e.FieldTypeId, e.WorkItemTypeIds),
         FieldDeletedDomainEvent e => new FieldDeletedIntegrationEvent(e.FieldId),
+        ProjectInvitationCreatedDomainEvent e => new ProjectInvitationCreatedIntegrationEvent(e.InvitationId, e.ProjectId, e.InviteeId),
+        ProjectInvitationCancelledDomainEvent e => new ProjectInvitationCancelledIntegrationEvent(e.InvitationId, e.ProjectId, e.InviteeId),
         _ => null
     };
 }

@@ -12,6 +12,7 @@ import {
   useUpdateProjectMemberRoleMutation,
   useProjectRolesQuery,
 } from '@/core/query/project'
+import { useDeleteAgentMutation } from '@/core/query/agent'
 import { useUsersInfiniteQuery } from '@/core/query/user/users'
 import { Button } from '@/shared/components/ui/button'
 import {
@@ -48,6 +49,7 @@ import {
   getMemberInitials,
   getRoleAccentClassName,
 } from '@/modules/project/pages/settings/utils/projectMembers.utils'
+import { CreateAgentDialog } from '@/modules/chat/components/CreateAgentDialog'
 
 interface ProjectSettingsMembersProps {
   projectId: string
@@ -86,6 +88,7 @@ export function ProjectSettingsMembers({
   )
   const updateRoleMutation = useUpdateProjectMemberRoleMutation(projectId)
   const deleteMemberMutation = useDeleteProjectMemberMutation(projectId)
+  const deleteAgentMutation = useDeleteAgentMutation(projectId)
   const createInvitationMutation = useCreateProjectInvitationMutation(projectId)
   const cancelInvitationMutation = useCancelProjectInvitationMutation(projectId)
 
@@ -125,7 +128,7 @@ export function ProjectSettingsMembers({
 
   const ownerMembersCount = useMemo(() => {
     if (!ownerRoleId) return 0
-    return members.filter((m) => m.role === ownerRoleId).length
+    return members.filter((m) => m.role === ownerRoleId && m.type === 'person').length
   }, [members, ownerRoleId])
 
   const roleNameById = useMemo(
@@ -149,13 +152,13 @@ export function ProjectSettingsMembers({
     pendingInvitationsQuery.isError
 
   const isUpdatingRole = updateRoleMutation.isPending
-  const isDeletingMember = deleteMemberMutation.isPending
+  const isDeletingMember = deleteMemberMutation.isPending || deleteAgentMutation.isPending
   const isInviting = createInvitationMutation.isPending
   const isCancelling = cancelInvitationMutation.isPending
 
-  const peopleCount = members.length
-  const agentsCount = 0
-  const totalCount = peopleCount + agentsCount
+  const agentsCount = members.filter((m) => m.type === 'agent').length
+  const peopleCount = members.length - agentsCount
+  const totalCount = members.length
 
   const openInviteDialog = () => {
     setInviteSearch('')
@@ -199,16 +202,22 @@ export function ProjectSettingsMembers({
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            data-icon="inline-start"
-            disabled
-            title="Coming soon"
-          >
-            <Bot />
-            {t('management.members.actions.createAgent')}
-          </Button>
+          <CreateAgentDialog
+            projectId={projectId}
+            onCreated={() => toast.success(t('management.members.actions.agentCreated', { defaultValue: 'Agente creado correctamente' }))}
+            trigger={
+              <Button
+                type="button"
+                variant="outline"
+                data-icon="inline-start"
+                disabled={!canManageMembers}
+                title={!canManageMembers ? t('management.members.permissions.noInvite') : undefined}
+              >
+                <Bot />
+                {t('management.members.actions.createAgent')}
+              </Button>
+            }
+          />
 
           <Button
             type="button"
@@ -338,7 +347,7 @@ export function ProjectSettingsMembers({
             const accentClassName =
               roleAccentById.get(member.role) ?? getRoleAccentClassName(0)
             const isOwnerMember =
-              Boolean(ownerRoleId) && member.role === ownerRoleId
+              member.type === 'person' && Boolean(ownerRoleId) && member.role === ownerRoleId
             const isLastOwner = isOwnerMember && ownerMembersCount <= 1
 
             return (
@@ -371,7 +380,7 @@ export function ProjectSettingsMembers({
                   <Select
                     value={member.role}
                     disabled={
-                      !canManageMembers || isUpdatingRole || isDeletingMember
+                      !canManageMembers || isUpdatingRole || isDeletingMember || member.type === 'agent'
                     }
                     onValueChange={(nextRoleId) => {
                       if (nextRoleId === member.role) return
@@ -433,7 +442,11 @@ export function ProjectSettingsMembers({
                         return
                       }
 
-                      deleteMemberMutation.mutate(member.id)
+                      if (member.type === 'agent') {
+                        deleteAgentMutation.mutate(member.id)
+                      } else {
+                        deleteMemberMutation.mutate(member.id)
+                      }
                     }}
                     title={
                       !canManageMembers

@@ -1,0 +1,77 @@
+using BuildingBlocks.Application.Abstractions;
+using BuildingBlocks.Application.Commands;
+using BuildingBlocks.Domain.Result;
+using Modules.Chats.Application.Chats;
+using Modules.Chats.Domain.Entities;
+using Modules.Chats.Domain.Entities.Participant;
+using Modules.Chats.Domain.Errors;
+using Modules.Chats.Domain.Repositories;
+
+namespace Modules.Chats.Application.Chats.Messages.Send;
+
+public sealed class SendMessageCommandHandler(
+    IChatRepository chatRepository,
+    IChatMessageRepository messageRepository,
+    IUserReadModelRepository userReadModelRepository,
+    IAgentReadModelRepository agentReadModelRepository,
+    IUserContext userContext) : ICommandHandler<SendMessageCommand, Result<ChatMessageDto>>
+{
+    public async Task<Result<ChatMessageDto>> Handle(SendMessageCommand command, CancellationToken cancellationToken)
+    {
+        Chat? chat = await chatRepository.GetByIdTrackedAsync(command.ChatId, cancellationToken);
+        if (chat is null)
+            return Result.Failure<ChatMessageDto>(ChatErrors.ChatNotFound);
+
+        ChatParticipant? senderParticipant = await chatRepository.GetParticipantTrackedAsync(
+            command.ChatId, userContext.UserId, cancellationToken);
+        if (senderParticipant is null)
+            return Result.Failure<ChatMessageDto>(ChatErrors.NotParticipant);
+
+        IReadOnlyList<Guid> agentRecipientIds = await chatRepository.GetAgentParticipantIdsAsync(
+            command.ChatId, cancellationToken);
+
+        // Exclude the sender themselves (prevents an agent from querying itself)
+        agentRecipientIds = agentRecipientIds
+            .Where(id => id != senderParticipant.ParticipantId)
+            .ToList();
+
+        ChatMessage message = ChatMessage.Create(
+            Guid.NewGuid(), command.Content, DateTime.UtcNow,
+            MessageStatus.Pending, chat, senderParticipant, agentRecipientIds);
+
+        await messageRepository.AddAsync(message, cancellationToken);
+        await messageRepository.SaveChangesAsync(cancellationToken);
+
+        string senderName;
+        string senderType;
+
+        if (senderParticipant.ParticipantType == ParticipantType.Agent)
+        {
+            AgentReadModel? agentReadModel = await agentReadModelRepository.GetByIdAsync(
+                senderParticipant.ParticipantId, cancellationToken);
+            senderName = agentReadModel?.Name ?? "AI Assistant";
+            senderType = "agent";
+        }
+        else
+        {
+            UserReadModel? user = await userReadModelRepository.GetByIdAsync(userContext.UserId, cancellationToken);
+            senderName = user is null ? "" : $"{user.FirstName} {user.LastName}".Trim();
+            senderType = "person";
+        }
+
+        ChatSenderDto sender = new(senderParticipant.ParticipantId, senderName, senderType);
+        ChatMessageDto dto = new(
+            message.Id, command.ChatId, message.Content, message.CreatedAt,
+            MapStatus(message.Status), sender);
+
+        return Result.Success(dto);
+    }
+
+    private static string MapStatus(MessageStatus status) => status switch
+    {
+        MessageStatus.Pending => "pending",
+        MessageStatus.Delivered => "delivered",
+        MessageStatus.Read => "read",
+        _ => status.ToString()
+    };
+}

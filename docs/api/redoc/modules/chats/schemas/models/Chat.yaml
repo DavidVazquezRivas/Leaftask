@@ -7,17 +7,34 @@ properties:
   name:
     type: string
     example: 'Alice'
-  lastMessage:
-    $ref: './ChatLastMessage.yaml'
   type:
     type: string
     enum: [person, agent]
     example: 'person'
+  unreadCount:
+    type: integer
+    description: Number of messages not yet read by the current user.
+    example: 3
+  lastMessage:
+    type: object
+    allOf:
+      - $ref: './ChatLastMessage.yaml'
+    nullable: true
+    description: The most recent message. Null if no messages have been sent yet.
+  otherParticipantId:
+    type: string
+    format: uuid
+    nullable: true
+    description: ID of the other participant. Present only when type is 'person'.
+    example: '123e4567-e89b-12d3-a456-426614174099'
   project:
-    $ref: './ChatProject.yaml'
-    description: Only present if the chat type is 'agent'. Indicates the project context.
+    type: object
+    allOf:
+      - $ref: './ChatProject.yaml'
+    nullable: true
+    description: Project context. Present only when type is 'agent'.
 required:
   - id
   - name
-  - lastMessage
   - type
+  - unreadCount

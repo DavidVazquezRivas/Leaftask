@@ -262,6 +262,23 @@ namespace Modules.Projects.DrivenInfrastructure.Persistence.Migrations
                     b.ToTable("project_invitations", "project");
                 });
 
+            modelBuilder.Entity("Modules.Projects.Domain.Entities.Member.AgentReadModel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("agent_read_models", "project");
+                });
+
             modelBuilder.Entity("Modules.Projects.Domain.Entities.Member.ProjectMember", b =>
                 {
                     b.Property<Guid>("Id")

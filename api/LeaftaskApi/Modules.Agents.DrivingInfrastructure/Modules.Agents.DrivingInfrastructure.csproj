@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BuildingBlocks.DrivingInfrastructure\BuildingBlocks.DrivingInfrastructure.csproj" />
+    <ProjectReference Include="..\Modules.Agents.Application\Modules.Agents.Application.csproj" />
+    <ProjectReference Include="..\Modules.Agents.DrivenInfrastructure\Modules.Agents.DrivenInfrastructure.csproj" />
+    <ProjectReference Include="..\Modules.Agents.Integration\Modules.Agents.Integration.csproj" />
+    <ProjectReference Include="..\Modules.Projects.Integration\Modules.Projects.Integration.csproj" />
+    <ProjectReference Include="..\Modules.WorkItems.Integration\Modules.WorkItems.Integration.csproj" />
+    <ProjectReference Include="..\Modules.Chats.Integration\Modules.Chats.Integration.csproj" />
+  </ItemGroup>
+
+</Project>

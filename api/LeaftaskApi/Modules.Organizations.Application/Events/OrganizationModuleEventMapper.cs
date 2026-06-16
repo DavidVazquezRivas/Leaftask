@@ -35,6 +35,24 @@ public sealed class OrganizationModuleEventMapper : IIntegrationEventMapper
                     requested.PermissionName,
                     requested.ActionName,
                     requested.ActionPayload),
+            OrganizationMemberJoinedDomainEvent joined => new OrganizationMemberJoinedIntegrationEvent(
+                joined.OrganizationId,
+                joined.UserId,
+                joined.Permissions.Select(p => new Integration.OrganizationPermissionEntry(p.PermissionName, p.Level)).ToArray()),
+            OrganizationMemberRoleChangedDomainEvent roleChanged => new OrganizationMemberRoleChangedIntegrationEvent(
+                roleChanged.OrganizationId,
+                roleChanged.UserId,
+                roleChanged.NewPermissions.Select(p => new Integration.OrganizationPermissionEntry(p.PermissionName, p.Level)).ToArray()),
+            OrganizationRolePermissionsUpdatedDomainEvent rolePermsUpdated => new OrganizationRolePermissionsUpdatedIntegrationEvent(
+                rolePermsUpdated.OrganizationId,
+                rolePermsUpdated.AffectedMembers
+                    .Select(m => new Integration.AffectedMemberPermissions(
+                        m.UserId,
+                        m.Permissions.Select(p => new Integration.OrganizationPermissionEntry(p.PermissionName, p.Level)).ToArray()))
+                    .ToArray()),
+            OrganizationMemberRemovedDomainEvent removed => new OrganizationMemberRemovedIntegrationEvent(
+                removed.OrganizationId,
+                removed.UserId),
             _ => null
         };
 

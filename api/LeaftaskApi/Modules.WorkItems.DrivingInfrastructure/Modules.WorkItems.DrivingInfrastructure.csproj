@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -16,6 +16,7 @@
     <ProjectReference Include="..\BuildingBlocks.DrivenInfrastructure\BuildingBlocks.DrivenInfrastructure.csproj" />
     <ProjectReference Include="..\BuildingBlocks.DrivingInfrastructure\BuildingBlocks.DrivingInfrastructure.csproj" />
     <ProjectReference Include="..\Modules.WorkItems.DrivenInfrastructure\Modules.WorkItems.DrivenInfrastructure.csproj" />
+    <ProjectReference Include="..\Modules.Agents.Integration\Modules.Agents.Integration.csproj" />
     <ProjectReference Include="..\Modules.Projects.Integration\Modules.Projects.Integration.csproj" />
     <ProjectReference Include="..\Modules.User.Integration\Modules.Users.Integration.csproj" />
   </ItemGroup>

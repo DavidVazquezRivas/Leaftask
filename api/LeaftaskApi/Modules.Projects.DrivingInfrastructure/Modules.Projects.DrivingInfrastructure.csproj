@@ -18,6 +18,7 @@
     <ProjectReference Include="..\Modules.Projects.Integration\Modules.Projects.Integration.csproj" />
     <ProjectReference Include="..\Modules.User.Integration\Modules.Users.Integration.csproj" />
     <ProjectReference Include="..\Modules.Organizations.Integration\Modules.Organizations.Integration.csproj" />
+    <ProjectReference Include="..\Modules.Agents.Integration\Modules.Agents.Integration.csproj" />
   </ItemGroup>
 
 </Project>

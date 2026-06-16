@@ -1,35 +1,39 @@
 using BuildingBlocks.Application.Behaviors;
-using BuildingBlocks.DrivingInfrastructure.Jobs.Quartz;
 using BuildingBlocks.DrivingInfrastructure.Jobs.Outbox;
+using BuildingBlocks.DrivingInfrastructure.Jobs.Quartz;
+using BuildingBlocks.DrivingInfrastructure.Tools;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Modules.Projects.DrivingInfrastructure.Jobs;
-using Quartz;
 using Modules.Projects.Application.Authorization;
 using Modules.Projects.Application.Events;
-using Modules.Projects.Application.Management.Create;
-using Modules.Projects.Application.Management.GetMyProjects;
-using Modules.Projects.Application.Management.GetOrganizationProjects;
 using Modules.Projects.Application.Fields.GetFieldTypes;
 using Modules.Projects.Application.Fields.GetProjectCustomFields;
 using Modules.Projects.Application.Invitations.GetPending;
+using Modules.Projects.Application.Management.Create;
+using Modules.Projects.Application.Management.GetMyProjects;
+using Modules.Projects.Application.Management.GetOrganizationProjects;
 using Modules.Projects.Application.Members.GetMembers;
-using Modules.Projects.Application.Permissions.GetPermissions;
-using Modules.Projects.Application.Permissions.GetRoles;
 using Modules.Projects.Application.Organizations.Create;
 using Modules.Projects.Application.Organizations.Delete;
+using Modules.Projects.Application.Permissions.GetPermissions;
+using Modules.Projects.Application.Permissions.GetRoles;
+using Modules.Projects.Application.Agents.Create;
 using Modules.Projects.Application.Users.Create;
 using Modules.Projects.Domain.Repositories;
 using Modules.Projects.DrivenInfrastructure.Authorization;
 using Modules.Projects.DrivenInfrastructure.Persistence;
 using Modules.Projects.DrivenInfrastructure.Queries;
 using Modules.Projects.DrivenInfrastructure.Repositories;
+using Modules.Projects.DrivingInfrastructure.Jobs;
 using Modules.Projects.DrivingInfrastructure.Services;
+using Modules.Projects.DrivingInfrastructure.Subscribers.Agents;
 using Modules.Projects.DrivingInfrastructure.Subscribers.Organizations;
 using Modules.Projects.DrivingInfrastructure.Subscribers.Users;
+using Modules.Projects.DrivingInfrastructure.Tools;
 using Modules.Projects.Integration;
+using Quartz;
 
 namespace Modules.Projects.DrivingInfrastructure.Setup;
 
@@ -39,10 +43,14 @@ public static class DependencyInjection
     {
         services.AddDatabase(configuration);
         services.AddJobs(configuration);
+
         services.AddMessaging();
         services.AddValidators();
+
         services.AddRepositories();
         services.AddQueryServices();
+
+        services.AddAiTools();
 
         return services;
     }
@@ -78,6 +86,7 @@ public static class DependencyInjection
             config.RegisterServicesFromAssembly(typeof(UserCreatedIntegrationEventHandler).Assembly);
             config.RegisterServicesFromAssembly(typeof(OrganizationCreatedIntegrationEventHandler).Assembly);
             config.RegisterServicesFromAssembly(typeof(OrganizationDeletedIntegrationEventHandler).Assembly);
+            config.RegisterServicesFromAssembly(typeof(AgentCreatedIntegrationEventHandler).Assembly);
 
             config.AddOpenBehavior(typeof(LoggingBehavior<,>));
             config.AddOpenBehavior(typeof(ValidationBehavior<,>));
@@ -104,10 +113,12 @@ public static class DependencyInjection
         services.AddScoped<IUserReadModelRepository, UserReadModelRepository>();
         services.AddScoped<IOrganizationReadModelRepository, OrganizationReadModelRepository>();
         services.AddScoped<IOrganizationPermissionChecker, OrganizationPermissionChecker>();
+        services.AddScoped<IProjectAccessChecker, ProjectAccessChecker>();
         services.AddScoped<IProjectPermissionChecker, ProjectPermissionChecker>();
         services.AddScoped<IProjectPermissionService, ProjectPermissionService>();
         services.AddScoped<IProjectRoleRepository, ProjectRoleRepository>();
         services.AddScoped<IProjectFieldRepository, ProjectFieldRepository>();
+        services.AddScoped<IAgentReadModelRepository, AgentReadModelRepository>();
 
         return services;
     }
@@ -122,6 +133,17 @@ public static class DependencyInjection
         services.AddScoped<IGetPendingProjectInvitationsQueryService, GetPendingProjectInvitationsQueryService>();
         services.AddScoped<IGetFieldTypesQueryService, GetFieldTypesQueryService>();
         services.AddScoped<IGetProjectCustomFieldsQueryService, GetProjectCustomFieldsQueryService>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddAiTools(this IServiceCollection services)
+    {
+        services.AddTransient<IAiTool, ProjectCustomFieldsAiTool>();
+        services.AddTransient<IAiTool, ProjectInvitationsAiTool>();
+        services.AddTransient<IAiTool, ProjectManagementAiTool>();
+        services.AddTransient<IAiTool, ProjectMembersAiTool>();
+        services.AddTransient<IAiTool, ProjectPermissionsAiTool>();
 
         return services;
     }

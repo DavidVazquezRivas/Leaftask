@@ -2,6 +2,7 @@ using BuildingBlocks.Domain.Entities;
 using BuildingBlocks.Domain.Result;
 using Modules.Projects.Domain.Entities.Member;
 using Modules.Projects.Domain.Errors;
+using Modules.Projects.Domain.Events;
 
 namespace Modules.Projects.Domain.Entities.Invitation;
 
@@ -34,9 +35,13 @@ public sealed class ProjectInvitation : Entity
     public DateTime? RespondedAt { get; private set; }
     public DateTime? CancelledAt { get; private set; }
 
-    public static ProjectInvitation Create(Guid projectId, Guid inviteeId, MemberType inviteeType, Guid roleId) =>
-        new(Guid.NewGuid(), projectId, inviteeId, inviteeType, roleId,
+    public static ProjectInvitation Create(Guid projectId, Guid inviteeId, MemberType inviteeType, Guid roleId)
+    {
+        ProjectInvitation invitation = new(Guid.NewGuid(), projectId, inviteeId, inviteeType, roleId,
             InvitationStatus.Pending, DateTime.UtcNow, null, null);
+        invitation.Raise(new ProjectInvitationCreatedDomainEvent(invitation.Id, projectId, inviteeId));
+        return invitation;
+    }
 
     public Result Accept() => Respond(InvitationStatus.Accepted);
 
@@ -51,6 +56,7 @@ public sealed class ProjectInvitation : Entity
 
         Status = InvitationStatus.Cancelled;
         CancelledAt = DateTime.UtcNow;
+        Raise(new ProjectInvitationCancelledDomainEvent(Id, ProjectId, InviteeId));
         return Result.Success();
     }
 
@@ -60,6 +66,7 @@ public sealed class ProjectInvitation : Entity
         RoleId = newRoleId;
         RespondedAt = null;
         CancelledAt = null;
+        Raise(new ProjectInvitationCreatedDomainEvent(Id, ProjectId, InviteeId));
         return Result.Success();
     }
 

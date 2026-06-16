@@ -59,13 +59,30 @@ public sealed class WorkItem : Entity
         WorkItemStatus status,
         WorkItemType type,
         UserReadModel? assignee = null,
-        Guid? parentId = null) =>
-        new(Guid.NewGuid(), code, title, description, estimation, limitDate, project, status, type, assignee, parentId);
+        Guid? parentId = null)
+    {
+        WorkItem workItem = new(Guid.NewGuid(), code, title, description, estimation, limitDate,
+            project, status, type, assignee, parentId);
+
+        workItem.Raise(new WorkItemCreatedDomainEvent(
+            workItem.Id,
+            project.Id,
+            title,
+            status.Id,
+            type.Id,
+            assignee?.Id));
+
+        return workItem;
+    }
+
+    public void Delete() =>
+        Raise(new WorkItemDeletedDomainEvent(Id, Project.Id));
 
     public WorkItemComment AddComment(string content, UserReadModel author, IReadOnlyList<Guid> mentionedUserIds)
     {
         WorkItemComment comment = new(Guid.NewGuid(), content, this, author);
         Raise(new CommentAddedDomainEvent(Id, comment.Id, author.Id, mentionedUserIds));
+        Raise(new WorkItemCommentAddedDomainEvent(Id, Project.Id, comment.Id, author.Id));
         return comment;
     }
 
@@ -102,6 +119,8 @@ public sealed class WorkItem : Entity
                 "progress",
                 Progress.ToString(CultureInfo.InvariantCulture),
                 progress.Value.ToString(CultureInfo.InvariantCulture)));
+
+            Raise(new WorkItemProgressUpdatedDomainEvent(Id, Project.Id, Progress, progress.Value));
             Progress = progress.Value;
         }
 
@@ -126,6 +145,7 @@ public sealed class WorkItem : Entity
         if (status is not null && status.Id != Status.Id)
         {
             changes.Add(new WorkItemChange("statusId", Status.Id.ToString("D"), status.Id.ToString("D")));
+            Raise(new WorkItemStatusChangedDomainEvent(Id, Project.Id, Status.Id, status.Id));
             Status = status;
         }
 
@@ -145,6 +165,7 @@ public sealed class WorkItem : Entity
                     "assigneeId",
                     oldId?.ToString("D") ?? string.Empty,
                     newId?.ToString("D") ?? string.Empty));
+                Raise(new WorkItemAssigneeChangedDomainEvent(Id, Project.Id, oldId, newId));
                 Asignee = assignee;
             }
         }

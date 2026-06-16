@@ -1,3 +1,9 @@
+const notificationAll = ['notification'] as const
+const approvalAll = ['approval'] as const
+
+const chatAll = ['chat'] as const
+const chatMessagesAll = [...chatAll, 'messages'] as const
+
 const workItemAll = ['workitem'] as const
 const workItemManagementAll = [...workItemAll, 'management'] as const
 const workItemConfigAll = [...workItemAll, 'config'] as const
@@ -15,6 +21,23 @@ const organizationAll = ['organization'] as const
 const organizationManagementAll = [...organizationAll, 'management'] as const
 
 export const QueryKeys = {
+  notification: {
+    all: notificationAll,
+    list: (params: { status?: string } = {}) => [...notificationAll, 'list', params] as const,
+    unreadCount: () => [...notificationAll, 'unread-count'] as const,
+  },
+  approval: {
+    all: approvalAll,
+    list: () => [...approvalAll, 'list'] as const,
+  },
+  chat: {
+    all: chatAll,
+    list: () => [...chatAll, 'list'] as const,
+    messages: {
+      all: chatMessagesAll,
+      list: (chatId: string) => [...chatMessagesAll, 'list', chatId] as const,
+    },
+  },
   workItem: {
     all: workItemAll,
     management: {

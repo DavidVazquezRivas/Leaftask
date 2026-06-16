@@ -1,4 +1,7 @@
-﻿using Modules.Organizations.DrivingInfrastructure.Setup;
+﻿using Modules.Agents.DrivingInfrastructure.Setup;
+using Modules.Chats.DrivingInfrastructure.Setup;
+using Modules.Notification.DrivingInfrastructure.Setup;
+using Modules.Organizations.DrivingInfrastructure.Setup;
 using Modules.Projects.DrivingInfrastructure.Setup;
 using Modules.Users.DrivingInfrastructure.Setup;
 using Modules.WorkItems.DrivingInfrastructure.Setup;
@@ -16,6 +19,9 @@ internal static class SeedDatabaseExtensions
             await ProjectsModuleInitialization.SeedDataAsync(app.Services);
             await WorkItemsModuleInitialization.SeedDataAsync(app.Services);
             await ProjectsModuleInitialization.SeedWorkItemTypeReadModelsAsync(app.Services);
+            await ChatsModuleInitialization.SeedDataAsync(app.Services);
+            await AgentsModuleInitialization.SeedDataAsync(app.Services);
+            await NotificationsModuleInitialization.SeedDataAsync(app.Services);
         }
         catch (Exception ex)
         {

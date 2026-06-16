@@ -40,12 +40,21 @@ public sealed class GetProjectWorkItemsQueryService(WorkItemsDbContext dbContext
                 wi.Estimation,
                 wi.Progress,
                 wi.Status.Id,
+                wi.Status.Name,
                 wi.Type.Id,
+                wi.Type.Name,
                 wi.Asignee != null ? wi.Asignee.Id : (Guid?)null,
                 wi.Asignee != null ? wi.Asignee.FirstName : null,
                 wi.Asignee != null ? wi.Asignee.LastName : null,
                 wi.ParentId))
             .ToListAsync(cancellationToken);
+
+        Dictionary<Guid, decimal> dedicationByItem = await dbContext.WorkLogs
+            .AsNoTracking()
+            .Where(wl => EF.Property<Guid>(wl.WorkItem, "project_read_model_id") == projectId)
+            .GroupBy(wl => wl.WorkItem.Id)
+            .Select(g => new { WorkItemId = g.Key, Total = g.Sum(wl => wl.Hours) })
+            .ToDictionaryAsync(x => x.WorkItemId, x => x.Total, cancellationToken);
 
         IReadOnlyCollection<string> effectiveSort = NormalizeSort(sort);
 
@@ -65,9 +74,11 @@ public sealed class GetProjectWorkItemsQueryService(WorkItemsDbContext dbContext
                 row.AssigneeId.HasValue
                     ? new WorkItemAssigneeDto(row.AssigneeId.Value, row.AssigneeFirstName!, row.AssigneeLastName!)
                     : null,
-                null,
+                dedicationByItem.TryGetValue(row.Id, out decimal hours) ? (float?)hours : null,
                 row.TypeId,
+                row.TypeName,
                 row.StatusId,
+                row.StatusName,
                 row.ParentId));
     }
 
@@ -84,7 +95,9 @@ public sealed class GetProjectWorkItemsQueryService(WorkItemsDbContext dbContext
         decimal Estimation,
         int Progress,
         Guid StatusId,
+        string StatusName,
         Guid TypeId,
+        string TypeName,
         Guid? AssigneeId,
         string? AssigneeFirstName,
         string? AssigneeLastName,

@@ -38,6 +38,7 @@ export const usePrivateLayoutOrganizations = () => {
 
   const selectPersonal = () => {
     setSelectedOrganizationId(null)
+    navigate(AppPaths.APP_PROFILE)
   }
 
   const selectOrganization = (organizationId: string) => {

@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SemanticKernel.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BuildingBlocks.Application\BuildingBlocks.Application.csproj" />
+    <ProjectReference Include="..\Modules.Agents.Domain\Modules.Agents.Domain.csproj" />
+    <ProjectReference Include="..\Modules.Agents.Integration\Modules.Agents.Integration.csproj" />
+    <ProjectReference Include="..\Modules.Projects.Integration\Modules.Projects.Integration.csproj" />
+  </ItemGroup>
+
+</Project>
