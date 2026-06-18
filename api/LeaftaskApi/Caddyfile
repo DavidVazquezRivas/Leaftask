@@ -1,0 +1,3 @@
+leaftask-api.spaincentral.cloudapp.azure.com {
+    reverse_proxy api.host:8080
+}

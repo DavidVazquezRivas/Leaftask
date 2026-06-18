@@ -1,4 +1,18 @@
 services:
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./.containers/caddy_data:/data
+      - ./.containers/caddy_config:/config
+    depends_on:
+      - api.host
+
   api.host:
     image: ${DOCKER_REGISTRY-}apihost
     build:
@@ -11,7 +25,7 @@ services:
       - Modules__Users__Session__OAuth__Google__ClientId=${GOOGLE_CLIENT_ID}
       - Modules__Users__Session__Jwt__SecretKey=${JWT_SECRET_KEY}
       - ConnectionStrings__Database=Host=postgres;Port=5432;Database=leaftask;Username=postgres;Password=${POSTGRES_PASSWORD}
-      - Cors__AllowedOrigins__1=http://localhost:8080
+      - Cors__AllowedOrigins__1=${FRONTEND_URL}
       - Serilog__WriteTo__0__Name=Seq
       - Serilog__WriteTo__0__Args__serverUrl=http://seq:80
       - Minio__Endpoint=minio:9000
@@ -62,7 +76,6 @@ services:
       timeout: 5s
       retries: 10
       start_period: 30s
-
 
   seq:
     image: datalust/seq:latest
