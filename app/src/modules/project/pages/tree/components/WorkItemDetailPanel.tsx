@@ -176,7 +176,7 @@ export function WorkItemDetailPanel({
   const deleteCommentMutation = useDeleteCommentMutation(projectId, itemId ?? '')
 
   const detail = detailQuery.data?.data
-  const currentUserId = sessionQuery.data?.data?.id ?? ''
+  const currentUserId = sessionQuery.data?.id ?? ''
   const allComments = commentsQuery.data?.pages.flatMap((p) => p.data) ?? []
   const mentionUsers = members.map((m) => ({ id: m.id, name: m.name }))
 

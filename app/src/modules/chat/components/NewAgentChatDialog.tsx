@@ -46,7 +46,7 @@ export function NewAgentChatDialog({ existingChats, onCreated }: NewAgentChatDia
     (m) => m.type === 'agent' && !existingAgentIds.has(m.id)
   )
 
-  const handleSelect = (agentId: string, agentName: string) => {
+  const handleSelect = (agentId: string, _agentName: string) => {
     createMutation.mutate(
       { otherParticipantId: agentId, otherParticipantType: 'agent' },
       {

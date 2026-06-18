@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import { type ReactNode, Suspense } from 'react'
 import { Outlet } from 'react-router-dom'
 
 import { useAppTranslation } from '@/core/i18n'
@@ -35,7 +35,9 @@ export function PublicLayout({ children }: PublicLayoutProps) {
       </header>
 
       <main className="mx-auto flex w-full max-w-6xl flex-1 px-6 py-8">
-        {children ?? <Outlet />}
+        <Suspense>
+          {children ?? <Outlet />}
+        </Suspense>
       </main>
 
       <footer className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 pb-8 text-xs text-muted-foreground">

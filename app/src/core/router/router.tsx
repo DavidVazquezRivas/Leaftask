@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 
 import {
@@ -7,15 +8,34 @@ import {
 } from '@/core/router/guards'
 import { AppPaths } from '@/core/router/paths'
 import { PrivateLayout, PublicLayout } from '@/shared/components/layouts'
-import { LoginPage } from '@/modules/user/pages/login'
-import { OrganizationPage } from '@/modules/organization/pages/organization'
-import { OrganizationSettingsPage } from '@/modules/organization/pages/settings'
-import { ProjectTreePage } from '@/modules/project/pages/tree'
-import { ProjectSettingsPage } from '@/modules/project/pages/settings'
-import { ProfilePage } from '@/modules/user/pages/profile'
-import { ChatPage } from '@/modules/chat'
-import { NotificationsPage } from '@/modules/notification'
-import { NotFoundPage } from '@/shared/pages/not-found'
+
+const LoginPage = lazy(() =>
+  import('@/modules/user/pages/login').then((m) => ({ default: m.LoginPage }))
+)
+const ProfilePage = lazy(() =>
+  import('@/modules/user/pages/profile').then((m) => ({ default: m.ProfilePage }))
+)
+const OrganizationPage = lazy(() =>
+  import('@/modules/organization/pages/organization').then((m) => ({ default: m.OrganizationPage }))
+)
+const OrganizationSettingsPage = lazy(() =>
+  import('@/modules/organization/pages/settings').then((m) => ({ default: m.OrganizationSettingsPage }))
+)
+const ProjectTreePage = lazy(() =>
+  import('@/modules/project/pages/tree').then((m) => ({ default: m.ProjectTreePage }))
+)
+const ProjectSettingsPage = lazy(() =>
+  import('@/modules/project/pages/settings').then((m) => ({ default: m.ProjectSettingsPage }))
+)
+const NotificationsPage = lazy(() =>
+  import('@/modules/notification').then((m) => ({ default: m.NotificationsPage }))
+)
+const ChatPage = lazy(() =>
+  import('@/modules/chat').then((m) => ({ default: m.ChatPage }))
+)
+const NotFoundPage = lazy(() =>
+  import('@/shared/pages/not-found').then((m) => ({ default: m.NotFoundPage }))
+)
 
 const router = createBrowserRouter([
   {
@@ -87,5 +107,9 @@ const router = createBrowserRouter([
 ])
 
 export function AppRouter() {
-  return <RouterProvider router={router} />
+  return (
+    <Suspense>
+      <RouterProvider router={router} />
+    </Suspense>
+  )
 }

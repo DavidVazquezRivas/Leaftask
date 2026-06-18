@@ -1,4 +1,6 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
+import { Suspense } from 'react'
+import { Loader2 } from 'lucide-react'
 
 import { AppPaths } from '@/core/router'
 import {
@@ -99,7 +101,9 @@ export function PrivateLayout() {
         )}
 
         <main className={`min-w-0 flex-1 ${isChatActive ? 'h-full overflow-hidden' : 'overflow-y-auto px-6 py-8'}`}>
-          <Outlet />
+          <Suspense fallback={<div className="flex h-full w-full items-center justify-center"><Loader2 className="size-6 animate-spin text-muted-foreground" /></div>}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     </div>
