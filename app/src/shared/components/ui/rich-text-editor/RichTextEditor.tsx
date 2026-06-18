@@ -131,7 +131,7 @@ export function RichTextEditor({
     const current = editor.getHTML()
     const normalised = current === '<p></p>' ? '' : current
     if (normalised !== value) {
-      editor.commands.setContent(value || '', false)
+      editor.commands.setContent(value || '', { emitUpdate: false })
     }
   }, [editor, value])
 
