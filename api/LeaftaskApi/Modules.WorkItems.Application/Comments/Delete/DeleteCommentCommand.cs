@@ -1,10 +1,10 @@
 using BuildingBlocks.Application.Commands;
 using BuildingBlocks.Domain.Result;
-using Modules.WorkItems.Application.Authorization;
+using BuildingBlocks.Application.Authorization;
 
 namespace Modules.WorkItems.Application.Comments.Delete;
 
-[RequireProjectPermission("Access Project")]
+[RequireProjectPermission("work-items.comment")]
 public sealed record DeleteCommentCommand(
     Guid ProjectId,
     Guid WorkItemId,

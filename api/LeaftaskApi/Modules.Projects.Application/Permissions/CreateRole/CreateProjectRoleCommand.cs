@@ -1,6 +1,6 @@
 using BuildingBlocks.Application.Commands;
 using BuildingBlocks.Domain.Result;
-using Modules.Projects.Application.Authorization;
+using BuildingBlocks.Application.Authorization;
 using Modules.Projects.Application.Permissions.GetRoles;
 
 namespace Modules.Projects.Application.Permissions.CreateRole;

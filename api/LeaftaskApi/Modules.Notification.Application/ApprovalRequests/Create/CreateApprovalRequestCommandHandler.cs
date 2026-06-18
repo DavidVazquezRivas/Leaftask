@@ -19,7 +19,7 @@ public sealed class CreateApprovalRequestCommandHandler(
             return Result.Failure<Guid>(ApprovalRequestErrors.RequesterNotFound);
 
         ApprovalRequest approvalRequest = ApprovalRequest.Create(request.ContextType, request.ContextId,
-            request.RequesterId, request.PermissionName, requester);
+            request.RequesterId, request.PermissionName, requester, request.ActionType, request.ActionPayload);
 
         await approvalRequestRepository.AddAsync(approvalRequest, cancellationToken);
         await approvalRequestRepository.SaveChangesAsync(cancellationToken);

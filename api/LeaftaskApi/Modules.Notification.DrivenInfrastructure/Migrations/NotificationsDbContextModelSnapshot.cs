@@ -96,6 +96,14 @@ namespace Modules.Notification.DrivenInfrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("ActionPayload")
+                        .HasColumnType("text")
+                        .HasColumnName("action_payload");
+
+                    b.Property<string>("ActionType")
+                        .HasColumnType("text")
+                        .HasColumnName("action_type");
+
                     b.Property<Guid>("ContextId")
                         .HasColumnType("uuid")
                         .HasColumnName("context_id");
@@ -169,6 +177,23 @@ namespace Modules.Notification.DrivenInfrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("integer")
+                        .HasColumnName("level");
+
+                    b.Property<string>("PermissionName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("permission_name");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
                     b.HasKey("Id");
 

@@ -6,6 +6,7 @@ using Modules.Projects.Domain.Entities.Member;
 using Modules.Projects.Domain.Entities.Owner;
 using Modules.Projects.Domain.Entities.Role;
 using Modules.Projects.Domain.Errors;
+using Modules.Projects.Domain.Events;
 using Modules.Projects.Domain.Repositories;
 
 namespace Modules.Projects.Application.Management.Create;
@@ -43,16 +44,18 @@ public sealed class CreateProjectCommandHandler(
         await projectRepository.AddAsync(project, cancellationToken);
         await projectRepository.SaveChangesAsync(cancellationToken);
 
-        ProjectRole ownerRole = await CreateOwnerRoleAsync(project, cancellationToken);
-        await AddCreatorAsMemberAsync(project, ownerRole, cancellationToken);
+        List<ProjectPermission> allPermissions = await projectRoleRepository.GetAllPermissionsAsync(cancellationToken);
+        ProjectRole ownerRole = await CreateOwnerRoleAsync(project, allPermissions, cancellationToken);
+        await AddCreatorAsMemberAsync(project, ownerRole, allPermissions, cancellationToken);
 
         return Result.Success(ToResponse(project, organizationId));
     }
 
-    private async Task<ProjectRole> CreateOwnerRoleAsync(Project project, CancellationToken cancellationToken)
+    private async Task<ProjectRole> CreateOwnerRoleAsync(
+        Project project,
+        List<ProjectPermission> allPermissions,
+        CancellationToken cancellationToken)
     {
-        List<ProjectPermission> allPermissions = await projectRoleRepository.GetAllPermissionsAsync(cancellationToken);
-
         ProjectRole ownerRole = new(Guid.NewGuid(), "Owner", project, isOwnerRole: true);
         await projectRoleRepository.AddAsync(ownerRole, cancellationToken);
 
@@ -66,10 +69,21 @@ public sealed class CreateProjectCommandHandler(
         return ownerRole;
     }
 
-    private async Task AddCreatorAsMemberAsync(Project project, ProjectRole ownerRole, CancellationToken cancellationToken)
+    private async Task AddCreatorAsMemberAsync(
+        Project project,
+        ProjectRole ownerRole,
+        List<ProjectPermission> allPermissions,
+        CancellationToken cancellationToken)
     {
         ProjectMember member = new(Guid.NewGuid(), userContext.UserId, MemberType.User, ownerRole, project);
         await projectMemberRepository.AddAsync(member, cancellationToken);
+
+        IReadOnlyCollection<ProjectPermissionEntry> permissions = allPermissions
+            .Select(p => new ProjectPermissionEntry(p.Name, (int)PermissionLevel.Full))
+            .ToArray();
+
+        project.Raise(new ProjectMemberJoinedDomainEvent(project.Id, userContext.UserId, permissions));
+
         await projectMemberRepository.SaveChangesAsync(cancellationToken);
     }
 

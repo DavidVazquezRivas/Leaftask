@@ -4,7 +4,7 @@ import { toast } from 'sonner'
 import { ApiGateway } from '@/core/api/ApiGateway'
 import { i18n } from '@/core/i18n'
 import { QueryKeys } from '@/core/query/QueryKeys'
-import { isForbiddenError, useApiErrorHandler } from '@/core/query/hooks'
+import { useApiErrorHandler } from '@/core/query/hooks'
 import { queryClient } from '@/core/query/queryClient'
 
 export const useDeleteProjectRoleMutation = (projectId: string) => {
@@ -32,16 +32,6 @@ export const useDeleteProjectRoleMutation = (projectId: string) => {
       )
     },
     onError: (error) => {
-      if (isForbiddenError(error)) {
-        toast.info(
-          i18n.t(
-            'management.rolesPermissions.feedback.supervisedAction',
-            { ns: 'projects' }
-          )
-        )
-        return
-      }
-
       handleApiError(error)
     },
   })

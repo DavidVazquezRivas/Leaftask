@@ -7,4 +7,6 @@ public sealed record ApprovalRequestResolvedIntegrationEvent(
     string ContextType,
     Guid ContextId,
     Guid TargetId,
-    string Status) : IIntegrationEvent;
+    string Status,
+    string? ActionType,
+    string? ActionPayload) : IIntegrationEvent;

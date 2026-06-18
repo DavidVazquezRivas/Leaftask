@@ -5,7 +5,6 @@ import { ApiGateway } from '@/core/api/ApiGateway'
 import { i18n } from '@/core/i18n'
 import { QueryKeys } from '@/core/query/QueryKeys'
 import {
-  isForbiddenError,
   isOwnerProtectionError,
   useApiErrorHandler,
 } from '@/core/query/hooks'
@@ -36,16 +35,6 @@ export const useDeleteProjectMemberMutation = (projectId: string) => {
           i18n.t('management.members.feedback.ownerCannotBeRemoved', {
             ns: 'projects',
             defaultValue: 'Owner members cannot be removed.',
-          })
-        )
-        return
-      }
-
-      if (isForbiddenError(error)) {
-        toast.info(
-          i18n.t('management.members.permissions.noRemove', {
-            ns: 'projects',
-            defaultValue: "You don't have permission to remove members.",
           })
         )
         return

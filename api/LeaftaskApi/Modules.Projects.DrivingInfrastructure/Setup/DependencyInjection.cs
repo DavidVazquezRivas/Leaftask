@@ -1,4 +1,6 @@
+using BuildingBlocks.Application.Authorization;
 using BuildingBlocks.Application.Behaviors;
+using Modules.Notifications.Integration;
 using BuildingBlocks.DrivingInfrastructure.Jobs.Outbox;
 using BuildingBlocks.DrivingInfrastructure.Jobs.Quartz;
 using BuildingBlocks.DrivingInfrastructure.Tools;
@@ -29,10 +31,10 @@ using Modules.Projects.DrivenInfrastructure.Repositories;
 using Modules.Projects.DrivingInfrastructure.Jobs;
 using Modules.Projects.DrivingInfrastructure.Services;
 using Modules.Projects.DrivingInfrastructure.Subscribers.Agents;
+using Modules.Projects.DrivingInfrastructure.Subscribers.Notifications;
 using Modules.Projects.DrivingInfrastructure.Subscribers.Organizations;
 using Modules.Projects.DrivingInfrastructure.Subscribers.Users;
 using Modules.Projects.DrivingInfrastructure.Tools;
-using Modules.Projects.Integration;
 using Quartz;
 
 namespace Modules.Projects.DrivingInfrastructure.Setup;
@@ -87,6 +89,7 @@ public static class DependencyInjection
             config.RegisterServicesFromAssembly(typeof(OrganizationCreatedIntegrationEventHandler).Assembly);
             config.RegisterServicesFromAssembly(typeof(OrganizationDeletedIntegrationEventHandler).Assembly);
             config.RegisterServicesFromAssembly(typeof(AgentCreatedIntegrationEventHandler).Assembly);
+            config.RegisterServicesFromAssembly(typeof(ApprovalRequestResolvedIntegrationEventHandler).Assembly);
 
             config.AddOpenBehavior(typeof(LoggingBehavior<,>));
             config.AddOpenBehavior(typeof(ValidationBehavior<,>));
@@ -116,6 +119,7 @@ public static class DependencyInjection
         services.AddScoped<IProjectAccessChecker, ProjectAccessChecker>();
         services.AddScoped<IProjectPermissionChecker, ProjectPermissionChecker>();
         services.AddScoped<IProjectPermissionService, ProjectPermissionService>();
+        services.AddScoped<IProjectPermissionReplayContext, ProjectPermissionReplayContext>();
         services.AddScoped<IProjectRoleRepository, ProjectRoleRepository>();
         services.AddScoped<IProjectFieldRepository, ProjectFieldRepository>();
         services.AddScoped<IAgentReadModelRepository, AgentReadModelRepository>();

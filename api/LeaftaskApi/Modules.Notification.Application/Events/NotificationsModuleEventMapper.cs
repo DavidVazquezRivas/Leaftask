@@ -16,7 +16,9 @@ public sealed class NotificationsModuleEventMapper : IIntegrationEventMapper
                 e.ContextType.ToString(),
                 e.ContextId,
                 e.TargetId,
-                e.Status.ToString()),
+                e.Status.ToString(),
+                e.ActionType,
+                e.ActionPayload),
 
             _ => null
         };

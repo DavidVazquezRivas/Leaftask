@@ -15,6 +15,8 @@ export const AppPaths = {
   organizationSettings: (organizationId: string) =>
     `/app/organizations/${organizationId}/settings`,
   project: (projectId: string) => `/app/projects/${projectId}`,
+  projectWorkItem: (projectId: string, workItemId: string) =>
+    `/app/projects/${projectId}?itemId=${workItemId}`,
   projectSettings: (projectId: string) => `/app/projects/${projectId}/settings`,
   notifications: () => '/app/notifications',
   chat: () => '/app/chats',

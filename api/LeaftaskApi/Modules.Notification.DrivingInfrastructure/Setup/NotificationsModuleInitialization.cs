@@ -21,5 +21,6 @@ public static class NotificationsModuleInitialization
         NotificationsDbContext dbContext = scope.ServiceProvider.GetRequiredService<NotificationsDbContext>();
 
         await UserReadModelBackfillSeeder.SeedAsync(dbContext);
+        await ProjectPermissionReadModelBackfillSeeder.SeedAsync(dbContext);
     }
 }

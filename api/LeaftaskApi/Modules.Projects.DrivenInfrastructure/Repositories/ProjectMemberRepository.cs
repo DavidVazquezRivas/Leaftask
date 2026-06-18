@@ -9,6 +9,7 @@ public sealed class ProjectMemberRepository(ProjectsDbContext dbContext) : IProj
 {
     public async Task<ProjectMember?> GetByMemberIdTrackedAsync(Guid projectId, Guid memberId, CancellationToken cancellationToken = default) =>
         await dbContext.ProjectMembers
+            .Include(m => m.Role)
             .FirstOrDefaultAsync(
                 m => EF.Property<Guid>(m, "project_id") == projectId && m.MemberId == memberId,
                 cancellationToken);

@@ -1,7 +1,5 @@
-using BuildingBlocks.Application.Abstractions;
 using BuildingBlocks.Domain.Result;
 using FluentAssertions;
-using Modules.Projects.Application.Authorization;
 using Modules.Projects.Application.Management.Create;
 using Modules.Projects.Application.Management.Patch;
 using Modules.Projects.Domain.Entities;
@@ -16,31 +14,20 @@ public class PatchProjectCommandHandlerTests
 {
     private readonly PatchProjectCommandHandler _handler;
     private readonly IProjectRepository _projectRepositoryMock;
-    private readonly IOrganizationPermissionChecker _permissionCheckerMock;
-    private readonly IUserContext _userContextMock;
 
     public PatchProjectCommandHandlerTests()
     {
         _projectRepositoryMock = Substitute.For<IProjectRepository>();
-        _permissionCheckerMock = Substitute.For<IOrganizationPermissionChecker>();
-        _userContextMock = Substitute.For<IUserContext>();
-
-        _handler = new PatchProjectCommandHandler(
-            _projectRepositoryMock,
-            _permissionCheckerMock,
-            _userContextMock);
+        _handler = new PatchProjectCommandHandler(_projectRepositoryMock);
     }
 
     [Fact]
-    public async Task Handle_Should_ReturnSuccess_When_PersonalProjectAndUserIsOwner()
+    public async Task Handle_Should_ReturnSuccess_When_ProjectExists()
     {
         // Arrange
-        Guid userId = Guid.NewGuid();
-        _userContextMock.UserId.Returns(userId);
-
         Project project = ProjectTestBuilder.AProject()
             .WithName("Old Name")
-            .OwnedByUser(userId)
+            .OwnedByUser(Guid.NewGuid())
             .Build();
 
         _projectRepositoryMock.GetByIdTrackedAsync(project.Id, Arg.Any<CancellationToken>())
@@ -58,39 +45,9 @@ public class PatchProjectCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_Should_ReturnSuccess_When_OrganizationProjectAndUserIsMember()
-    {
-        // Arrange
-        Guid userId = Guid.NewGuid();
-        Guid organizationId = Guid.NewGuid();
-        _userContextMock.UserId.Returns(userId);
-
-        Project project = ProjectTestBuilder.AProject()
-            .OwnedByOrganization(organizationId)
-            .Build();
-
-        _projectRepositoryMock.GetByIdTrackedAsync(project.Id, Arg.Any<CancellationToken>())
-            .Returns(project);
-
-        _permissionCheckerMock.IsMemberAsync(organizationId, userId, Arg.Any<CancellationToken>())
-            .Returns(true);
-
-        PatchProjectCommand command = new(project.Id, null, null, ProjectPrivacy.Private);
-
-        // Act
-        Result<ProjectResponse> result = await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.Value.PrivacyLevel.Should().Be(ProjectPrivacy.Private);
-    }
-
-    [Fact]
     public async Task Handle_Should_ReturnFailure_When_ProjectDoesNotExist()
     {
         // Arrange
-        _userContextMock.UserId.Returns(Guid.NewGuid());
-
         _projectRepositoryMock.GetByIdTrackedAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns((Project?)null);
 
@@ -106,33 +63,10 @@ public class PatchProjectCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_Should_ReturnFailure_When_UserHasNoAccess()
-    {
-        // Arrange
-        _userContextMock.UserId.Returns(Guid.NewGuid());
-
-        Project project = ProjectTestBuilder.AProject().OwnedByUser(Guid.NewGuid()).Build();
-
-        _projectRepositoryMock.GetByIdTrackedAsync(project.Id, Arg.Any<CancellationToken>())
-            .Returns(project);
-
-        PatchProjectCommand command = new(project.Id, "New Name", null, null);
-
-        // Act
-        Result<ProjectResponse> result = await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        result.Error.Should().Be(ProjectErrors.AccessDenied);
-        await _projectRepositoryMock.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
     public async Task Handle_Should_ReturnFailure_When_AbbreviationIsTaken()
     {
         // Arrange
         Guid userId = Guid.NewGuid();
-        _userContextMock.UserId.Returns(userId);
 
         Project project = ProjectTestBuilder.AProject()
             .WithAbbreviation("OLD")

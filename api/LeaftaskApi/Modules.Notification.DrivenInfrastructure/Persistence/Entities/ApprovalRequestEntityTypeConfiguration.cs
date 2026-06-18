@@ -32,6 +32,12 @@ internal sealed class ApprovalRequestEntityTypeConfiguration : IEntityTypeConfig
             .HasColumnName("permission_name")
             .IsRequired();
 
+        builder.Property(a => a.ActionType)
+            .HasColumnName("action_type");
+
+        builder.Property(a => a.ActionPayload)
+            .HasColumnName("action_payload");
+
         builder.Property(a => a.CreatedAt)
             .HasColumnName("created_at")
             .IsRequired();

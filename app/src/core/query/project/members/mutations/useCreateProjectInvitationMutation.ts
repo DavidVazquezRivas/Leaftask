@@ -6,7 +6,7 @@ import { ApiError } from '@/core/api/global/errors/ApiError'
 import type { CreateProjectInvitationRequest } from '@/core/api/project/members'
 import { i18n } from '@/core/i18n'
 import { QueryKeys } from '@/core/query/QueryKeys'
-import { isForbiddenError, useApiErrorHandler } from '@/core/query/hooks'
+import { useApiErrorHandler } from '@/core/query/hooks'
 import { queryClient } from '@/core/query/queryClient'
 
 export const useCreateProjectInvitationMutation = (projectId: string) => {
@@ -34,16 +34,6 @@ export const useCreateProjectInvitationMutation = (projectId: string) => {
       )
     },
     onError: (error) => {
-      if (isForbiddenError(error)) {
-        toast.info(
-          i18n.t('management.members.permissions.noInvite', {
-            ns: 'projects',
-            defaultValue: "You don't have permission to invite members.",
-          })
-        )
-        return
-      }
-
       if (error instanceof ApiError && error.status === 409) {
         toast.error(
           i18n.t('management.members.feedback.alreadyInvited', {

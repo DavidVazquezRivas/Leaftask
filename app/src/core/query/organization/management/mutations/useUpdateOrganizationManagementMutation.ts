@@ -5,7 +5,7 @@ import { ApiGateway } from '@/core/api/ApiGateway'
 import type { PatchOrganizationManagementRequest } from '@/core/api/organization/management'
 import { i18n } from '@/core/i18n'
 import { QueryKeys } from '@/core/query/QueryKeys'
-import { isForbiddenError, useApiErrorHandler } from '@/core/query/hooks'
+import { useApiErrorHandler } from '@/core/query/hooks'
 import { queryClient } from '@/core/query/queryClient'
 
 export const useUpdateOrganizationManagementMutation = (
@@ -37,15 +37,6 @@ export const useUpdateOrganizationManagementMutation = (
       )
     },
     onError: (error) => {
-      if (isForbiddenError(error)) {
-        toast.info(
-          i18n.t('management.settings.general.permissions.forbiddenAction', {
-            ns: 'organizations',
-          })
-        )
-        return
-      }
-
       handleApiError(error)
     },
   })

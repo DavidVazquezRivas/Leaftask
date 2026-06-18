@@ -74,6 +74,7 @@ public static class DependencyInjection
         services.AddScoped<IApprovalRequestRepository, ApprovalRequestRepository>();
         services.AddScoped<IUserReadModelRepository, UserReadModelRepository>();
         services.AddScoped<IOrganizationPermissionReadModelRepository, OrganizationPermissionReadModelRepository>();
+        services.AddScoped<IProjectPermissionReadModelRepository, ProjectPermissionReadModelRepository>();
 
         return services;
     }

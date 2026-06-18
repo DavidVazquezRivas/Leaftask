@@ -8,4 +8,6 @@ public sealed record CreateApprovalRequestCommand(
     ContextType ContextType,
     Guid ContextId,
     Guid RequesterId,
-    string PermissionName) : ICommand<Result<Guid>>;
+    string PermissionName,
+    string? ActionType = null,
+    string? ActionPayload = null) : ICommand<Result<Guid>>;

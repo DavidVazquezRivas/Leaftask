@@ -12,7 +12,8 @@ namespace Modules.Notification.Application.ApprovalRequests.UpdateStatus;
 
 public sealed class UpdateApprovalStatusCommandHandler(
     IApprovalRequestRepository approvalRequestRepository,
-    IOrganizationPermissionReadModelRepository permissionReadModelRepository,
+    IOrganizationPermissionReadModelRepository orgPermissionRepository,
+    IProjectPermissionReadModelRepository projectPermissionRepository,
     IUserReadModelRepository userReadModelRepository,
     IUserContext userContext)
     : ICommandHandler<UpdateApprovalStatusCommand, Result<ApprovalDto>>
@@ -30,8 +31,13 @@ public sealed class UpdateApprovalStatusCommandHandler(
         if (approvalRequest.Status != RequestStatus.Pending)
             return Result.Failure<ApprovalDto>(ApprovalRequestErrors.AlreadyResolved);
 
-        bool hasPermission = await permissionReadModelRepository.ExistsAsync(
-            userContext.UserId, approvalRequest.ContextId, approvalRequest.PermissionName, 2, cancellationToken);
+        bool hasPermission = approvalRequest.ContextType switch
+        {
+            ContextType.Project => await projectPermissionRepository.ExistsAsync(
+                userContext.UserId, approvalRequest.ContextId, approvalRequest.PermissionName, 2, cancellationToken),
+            _ => await orgPermissionRepository.ExistsAsync(
+                userContext.UserId, approvalRequest.ContextId, approvalRequest.PermissionName, 2, cancellationToken)
+        };
 
         if (!hasPermission)
             return Result.Failure<ApprovalDto>(ApprovalRequestErrors.Forbidden);
@@ -60,10 +66,20 @@ public sealed class UpdateApprovalStatusCommandHandler(
                 RequestStatus.Rejected => "rejected",
                 _ => ar.Status.ToString()
             },
-            new SimpleReferenceDto(ar.ContextId, "Organization"),
-            new SimpleReferenceDto(ar.TargetId, "Permission Request"),
+            ar.ContextType switch
+            {
+                ContextType.Organization => "organization",
+                ContextType.Project => "project",
+                _ => "unknown"
+            },
+            ar.PermissionName,
+            ar.ActionType,
+            ar.ActionPayload,
+            new SimpleReferenceDto(ar.ContextId, ar.ContextId.ToString()),
+            new SimpleReferenceDto(ar.TargetId, ar.TargetId.ToString()),
             new SimpleReferenceDto(ar.Requester.Id, $"{ar.Requester.FirstName} {ar.Requester.LastName}"),
             ar.CreatedAt,
+            CanResolve: true,
             ar.Comments.Select(c => new ApprovalCommentDto(
                 c.Id,
                 c.Content,

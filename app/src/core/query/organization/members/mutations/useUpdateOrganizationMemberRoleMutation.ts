@@ -5,7 +5,7 @@ import { ApiGateway } from '@/core/api/ApiGateway'
 import type { PatchOrganizationMemberRoleRequest } from '@/core/api/organization/members'
 import { i18n } from '@/core/i18n'
 import { QueryKeys } from '@/core/query/QueryKeys'
-import { isForbiddenError, useApiErrorHandler } from '@/core/query/hooks'
+import { useApiErrorHandler } from '@/core/query/hooks'
 import { queryClient } from '@/core/query/queryClient'
 
 export const useUpdateOrganizationMemberRoleMutation = (
@@ -47,17 +47,6 @@ export const useUpdateOrganizationMemberRoleMutation = (
       )
     },
     onError: (error) => {
-      if (isForbiddenError(error)) {
-        toast.info(
-          i18n.t('management.settings.general.permissions.forbiddenAction', {
-            ns: 'organizations',
-            defaultValue:
-              "This action requires approval and can't be completed right now.",
-          })
-        )
-        return
-      }
-
       handleApiError(error)
     },
   })

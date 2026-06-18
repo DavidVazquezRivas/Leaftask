@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useParams } from 'react-router'
+import { useParams, useSearchParams } from 'react-router'
 import { Plus, Loader2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
@@ -42,7 +42,8 @@ export function ProjectTreePage() {
     open: false,
     parentId: null,
   })
-  const [selectedItemId, setSelectedItemId] = useState<string | null>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const selectedItemId = searchParams.get('itemId')
 
   const types = useMemo(() => typesQuery.data?.data ?? [], [typesQuery.data])
   const statuses = useMemo(
@@ -132,7 +133,7 @@ export function ProjectTreePage() {
         <OrbitalTree
           data={workItems as WorkItemData[]}
           nodeAdapter={nodeAdapter}
-          onClickNode={(raw) => setSelectedItemId(raw.id)}
+          onClickNode={(raw) => setSearchParams({ itemId: raw.id })}
           onAddChild={(raw) => openCreate(raw.id)}
         />
       )}
@@ -164,10 +165,8 @@ export function ProjectTreePage() {
         open={selectedItemId !== null}
         projectId={projectId ?? ''}
         itemId={selectedItemId}
-        onClose={() => setSelectedItemId(null)}
-        onDelete={() => {
-          setSelectedItemId(null)
-        }}
+        onClose={() => setSearchParams({})}
+        onDelete={() => setSearchParams({})}
         types={types}
         statuses={statuses}
         workItems={workItems}

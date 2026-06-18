@@ -1,10 +1,10 @@
 using BuildingBlocks.Application.Commands;
 using BuildingBlocks.Domain.Result;
-using Modules.WorkItems.Application.Authorization;
+using BuildingBlocks.Application.Authorization;
 
 namespace Modules.WorkItems.Application.WorkLogs.Delete;
 
-[RequireProjectPermission("Access Project")]
+[RequireProjectPermission("work-items.edit-own-progress")]
 public sealed record DeleteWorkLogCommand(
     Guid ProjectId,
     Guid WorkItemId,

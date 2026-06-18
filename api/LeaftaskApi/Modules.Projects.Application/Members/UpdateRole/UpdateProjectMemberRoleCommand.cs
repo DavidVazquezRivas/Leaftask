@@ -1,6 +1,6 @@
 using BuildingBlocks.Application.Commands;
 using BuildingBlocks.Domain.Result;
-using Modules.Projects.Application.Authorization;
+using BuildingBlocks.Application.Authorization;
 
 namespace Modules.Projects.Application.Members.UpdateRole;
 

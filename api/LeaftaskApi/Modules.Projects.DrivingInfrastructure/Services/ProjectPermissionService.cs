@@ -1,26 +1,37 @@
+using BuildingBlocks.Application.Authorization;
 using Modules.Projects.Application.Authorization;
-using Modules.Projects.Integration;
-using ProjectPermissionCheckStatus = Modules.Projects.Integration.ProjectPermissionCheckStatus;
+using Modules.Projects.Domain.Events;
+using Modules.Projects.Domain.Repositories;
 
 namespace Modules.Projects.DrivingInfrastructure.Services;
 
-public sealed class ProjectPermissionService(IProjectPermissionChecker permissionChecker)
+public sealed class ProjectPermissionService(
+    IProjectPermissionChecker permissionChecker,
+    IProjectRepository projectRepository)
     : IProjectPermissionService
 {
     public async Task<ProjectPermissionCheckStatus> CheckPermissionAsync(
         Guid projectId,
         Guid userId,
         string permissionName,
+        CancellationToken cancellationToken = default) =>
+        await permissionChecker.CheckAsync(projectId, userId, permissionName, cancellationToken);
+
+    public async Task RequestApprovalAsync(
+        Guid projectId,
+        Guid userId,
+        string permissionName,
+        string actionName,
+        string actionPayload,
         CancellationToken cancellationToken = default)
     {
-        Application.Authorization.ProjectPermissionCheckStatus status =
-            await permissionChecker.CheckAsync(projectId, userId, permissionName, cancellationToken);
+        Domain.Entities.Project? project = await projectRepository.GetByIdTrackedAsync(projectId, cancellationToken);
+        if (project is null)
+            return;
 
-        return status switch
-        {
-            Application.Authorization.ProjectPermissionCheckStatus.Full => ProjectPermissionCheckStatus.Full,
-            Application.Authorization.ProjectPermissionCheckStatus.ProjectNotFound => ProjectPermissionCheckStatus.ProjectNotFound,
-            _ => ProjectPermissionCheckStatus.Denied
-        };
+        project.Raise(new ProjectPermissionActionRequestedDomainEvent(
+            project.Id, userId, permissionName, actionName, actionPayload));
+
+        await projectRepository.SaveChangesAsync(cancellationToken);
     }
 }

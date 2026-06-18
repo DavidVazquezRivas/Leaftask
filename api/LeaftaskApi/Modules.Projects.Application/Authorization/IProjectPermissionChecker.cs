@@ -1,3 +1,5 @@
+using BuildingBlocks.Application.Authorization;
+
 namespace Modules.Projects.Application.Authorization;
 
 public interface IProjectPermissionChecker

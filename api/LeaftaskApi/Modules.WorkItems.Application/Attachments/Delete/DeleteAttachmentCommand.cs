@@ -1,10 +1,10 @@
 using BuildingBlocks.Application.Commands;
 using BuildingBlocks.Domain.Result;
-using Modules.WorkItems.Application.Authorization;
+using BuildingBlocks.Application.Authorization;
 
 namespace Modules.WorkItems.Application.Attachments.Delete;
 
-[RequireProjectPermission("Access Project")]
+[RequireProjectPermission("work-items.edit-definition")]
 public sealed record DeleteAttachmentCommand(
     Guid ProjectId,
     Guid WorkItemId,

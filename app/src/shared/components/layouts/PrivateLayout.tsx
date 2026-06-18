@@ -11,7 +11,7 @@ import {
   usePrivateLayoutSession,
 } from '@/shared/components/layouts/hooks'
 import { useChatsQuery, useChatPollingQuery } from '@/core/query/chat'
-import { useNotificationsQuery } from '@/core/query/notification'
+import { useNotificationsQuery, useApprovalsQuery } from '@/core/query/notification'
 
 export function PrivateLayout() {
   const navigate = useNavigate()
@@ -45,9 +45,11 @@ export function PrivateLayout() {
   const totalUnread = (chatsQuery.data ?? []).reduce((sum, c) => sum + c.unreadCount, 0)
 
   const notificationsQuery = useNotificationsQuery('unread')
-  const totalUnreadNotifications = (notificationsQuery.data?.pages ?? [])
-    .flatMap((p) => p.data)
-    .length
+  const approvalsQuery = useApprovalsQuery()
+
+  const totalUnreadNotifications =
+    (notificationsQuery.data?.pages ?? []).flatMap((p) => p.data).length +
+    (approvalsQuery.data?.pages ?? []).flatMap((p) => p.data).filter((a) => a.status === 'pending').length
 
   const projectsEmptyLabel = isOrganizationContext
     ? tGlobal('organizationPanel.projectsEmpty')

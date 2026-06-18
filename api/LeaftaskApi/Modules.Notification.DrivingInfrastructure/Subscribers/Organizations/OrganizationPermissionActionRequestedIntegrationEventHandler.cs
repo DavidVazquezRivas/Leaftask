@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Result;
 using BuildingBlocks.DrivingInfrastructure.Events;
 using MediatR;
 using Modules.Notification.Application.ApprovalRequests.Create;
@@ -17,12 +18,18 @@ public sealed class OrganizationPermissionActionRequestedIntegrationEventHandler
 {
     protected override async Task HandleIntegrationEvent(
         OrganizationPermissionActionRequestedIntegrationEvent notification,
-        CancellationToken cancellationToken) =>
-        await sender.Send(new CreateApprovalRequestCommand(
+        CancellationToken cancellationToken)
+    {
+        Result<Guid> result = await sender.Send(new CreateApprovalRequestCommand(
             ContextType.Organization,
             notification.OrganizationId,
             notification.RequestedByUserId,
             notification.PermissionName), cancellationToken);
+
+        if (result.IsFailure)
+            throw new InvalidOperationException(
+                $"Failed to create approval request: {result.Error.Code} — {result.Error.Description}");
+    }
 
     protected override Guid GetFallbackMessageId(OrganizationPermissionActionRequestedIntegrationEvent notification) =>
         notification.RequestedByUserId;

@@ -8,4 +8,6 @@ public sealed record ApprovalRequestResolvedDomainEvent(
     ContextType ContextType,
     Guid ContextId,
     Guid TargetId,
-    RequestStatus Status) : IDomainEvent;
+    RequestStatus Status,
+    string? ActionType,
+    string? ActionPayload) : IDomainEvent;

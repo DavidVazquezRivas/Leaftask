@@ -11,8 +11,13 @@ public sealed record ApprovalCommentDto(
 public sealed record ApprovalDto(
     Guid Id,
     string Status,
+    string ContextType,
+    string PermissionName,
+    string? ActionType,
+    string? ActionPayload,
     SimpleReferenceDto Context,
     SimpleReferenceDto Target,
     SimpleReferenceDto Requester,
     DateTime CreatedAt,
+    bool CanResolve,
     IReadOnlyCollection<ApprovalCommentDto> Comments);
