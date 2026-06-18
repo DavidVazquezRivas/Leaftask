@@ -41,54 +41,64 @@ public sealed class GetMyApprovalsQueryService(NotificationsDbContext dbContext)
             .Select(p => new { ContextId = p.ProjectId, p.PermissionName })
             .ToListAsync(cancellationToken);
 
-        var allPerms = orgPerms.Concat(projectPerms).ToList();
+        var fullPerms = orgPerms.Concat(projectPerms).ToList();
 
-        if (allPerms.Count == 0)
-            return new PaginatedResult<ApprovalDto>([], null, false);
+        List<Guid> contextIds = fullPerms.Select(p => p.ContextId).Distinct().ToList();
+        List<string> permNames = fullPerms.Select(p => p.PermissionName).Distinct().ToList();
 
-        List<Guid> contextIds = allPerms.Select(p => p.ContextId).Distinct().ToList();
-        List<string> permNames = allPerms.Select(p => p.PermissionName).Distinct().ToList();
-
+        // Include approvals where the user is an eligible reviewer (Full permission) OR the requester
         List<ApprovalRequest> approvals = (await dbContext.ApprovalRequests
             .AsNoTracking()
             .Include(ar => ar.Requester)
             .Include(ar => ar.Comments)
                 .ThenInclude(rc => rc.CreatedBy)
-            .Where(ar => contextIds.Contains(ar.ContextId) && permNames.Contains(ar.PermissionName))
+            .Where(ar =>
+                contextIds.Contains(ar.ContextId) && permNames.Contains(ar.PermissionName) ||
+                ar.Requester.Id == userId)
             .ToListAsync(cancellationToken))
-            .Where(ar => allPerms.Any(p => p.ContextId == ar.ContextId && p.PermissionName == ar.PermissionName))
+            .Where(ar =>
+                fullPerms.Any(p => p.ContextId == ar.ContextId && p.PermissionName == ar.PermissionName) ||
+                ar.Requester.Id == userId)
             .ToList();
 
+        if (approvals.Count == 0)
+            return new PaginatedResult<ApprovalDto>([], null, false);
+
         List<ApprovalRow> rows = approvals
-            .Select(ar => new ApprovalRow(
-                ar.Id,
-                ar.Status switch
-                {
-                    RequestStatus.Pending => "pending",
-                    RequestStatus.Approved => "approved",
-                    RequestStatus.Rejected => "rejected",
-                    _ => ar.Status.ToString()
-                },
-                ar.ContextType switch
-                {
-                    ContextType.Organization => "organization",
-                    ContextType.Project => "project",
-                    _ => "unknown"
-                },
-                ar.PermissionName,
-                ar.ActionType,
-                ar.ActionPayload,
-                ar.ContextId,
-                ar.TargetId,
-                ar.Requester.Id,
-                $"{ar.Requester.FirstName} {ar.Requester.LastName}",
-                ar.CreatedAt,
-                ar.Comments.Select(rc => new CommentRow(
-                    rc.Id,
-                    rc.Content,
-                    rc.CreatedAt,
-                    rc.CreatedBy.Id,
-                    $"{rc.CreatedBy.FirstName} {rc.CreatedBy.LastName}")).ToArray()))
+            .Select(ar =>
+            {
+                bool canResolve = fullPerms.Any(p => p.ContextId == ar.ContextId && p.PermissionName == ar.PermissionName);
+                return new ApprovalRow(
+                    ar.Id,
+                    ar.Status switch
+                    {
+                        RequestStatus.Pending => "pending",
+                        RequestStatus.Approved => "approved",
+                        RequestStatus.Rejected => "rejected",
+                        _ => ar.Status.ToString()
+                    },
+                    ar.ContextType switch
+                    {
+                        ContextType.Organization => "organization",
+                        ContextType.Project => "project",
+                        _ => "unknown"
+                    },
+                    ar.PermissionName,
+                    ar.ActionType,
+                    ar.ActionPayload,
+                    ar.ContextId,
+                    ar.TargetId,
+                    ar.Requester.Id,
+                    $"{ar.Requester.FirstName} {ar.Requester.LastName}",
+                    ar.CreatedAt,
+                    canResolve,
+                    ar.Comments.Select(rc => new CommentRow(
+                        rc.Id,
+                        rc.Content,
+                        rc.CreatedAt,
+                        rc.CreatedBy.Id,
+                        $"{rc.CreatedBy.FirstName} {rc.CreatedBy.LastName}")).ToArray());
+            })
             .ToList();
 
         return CursorPaginationHelper.Paginate(
@@ -109,12 +119,12 @@ public sealed class GetMyApprovalsQueryService(NotificationsDbContext dbContext)
                 new SimpleReferenceDto(row.TargetId, row.TargetId.ToString()),
                 new SimpleReferenceDto(row.RequesterId, row.RequesterName),
                 row.CreatedAt,
+                row.CanResolve,
                 row.Comments.Select(c => new ApprovalCommentDto(
                     c.Id,
                     c.Content,
                     c.CreatedAt,
                     new SimpleReferenceDto(c.CreatedById, c.CreatedByName))).ToArray()));
-
     }
 
     private sealed record ApprovalRow(
@@ -129,6 +139,7 @@ public sealed class GetMyApprovalsQueryService(NotificationsDbContext dbContext)
         Guid RequesterId,
         string RequesterName,
         DateTime CreatedAt,
+        bool CanResolve,
         IReadOnlyCollection<CommentRow> Comments);
 
     private sealed record CommentRow(

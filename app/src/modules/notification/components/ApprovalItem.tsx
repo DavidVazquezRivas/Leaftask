@@ -283,7 +283,7 @@ export function ApprovalItem({ approval, orgMap, projectMap }: ApprovalItemProps
           </div>
         </div>
 
-        {isPending && (
+        {isPending && approval.canResolve && (
           <div className="mt-3 flex gap-2">
             <Button
               size="sm"

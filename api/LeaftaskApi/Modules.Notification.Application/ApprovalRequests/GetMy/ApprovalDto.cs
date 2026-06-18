@@ -19,4 +19,5 @@ public sealed record ApprovalDto(
     SimpleReferenceDto Target,
     SimpleReferenceDto Requester,
     DateTime CreatedAt,
+    bool CanResolve,
     IReadOnlyCollection<ApprovalCommentDto> Comments);

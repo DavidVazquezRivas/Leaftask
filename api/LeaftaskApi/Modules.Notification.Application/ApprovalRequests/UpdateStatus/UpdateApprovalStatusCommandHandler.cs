@@ -79,6 +79,7 @@ public sealed class UpdateApprovalStatusCommandHandler(
             new SimpleReferenceDto(ar.TargetId, ar.TargetId.ToString()),
             new SimpleReferenceDto(ar.Requester.Id, $"{ar.Requester.FirstName} {ar.Requester.LastName}"),
             ar.CreatedAt,
+            CanResolve: true,
             ar.Comments.Select(c => new ApprovalCommentDto(
                 c.Id,
                 c.Content,

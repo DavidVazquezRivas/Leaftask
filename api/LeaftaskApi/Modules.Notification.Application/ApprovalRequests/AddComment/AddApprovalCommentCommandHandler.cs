@@ -12,6 +12,8 @@ namespace Modules.Notification.Application.ApprovalRequests.AddComment;
 
 public sealed class AddApprovalCommentCommandHandler(
     IApprovalRequestRepository approvalRequestRepository,
+    IOrganizationPermissionReadModelRepository orgPermissionRepository,
+    IProjectPermissionReadModelRepository projectPermissionRepository,
     IUserReadModelRepository userReadModelRepository,
     IUserContext userContext)
     : ICommandHandler<AddApprovalCommentCommand, Result<ApprovalCommentDto>>
@@ -25,6 +27,21 @@ public sealed class AddApprovalCommentCommandHandler(
 
         if (approvalRequest is null)
             return Result.Failure<ApprovalCommentDto>(ApprovalRequestErrors.NotFound);
+
+        bool isRequester = approvalRequest.Requester.Id == userContext.UserId;
+        if (!isRequester)
+        {
+            bool hasPermission = approvalRequest.ContextType switch
+            {
+                ContextType.Project => await projectPermissionRepository.ExistsAsync(
+                    userContext.UserId, approvalRequest.ContextId, approvalRequest.PermissionName, 2, cancellationToken),
+                _ => await orgPermissionRepository.ExistsAsync(
+                    userContext.UserId, approvalRequest.ContextId, approvalRequest.PermissionName, 2, cancellationToken)
+            };
+
+            if (!hasPermission)
+                return Result.Failure<ApprovalCommentDto>(ApprovalRequestErrors.Forbidden);
+        }
 
         UserReadModel? author = await userReadModelRepository.GetByIdAsync(userContext.UserId, cancellationToken);
         if (author is null)

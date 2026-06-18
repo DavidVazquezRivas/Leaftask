@@ -35,5 +35,6 @@ export interface ApprovalData {
   target: SimpleReferenceData
   requester: SimpleReferenceData
   createdAt: string
+  canResolve: boolean
   comments: ApprovalCommentData[]
 }
