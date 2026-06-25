@@ -4,7 +4,9 @@ using BuildingBlocks.DrivingInfrastructure.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Modules.Users.Application.Session;
+using Modules.Users.Application.Session.DevLogin;
 using Modules.Users.Application.Session.GetActive;
 using Modules.Users.Application.Session.Logout;
 using Modules.Users.Application.Session.OAuth.Google;
@@ -18,6 +20,34 @@ namespace Modules.Users.DrivingInfrastructure.Controllers;
 [Route("api/v1/session")]
 public sealed class SessionController : ApiBaseController
 {
+    [AllowAnonymous]
+    [HttpPost("dev-login")]
+    public async Task<IActionResult> DevLogin(
+        [FromQuery] string email,
+        [FromServices] IHostEnvironment env,
+        CancellationToken cancellationToken)
+    {
+        if (!env.IsDevelopment())
+        {
+            return NotFound();
+        }
+
+        Result<SessionResponse> result = await Sender.Send(new DevLoginCommand(email), cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return HandleResult(result);
+        }
+
+        SessionResponse sessionResponse = result.Value;
+
+        SetRefreshTokenCookie(sessionResponse.RefreshToken, sessionResponse.RefreshTokenExpiresAt);
+
+        ApiResponse<AccessTokenResponse> response =
+            BuildSuccessResponse(new AccessTokenResponse(sessionResponse.AccessToken));
+        return Ok(response);
+    }
+
     [AllowAnonymous]
     [HttpPost("oauth/google")]
     public async Task<IActionResult> LoginGoogle(
