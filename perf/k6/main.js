@@ -4,6 +4,7 @@ import { workitemsScenario } from './scenarios/workitems.js';
 import { organizationsScenario } from './scenarios/organizations.js';
 import { projectsScenario } from './scenarios/projects.js';
 import { commentsScenario } from './scenarios/comments.js';
+import { generateHtml } from './reporter.js';
 
 const isSmoke = __ENV.PROFILE === 'smoke';
 const isStress = __ENV.PROFILE === 'stress';
@@ -39,7 +40,11 @@ export function organizationsRead(data) { organizationsScenario.read(data); }
 export function commentsReadWrite(data) { commentsScenario.readWrite(data); }
 
 export function handleSummary(data) {
-    const path = __ENV.SUMMARY_JSON;
-    if (!path) return {};
-    return { [path]: JSON.stringify(data, null, 2) };
+    const profile  = __ENV.PROFILE || 'load';
+    const htmlPath = __ENV.HTML_REPORT;
+    const jsonPath = __ENV.SUMMARY_JSON;
+    const out = {};
+    if (htmlPath) out[htmlPath] = generateHtml(data, profile);
+    if (jsonPath) out[jsonPath] = JSON.stringify(data, null, 2);
+    return out;
 }
