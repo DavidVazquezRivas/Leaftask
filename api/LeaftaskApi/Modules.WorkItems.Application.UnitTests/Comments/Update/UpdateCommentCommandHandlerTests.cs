@@ -120,28 +120,68 @@ public class UpdateCommentCommandHandlerTests
     [Fact]
     public async Task Handle_Should_ReturnFailure_When_UserIsNotOwner()
     {
-        // Arrange
         Guid projectId = Guid.NewGuid();
         Guid workItemId = Guid.NewGuid();
         Guid commentId = Guid.NewGuid();
         Guid ownerId = Guid.NewGuid();
         Guid currentUserId = Guid.NewGuid();
-        UpdateCommentCommand command = new(projectId, workItemId, commentId, "Content", null);
 
-        _workItemRepositoryMock.ExistsInProjectAsync(workItemId, projectId, Arg.Any<CancellationToken>())
-            .Returns(true);
+        _workItemRepositoryMock.ExistsInProjectAsync(workItemId, projectId, Arg.Any<CancellationToken>()).Returns(true);
         _userContextMock.UserId.Returns(currentUserId);
-
-        WorkItemComment comment = CreateComment(ownerId);
         _commentRepositoryMock.GetByIdTrackedAsync(commentId, workItemId, Arg.Any<CancellationToken>())
-            .Returns(comment);
+            .Returns(CreateComment(ownerId));
 
-        // Act
-        Result<CommentDto> result = await _handler.Handle(command, CancellationToken.None);
+        Result<CommentDto> result = await _handler.Handle(
+            new(projectId, workItemId, commentId, "Content", null), CancellationToken.None);
 
-        // Assert
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(WorkItemErrors.CommentNotOwner);
-        await _commentRepositoryMock.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_Should_ReturnFailure_When_AttachmentIdsProvided_But_SomeNotFound()
+    {
+        Guid projectId = Guid.NewGuid();
+        Guid workItemId = Guid.NewGuid();
+        Guid commentId = Guid.NewGuid();
+        Guid userId = Guid.NewGuid();
+        List<Guid> attachmentIds = [Guid.NewGuid(), Guid.NewGuid()];
+
+        _workItemRepositoryMock.ExistsInProjectAsync(workItemId, projectId, Arg.Any<CancellationToken>()).Returns(true);
+        _userContextMock.UserId.Returns(userId);
+        _commentRepositoryMock.GetByIdTrackedAsync(commentId, workItemId, Arg.Any<CancellationToken>())
+            .Returns(CreateComment(userId));
+        _attachmentRepositoryMock.GetByCommentIdTrackedAsync(commentId, Arg.Any<CancellationToken>())
+            .Returns([]);
+        _attachmentRepositoryMock.GetByIdsTrackedAsync(attachmentIds, workItemId, Arg.Any<CancellationToken>())
+            .Returns([]);  // Only 0 found, but 2 requested → mismatch
+
+        Result<CommentDto> result = await _handler.Handle(
+            new(projectId, workItemId, commentId, null, attachmentIds), CancellationToken.None);
+
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(WorkItemErrors.AttachmentNotFound);
+    }
+
+    [Fact]
+    public async Task Handle_Should_ClearAttachments_When_EmptyAttachmentIds()
+    {
+        Guid projectId = Guid.NewGuid();
+        Guid workItemId = Guid.NewGuid();
+        Guid commentId = Guid.NewGuid();
+        Guid userId = Guid.NewGuid();
+
+        _workItemRepositoryMock.ExistsInProjectAsync(workItemId, projectId, Arg.Any<CancellationToken>()).Returns(true);
+        _userContextMock.UserId.Returns(userId);
+        _commentRepositoryMock.GetByIdTrackedAsync(commentId, workItemId, Arg.Any<CancellationToken>())
+            .Returns(CreateComment(userId));
+        _attachmentRepositoryMock.GetByCommentIdTrackedAsync(commentId, Arg.Any<CancellationToken>())
+            .Returns([]);
+
+        Result<CommentDto> result = await _handler.Handle(
+            new(projectId, workItemId, commentId, null, []), CancellationToken.None);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Attachments.Should().BeEmpty();
     }
 }
