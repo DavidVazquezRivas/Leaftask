@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+          <Include>
+            [Modules.*.Domain]*
+            [Modules.*.Application]*
+            [BuildingBlocks.Domain]*
+            [BuildingBlocks.Application]*
+          </Include>
+          <Exclude>
+            [*.UnitTests]*
+            [*.Infrastructure]*
+            [*.DrivenInfrastructure]*
+            [*.DrivingInfrastructure]*
+            [*.Integration]*
+            [Api.Host]*
+          </Exclude>
+          <ExcludeByAttribute>GeneratedCode,ExcludeFromCodeCoverage,CompilerGenerated</ExcludeByAttribute>
+          <SkipAutoProps>true</SkipAutoProps>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
