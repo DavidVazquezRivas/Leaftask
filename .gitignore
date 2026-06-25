@@ -21,3 +21,6 @@ docker-compose.override.yml
 
 # Test results and coverage reports
 **/TestResults/
+
+# k6 performance test results
+perf/results/

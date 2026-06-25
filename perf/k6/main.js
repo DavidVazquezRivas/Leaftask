@@ -37,3 +37,9 @@ export function workitemsWrite(data) { workitemsScenario.write(data); }
 export function projectsRead(data) { projectsScenario.read(data); }
 export function organizationsRead(data) { organizationsScenario.read(data); }
 export function commentsReadWrite(data) { commentsScenario.readWrite(data); }
+
+export function handleSummary(data) {
+    const path = __ENV.SUMMARY_JSON;
+    if (!path) return {};
+    return { [path]: JSON.stringify(data, null, 2) };
+}
