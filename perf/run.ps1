@@ -8,15 +8,15 @@ $env:BASE_URL = $BaseUrl
 
 switch ($Profile) {
     'smoke' {
-        Write-Host "Smoke test: 1 VU, 30s" -ForegroundColor Cyan
-        k6 run --vus 1 --duration 30s "$PSScriptRoot\k6\main.js"
+        Write-Host "Smoke test: 1 VU, 30s por escenario" -ForegroundColor Cyan
+        k6 run --env "PROFILE=smoke" --env "BASE_URL=$BaseUrl" "$PSScriptRoot\k6\main.js"
     }
     'load' {
-        Write-Host "Load test: 30 VUs, 3 minutos" -ForegroundColor Cyan
-        k6 run "$PSScriptRoot\k6\main.js"
+        Write-Host "Load test: 30 VUs, 2 minutos por escenario" -ForegroundColor Cyan
+        k6 run --env "BASE_URL=$BaseUrl" "$PSScriptRoot\k6\main.js"
     }
     'stress' {
-        Write-Host "Stress test: rampa 0→50 VUs" -ForegroundColor Cyan
-        k6 run --stage '0s:0,1m:50,3m:50,1m:0' --vus 0 "$PSScriptRoot\k6\main.js"
+        Write-Host "Stress test: VUs x1.6, 4 minutos por escenario" -ForegroundColor Cyan
+        k6 run --env "PROFILE=stress" --env "BASE_URL=$BaseUrl" "$PSScriptRoot\k6\main.js"
     }
 }

@@ -1,5 +1,5 @@
 import http from 'k6/http';
-import { check, fail } from 'k6';
+import { check, fail, sleep } from 'k6';
 import { BASE_URL, STATUS_ID, TYPE_ID } from './config.js';
 
 function headers(token) {
@@ -25,13 +25,13 @@ function createOrg(token) {
 }
 
 function createProject(token, organizationId) {
+    const abbr = Math.random().toString(36).slice(-3).toUpperCase();
     const res = http.post(
         `${BASE_URL}/projects`,
         JSON.stringify({
             name: 'Perf Project',
-            abbreviation: 'PRF',
-            privacyLevel: 'Public',
-            organizationId,
+            abbreviation: abbr,
+            privacyLevel: 0,
         }),
         { headers: headers(token) },
     );
@@ -63,6 +63,10 @@ export function setup() {
     const token = devLogin('admin@dev.com');
     const orgId = createOrg(token);
     const projectId = createProject(token, orgId);
+
+    // El outbox procesa cada 5s — esperar a que ProjectReadModel llegue al módulo WorkItems
+    console.log('Esperando sincronización del outbox (~7s)...');
+    sleep(7);
 
     const workItemIds = [];
     for (let i = 0; i < 20; i++) {

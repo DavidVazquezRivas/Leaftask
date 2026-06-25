@@ -5,39 +5,27 @@ import { organizationsScenario } from './scenarios/organizations.js';
 import { projectsScenario } from './scenarios/projects.js';
 import { commentsScenario } from './scenarios/comments.js';
 
+const isSmoke = __ENV.PROFILE === 'smoke';
+const isStress = __ENV.PROFILE === 'stress';
+
+function scenario(exec, vus, duration) {
+    const stressVus = Math.round(vus * 1.6);
+    return {
+        executor: 'constant-vus',
+        vus: isSmoke ? 1 : (isStress ? stressVus : vus),
+        duration: isSmoke ? '30s' : (isStress ? '4m' : duration),
+        exec,
+    };
+}
+
 export const options = {
     thresholds: THRESHOLDS,
     scenarios: {
-        workitems_read: {
-            executor: 'constant-vus',
-            vus: 15,
-            duration: '2m',
-            exec: 'workitemsRead',
-        },
-        workitems_write: {
-            executor: 'constant-vus',
-            vus: 5,
-            duration: '2m',
-            exec: 'workitemsWrite',
-        },
-        projects_read: {
-            executor: 'constant-vus',
-            vus: 5,
-            duration: '2m',
-            exec: 'projectsRead',
-        },
-        organizations_read: {
-            executor: 'constant-vus',
-            vus: 3,
-            duration: '2m',
-            exec: 'organizationsRead',
-        },
-        comments_rw: {
-            executor: 'constant-vus',
-            vus: 2,
-            duration: '2m',
-            exec: 'commentsReadWrite',
-        },
+        workitems_read:     scenario('workitemsRead',     15, '2m'),
+        workitems_write:    scenario('workitemsWrite',     5, '2m'),
+        projects_read:      scenario('projectsRead',       5, '2m'),
+        organizations_read: scenario('organizationsRead',  3, '2m'),
+        comments_rw:        scenario('commentsReadWrite',  2, '2m'),
     },
 };
 

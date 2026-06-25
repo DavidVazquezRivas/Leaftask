@@ -7,7 +7,7 @@ export const projectsScenario = {
     read(data) {
         const { token, orgId, projectId } = data;
 
-        const list = http.get(`${BASE_URL}/projects`, { headers: headers(token) });
+        const list = http.get(`${BASE_URL}/projects/me`, { headers: headers(token) });
         check(list, { 'list projects 200': (r) => r.status === 200 });
 
         const byOrg = http.get(`${BASE_URL}/projects/organization/${orgId}`, { headers: headers(token) });
