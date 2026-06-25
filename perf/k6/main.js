@@ -21,6 +21,7 @@ function scenario(exec, vus, duration) {
 
 export const options = {
     thresholds: THRESHOLDS,
+    summaryTrendStats: ['avg', 'min', 'med', 'max', 'p(90)', 'p(95)', 'p(99)'],
     scenarios: {
         workitems_read:     scenario('workitemsRead',     15, '2m'),
         workitems_write:    scenario('workitemsWrite',     5, '2m'),
