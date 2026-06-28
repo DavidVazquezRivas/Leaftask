@@ -18,3 +18,9 @@ docker-compose.override.yml
 
 # Environment files
 .env
+
+# Test results and coverage reports
+**/TestResults/
+
+# k6 performance test results
+perf/results/

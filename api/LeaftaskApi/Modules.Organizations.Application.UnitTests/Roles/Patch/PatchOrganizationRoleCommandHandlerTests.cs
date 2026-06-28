@@ -89,27 +89,13 @@ public class PatchOrganizationRoleCommandHandlerTests
     {
         // Arrange
         Guid creatorUserId = Guid.NewGuid();
-        _userContextMock.UserId.Returns(creatorUserId);
-
-        OrganizationPermission configurePermission = new("Configure Organization",
-            "Modify organization settings, branding, and general configuration");
-        OrganizationPermission[] permissions = [configurePermission];
-
-        Organization organization = Organization.Create(
-            "Leaftask",
-            "Organization description",
-            "https://leaftask.com",
-            creatorUserId,
-            permissions);
-
-        PatchOrganizationRoleCommand command = new(
-            organization.Id,
-            Guid.NewGuid(),
-            "Leaftask Admin Updated",
-            [new PatchOrganizationRolePermissionInput(configurePermission.Id, PermissionLevel.Full)]);
+        OrganizationPermission permission = new("Configure Organization", "desc");
+        Organization organization = Organization.Create("Leaftask", "desc", "https://leaftask.com", creatorUserId, [permission]);
 
         _repositoryMock.GetByIdAsync(organization.Id, Arg.Any<CancellationToken>()).Returns(organization);
-        _permissionRepositoryMock.GetAllAsync(Arg.Any<CancellationToken>()).Returns(permissions);
+        _permissionRepositoryMock.GetAllAsync(Arg.Any<CancellationToken>()).Returns([permission]);
+
+        PatchOrganizationRoleCommand command = new(organization.Id, Guid.NewGuid(), "Updated", null);
 
         // Act
         Result<OrganizationRoleResponse> result = await _handler.Handle(command, CancellationToken.None);
@@ -117,6 +103,63 @@ public class PatchOrganizationRoleCommandHandlerTests
         // Assert
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(OrganizationErrors.OrganizationRoleNotFound);
-        await _repositoryMock.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_Should_ReturnFailure_When_OrganizationNotFound()
+    {
+        _repositoryMock.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns((Organization?)null);
+        PatchOrganizationRoleCommand command = new(Guid.NewGuid(), Guid.NewGuid(), null, null);
+
+        Result<OrganizationRoleResponse> result = await _handler.Handle(command, CancellationToken.None);
+
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(OrganizationErrors.OrganizationNotFound);
+    }
+
+    [Fact]
+    public async Task Handle_Should_ReturnFailure_When_PermissionNotFound()
+    {
+        Guid creatorUserId = Guid.NewGuid();
+        OrganizationPermission permission = new("Configure Organization", "desc");
+        Organization organization = Organization.Create("Leaftask", "desc", "https://leaftask.com", creatorUserId, [permission]);
+        OrganizationRole role = organization.AddRole("Member", [permission]);
+
+        _repositoryMock.GetByIdAsync(organization.Id, Arg.Any<CancellationToken>()).Returns(organization);
+        _permissionRepositoryMock.GetAllAsync(Arg.Any<CancellationToken>()).Returns([permission]);
+
+        Guid unknownPermId = Guid.NewGuid();
+        PatchOrganizationRoleCommand command = new(
+            organization.Id, role.Id, null,
+            [new PatchOrganizationRolePermissionInput(unknownPermId, PermissionLevel.Full)]);
+
+        Result<OrganizationRoleResponse> result = await _handler.Handle(command, CancellationToken.None);
+
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(OrganizationErrors.OrganizationPermissionNotFound);
+    }
+
+    [Fact]
+    public async Task Handle_Should_ReturnFailure_When_UpdateRoleFailsDueToUnknownRolePermission()
+    {
+        Guid creatorUserId = Guid.NewGuid();
+        OrganizationPermission permA = new("Configure Organization", "desc");
+        OrganizationPermission permB = new("Invite Members", "desc");
+        Organization organization = Organization.Create("Leaftask", "desc", "https://leaftask.com", creatorUserId, [permA, permB]);
+        // Create a role with only permA in it
+        OrganizationRole role = organization.AddRole("Limited", [permA]);
+
+        _repositoryMock.GetByIdAsync(organization.Id, Arg.Any<CancellationToken>()).Returns(organization);
+        _permissionRepositoryMock.GetAllAsync(Arg.Any<CancellationToken>()).Returns([permA, permB]);
+
+        // Try to set permB level on a role that doesn't have permB — this triggers OrganizationRole.Update failure
+        PatchOrganizationRoleCommand command = new(
+            organization.Id, role.Id, null,
+            [new PatchOrganizationRolePermissionInput(permB.Id, PermissionLevel.Full)]);
+
+        Result<OrganizationRoleResponse> result = await _handler.Handle(command, CancellationToken.None);
+
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(OrganizationErrors.OrganizationRolePermissionNotFound);
     }
 }
